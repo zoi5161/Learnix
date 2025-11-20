@@ -1,0 +1,13 @@
+/node_modules
+
+.env
+.env.local
+
+/logs
+*.sqlite
+*.db
+
+/dist
+/out
+
+npm-debug.log*
