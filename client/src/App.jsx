@@ -6,6 +6,7 @@ import StudentDashboard from './pages/Dashboard/StudentDashboard';
 import InstructorDashboard from './pages/Dashboard/InstructorDashboard'; // NEW
 import AdminDashboard from './pages/Dashboard/AdminDashboard';
 import BaseLayout from './layouts/BaseLayout';
+import OAuthSuccess from './pages/Auth/OAuthSuccess';
 
 const PrivateRoute = ({ children, roles }) => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -28,6 +29,7 @@ const App = () => {
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/login/oauth/success" element={<OAuthSuccess />} />
                 
                 <Route path="/student/dashboard" element={<PrivateRoute roles={['student']}><StudentDashboard /></PrivateRoute>} />
                 <Route path="/instructor/dashboard" element={<PrivateRoute roles={['instructor']}><InstructorDashboard /></PrivateRoute>} />
