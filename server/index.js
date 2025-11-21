@@ -11,7 +11,7 @@ const cors = require('cors');
 connectDB();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "10mb" })); // tự decode UTF-8
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'http://localhost:5173'], 

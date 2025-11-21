@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { setAccessToken, setRefreshToken } from "../../utils/authToken"; // helper lưu token
 
 const OAuthSuccess = () => {
     const location = useLocation();
@@ -7,30 +8,26 @@ const OAuthSuccess = () => {
 
     useEffect(() => {
         const query = new URLSearchParams(location.search);
-        
-        const token = query.get('token');
-        const role = query.get('role');
-        const name = query.get('name');
+        const accessToken = query.get("accessToken");
+        const refreshToken = query.get("refreshToken");
 
-        if (token && role && name) {
-            const user = { token, role, name: decodeURIComponent(name) };
-            localStorage.setItem('user', JSON.stringify(user));
-            
-            if (role === 'admin') {
-                navigate('/admin/dashboard', { replace: true });
-            } else if (role === 'instructor') {
-                navigate('/instructor/dashboard', { replace: true });
-            } else {
-                navigate('/student/dashboard', { replace: true });
-            }
+        if (accessToken) {
+            // Lưu token
+            setAccessToken(accessToken);
+            if (refreshToken) setRefreshToken(refreshToken);
+
+            // Redirect tới dashboard duy nhất
+            navigate("/dashboard", { replace: true });
         } else {
-            navigate('/login?error=oauth_data_missing', { replace: true });
+            navigate("/login?error=oauth_data_missing", { replace: true });
         }
     }, [location.search, navigate]);
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
-            <h1 className="text-xl font-semibold text-gray-700">Đang xử lý đăng nhập...</h1>
+            <h1 className="text-xl font-semibold text-gray-700">
+                Đang xử lý đăng nhập...
+            </h1>
         </div>
     );
 };

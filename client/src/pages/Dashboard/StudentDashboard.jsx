@@ -1,6 +1,7 @@
 import React from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
+import {getUserFromToken} from '../../utils/authToken';
 
 // Thẻ tóm tắt tiến độ (để giữ code Tailwind gọn gàng)
 const ProgressSummaryCard = ({ title, value, color }) => (
@@ -26,7 +27,7 @@ const CourseCard = ({ title, progress }) => (
 
 
 const StudentDashboard = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = getUserFromToken();
     const navigate = useNavigate();
 
     const enrolledCourses = [
@@ -35,7 +36,7 @@ const StudentDashboard = () => {
         { id: 3, title: "Database Management (SQL)", progress: 10 },
     ];
     const totalProgress = Math.floor(enrolledCourses.reduce((sum, course) => sum + course.progress, 0) / enrolledCourses.length) || 0;
-
+    
     if (!user || user.role !== 'student') {
         navigate('/login');
         return null;

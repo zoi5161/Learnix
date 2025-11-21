@@ -1,9 +1,10 @@
 import React from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
+import { getUserFromToken } from '../../utils/authToken';
 
 const InstructorDashboard = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = getUserFromToken();
     const navigate = useNavigate();
 
     if (!user || user.role !== 'instructor') {

@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getUserFromToken, clearAuth } from '../utils/authToken';
 
 const Header = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = getUserFromToken();
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        clearAuth();
         window.location.href = '/login';
     };
 
@@ -43,7 +44,7 @@ const BaseLayout = ({ children }) => {
             <Header />
             <main className="flex-grow container mx-auto p-4">{children}</main>
             <footer className="bg-gray-100 p-4 text-center text-gray-600 border-t">
-                © 2024 Learnix | Intelligent E-Learning
+                © 2025 Learnix | Intelligent E-Learning
             </footer>
         </div>
     );
