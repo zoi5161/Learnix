@@ -19,54 +19,53 @@ api.interceptors.request.use(config => {
 });
 
 api.interceptors.response.use(
-    res => res,
-    async err => {
-        const originalRequest = err.config;
-        
-        // Skip interceptor for refresh endpoint to avoid infinite loop
-        if (originalRequest.url?.includes('/auth/refresh')) {
-            return Promise.reject(err);
-        }
-        
-        if (err.response?.status === 401 && !originalRequest._retry) {
-            if (isRefreshing) {
-                return new Promise((resolve, reject) => {
-                    failedQueue.push({ resolve, reject });
-                }).then(token => {
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
-                    return axios(originalRequest);
-                });
-            }
+  res => res,
+  async err => {
+    const originalRequest = err.config;
+    if (originalRequest.url?.includes('/auth/refresh')) return Promise.reject(err);
 
-            originalRequest._retry = true;
-            isRefreshing = true;
+    if (err.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // set trước
 
-            try {
-                const refreshToken = getRefreshToken();
-                if (!refreshToken) throw new Error("No refresh token");
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(token => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest); // dùng instance
+        });
+      }
 
-                // Use plain axios to avoid interceptor loop
-                const { data } = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, { refreshToken });
+      isRefreshing = true;
+      try {
+        const refreshToken = getRefreshToken();
+        if (!refreshToken) throw new Error('No refresh token');
 
-                setAccessToken(data.accessToken);
-                if (data.refreshToken) setRefreshToken(data.refreshToken);
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
+          { refreshToken }
+        );
 
-                originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-                processQueue(null, data.accessToken);
+        setAccessToken(data.accessToken);
+        if (data.refreshToken) setRefreshToken(data.refreshToken);
 
-                return axios(originalRequest);
-            } catch (e) {
-                processQueue(e, null);
-                clearAuth();
-                window.location.href = "/login";
-                return Promise.reject(e);
-            } finally {
-                isRefreshing = false;
-            }
-        }
+        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        processQueue(null, data.accessToken);
 
-        return Promise.reject(err);
+        return api(originalRequest); // dùng instance
+      } catch (e) {
+        processQueue(e, null);
+        clearAuth();
+        window.location.href = '/login';
+        return Promise.reject(e);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
+    return Promise.reject(err);
+  }
 );
+
 
 export default api;

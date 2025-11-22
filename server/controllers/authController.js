@@ -47,7 +47,7 @@ const authUser = async (req, res) => {
         };
 
         res.json({
-            accessToken: generateToken(data, '1m', 'access'),   // access token 1m
+            accessToken: generateToken(data, '1h', 'access'),   // access token 1h
             refreshToken: generateToken(data, '7d', 'refresh') // refresh token 7 ngày
         });
     } else {
@@ -57,7 +57,7 @@ const authUser = async (req, res) => {
 
 const googleLoginSuccess = async (req, res) => {
     if (!req.user) {
-        return res.redirect('http://localhost:3000/login?error=auth_failed');
+        return res.redirect('/login');
     }
 
     const user = req.user;
@@ -70,7 +70,7 @@ const googleLoginSuccess = async (req, res) => {
 
     const accessToken = generateToken(data, '1h', 'access');
     const refreshToken = generateToken(data, '7d', 'refresh');
-    const redirectUrl = `http://localhost:3000/login/oauth/success?accessToken=${encodeURIComponent(accessToken)}&refreshToken=${encodeURIComponent(refreshToken)}`;
+    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/oauth-success?accessToken=${accessToken}&refreshToken=${refreshToken}`;
     res.redirect(redirectUrl);
 };
 
@@ -82,7 +82,7 @@ const refreshNewToken = async (req, res) => {
         const payload = verifyRefreshToken(refreshToken); // verify refresh token
 
         // Generate new access token (15 phút) và refresh token nếu muốn
-        const newAccessToken = generateToken({ id: payload.id, role: payload.role, email: payload.email, name: payload.name }, "1m");
+        const newAccessToken = generateToken({ id: payload.id, role: payload.role, email: payload.email, name: payload.name }, "1h");
         const newRefreshToken = generateRefreshToken({ id: payload.id, role: payload.role, email: payload.email, name: payload.name }); // tuỳ logic backend
         // console.log("New Access Token:", newAccessToken);
         // console.log("Payload from Refresh Token:", payload);

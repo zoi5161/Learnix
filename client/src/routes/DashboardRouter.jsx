@@ -7,7 +7,6 @@ import AdminDashboard from "../pages/Dashboard/AdminDashboard";
 import { getUserFromToken } from "../utils/authToken";
 const DashboardRouter = () => {
     const user = getUserFromToken();
-    console.log("DashboardRouter user:", user);
     if (!user) return null;
 
     switch (user.role) {
