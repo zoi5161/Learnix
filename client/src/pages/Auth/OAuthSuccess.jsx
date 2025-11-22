@@ -1,6 +1,9 @@
+// client/src/pages/Auth/OAuthSuccess.jsx
+
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { setAccessToken, setRefreshToken } from "../../utils/authToken"; // helper lưu token
+import { setAccessToken, setRefreshToken } from "../../utils/authToken";
+import { jwtDecode } from 'jwt-decode'; // Thư viện giải mã JWT
 
 const OAuthSuccess = () => {
     const location = useLocation();
@@ -10,14 +13,26 @@ const OAuthSuccess = () => {
         const query = new URLSearchParams(location.search);
         const accessToken = query.get("accessToken");
         const refreshToken = query.get("refreshToken");
-
+        
+        let role = 'student'; // Mặc định là student
+        
         if (accessToken) {
-            // Lưu token
-            setAccessToken(accessToken);
-            if (refreshToken) setRefreshToken(refreshToken);
+            try {
+                // Giải mã Access Token để lấy vai trò (Role)
+                const decoded = jwtDecode(accessToken);
+                role = decoded.role || 'student'; 
+                
+                // Lưu token
+                setAccessToken(accessToken);
+                if (refreshToken) setRefreshToken(refreshToken);
 
-            // Redirect tới dashboard duy nhất
-            navigate("/dashboard", { replace: true });
+                // Chuyển hướng theo vai trò (đúng yêu cầu Assignment)
+                navigate(`/${role}/dashboard`, { replace: true });
+
+            } catch (e) {
+                console.error("Invalid token:", e);
+                navigate("/login?error=invalid_token", { replace: true });
+            }
         } else {
             navigate("/login?error=oauth_data_missing", { replace: true });
         }
