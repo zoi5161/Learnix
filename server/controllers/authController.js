@@ -69,7 +69,7 @@ const googleLoginSuccess = async (req, res) => {
 
     const accessToken = generateToken(data, '1h', 'access');
     const refreshToken = generateToken(data, '7d', 'refresh');
-    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/oauth-success?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login/oauth/success?accessToken=${accessToken}&refreshToken=${refreshToken}`;
     res.redirect(redirectUrl);
 };
 
