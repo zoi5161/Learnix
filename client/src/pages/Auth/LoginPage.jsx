@@ -3,6 +3,7 @@ import authService from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import BaseLayout from '../../layouts/BaseLayout';
 import { getUserFromToken, getAccessToken } from '../../utils/authToken';
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -98,9 +99,9 @@ const LoginPage = () => {
 
                 <p className="text-center text-sm text-gray-600 mt-4">
                     Bạn chưa có tài khoản?{" "}
-                    <a href="/register" className="text-blue-600 font-semibold hover:underline">
+                    <Link to="/register" className="text-blue-600 font-semibold hover:underline">
                         Đăng ký
-                    </a>
+                    </Link>
                 </p>
             </div>
         </BaseLayout>
