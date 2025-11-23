@@ -1,4 +1,6 @@
-# Learnix - Short README
+# Learnix 
+
+## Deploy Link: https://learnix-rho.vercel.app/
 
 ## Run Locally
 
