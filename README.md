@@ -127,5 +127,13 @@ callbackURL = /api/auth/google/callback
   * ⚠️ Phụ thuộc Google, cần cấu hình redirect chuẩn.
 
 ---
+## Example Accounts
+
+| Email              | Password        | Role       |
+|--------------------|-----------------|------------|
+| user@gmail.com     | User123456789   | student    |
+| admin@gmail.com    | Admin123        | admin      |
+| instructor@gmail.com | Instructor123 | instructor |
+
 
 
