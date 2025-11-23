@@ -26,8 +26,7 @@ const OAuthSuccess = () => {
                 setAccessToken(accessToken);
                 if (refreshToken) setRefreshToken(refreshToken);
 
-                // Chuyển hướng theo vai trò (đúng yêu cầu Assignment)
-                navigate(`/${role}/dashboard`, { replace: true });
+                navigate("/dashboard", { replace: true });
 
             } catch (e) {
                 console.error("Invalid token:", e);
