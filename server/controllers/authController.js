@@ -9,7 +9,8 @@ const registerUser = async (req, res) => {
 
     if (!passwordRegex.test(password)) {
         return res.status(400).json({
-            message: 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, and numbers.'
+            message:
+                'Password must be at least 8 characters long and include uppercase letters, lowercase letters, and numbers.',
         });
     }
 
@@ -42,12 +43,12 @@ const authUser = async (req, res) => {
             id: user._id,
             role: user.role,
             name: user.name,
-            email: user.email
+            email: user.email,
         };
 
         res.json({
-            accessToken: generateToken(data, '1h', 'access'),   // access token 1h
-            refreshToken: generateToken(data, '7d', 'refresh') // refresh token 7 ngày
+            accessToken: generateToken(data, '1h', 'access'), // access token 1h
+            refreshToken: generateToken(data, '7d', 'refresh'), // refresh token 7 ngày
         });
     } else {
         res.status(401).json({ message: 'Invalid email or password' });
@@ -64,7 +65,7 @@ const googleLoginSuccess = async (req, res) => {
         id: user._id,
         role: user.role,
         name: user.name,
-        email: user.email
+        email: user.email,
     };
 
     const accessToken = generateToken(data, '1h', 'access');
@@ -75,19 +76,27 @@ const googleLoginSuccess = async (req, res) => {
 
 const refreshNewToken = async (req, res) => {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(401).json({ message: "No refresh token" });
+    if (!refreshToken) return res.status(401).json({ message: 'No refresh token' });
 
     try {
         const payload = verifyRefreshToken(refreshToken); // verify refresh token
 
         // Generate new access token (15 phút) và refresh token nếu muốn
-        const newAccessToken = generateToken({ id: payload.id, role: payload.role, email: payload.email, name: payload.name }, "1h");
-        const newRefreshToken = generateRefreshToken({ id: payload.id, role: payload.role, email: payload.email, name: payload.name }); // tuỳ logic backend
+        const newAccessToken = generateToken(
+            { id: payload.id, role: payload.role, email: payload.email, name: payload.name },
+            '1h'
+        );
+        const newRefreshToken = generateRefreshToken({
+            id: payload.id,
+            role: payload.role,
+            email: payload.email,
+            name: payload.name,
+        }); // tuỳ logic backend
         // console.log("New Access Token:", newAccessToken);
         // console.log("Payload from Refresh Token:", payload);
         res.json({ accessToken: newAccessToken });
     } catch (err) {
-        res.status(401).json({ message: "Invalid refresh token" });
+        res.status(401).json({ message: 'Invalid refresh token' });
     }
 };
 

@@ -4,8 +4,6 @@ const { getUserProfile, updateUserProfile } = require('../controllers/userContro
 
 const router = express.Router();
 
-router.route('/profile')
-    .get(getUserProfile)
-    .put(updateUserProfile);
+router.route('/profile').get(getUserProfile).put(updateUserProfile);
 
 module.exports = router;

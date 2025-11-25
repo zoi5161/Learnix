@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
-import {getUserFromToken} from '../../utils/authToken';
+import { getUserFromToken } from '../../utils/authToken';
 
 // Thẻ tóm tắt tiến độ (để giữ code Tailwind gọn gàng)
 const ProgressSummaryCard = ({ title, value, color }) => (
@@ -16,8 +16,8 @@ const CourseCard = ({ title, progress }) => (
     <div className="bg-white p-5 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-200">
         <h4 className="text-lg font-semibold text-gray-800 mb-2">{title}</h4>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div 
-                className="bg-yellow-500 h-2.5 rounded-full" 
+            <div
+                className="bg-yellow-500 h-2.5 rounded-full"
                 style={{ width: `${progress}%` }}
             ></div>
         </div>
@@ -25,18 +25,21 @@ const CourseCard = ({ title, progress }) => (
     </div>
 );
 
-
 const StudentDashboard = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
 
     const enrolledCourses = [
-        { id: 1, title: "IT Foundation: Python Basics", progress: 45 },
-        { id: 2, title: "Web Development with React", progress: 80 },
-        { id: 3, title: "Database Management (SQL)", progress: 10 },
+        { id: 1, title: 'IT Foundation: Python Basics', progress: 45 },
+        { id: 2, title: 'Web Development with React', progress: 80 },
+        { id: 3, title: 'Database Management (SQL)', progress: 10 },
     ];
-    const totalProgress = Math.floor(enrolledCourses.reduce((sum, course) => sum + course.progress, 0) / enrolledCourses.length) || 0;
-    
+    const totalProgress =
+        Math.floor(
+            enrolledCourses.reduce((sum, course) => sum + course.progress, 0) /
+                enrolledCourses.length
+        ) || 0;
+
     if (!user || user.role !== 'student') {
         navigate('/login');
         return null;
@@ -51,32 +54,28 @@ const StudentDashboard = () => {
 
                 {/* Phần Tóm Tắt Chung */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <ProgressSummaryCard 
-                        title="Courses Enrolled" 
-                        value={enrolledCourses.length} 
-                        color="indigo" 
+                    <ProgressSummaryCard
+                        title="Courses Enrolled"
+                        value={enrolledCourses.length}
+                        color="indigo"
                     />
-                    <ProgressSummaryCard 
-                        title="Overall Progress" 
-                        value={`${totalProgress}%`} 
-                        color="yellow" 
+                    <ProgressSummaryCard
+                        title="Overall Progress"
+                        value={`${totalProgress}%`}
+                        color="yellow"
                     />
-                    <ProgressSummaryCard 
-                        title="Quizzes Taken" 
-                        value="12" 
-                        color="green" 
-                    />
+                    <ProgressSummaryCard title="Quizzes Taken" value="12" color="green" />
                 </div>
 
                 {/* Danh sách Khóa học */}
                 <div className="bg-white p-8 rounded-xl shadow-2xl">
                     <h2 className="text-3xl font-bold text-gray-800 mb-6">Khóa Học Đang Học</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {enrolledCourses.map(course => (
-                            <CourseCard 
-                                key={course.id} 
-                                title={course.title} 
-                                progress={course.progress} 
+                        {enrolledCourses.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                title={course.title}
+                                progress={course.progress}
                             />
                         ))}
                     </div>

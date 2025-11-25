@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password_hash: { type: String, select: false },
     role: { type: String, enum: ['student', 'instructor', 'admin'], default: 'student' },
-    googleId: { type: String, unique: true, sparse: true }
+    googleId: { type: String, unique: true, sparse: true },
 });
 
 UserSchema.methods.matchPassword = async function (enteredPassword) {

@@ -1,4 +1,4 @@
-# Learnix 
+# Learnix
 
 ## Deploy Link: https://learnix-rho.vercel.app/
 
@@ -42,52 +42,63 @@ Dưới đây là phiên bản **đầy đủ – rõ ràng – ngắn gọn** c
 
 ---
 
+## 🛠️ Tooling & Quality Overview
+
+Dự án được xây dựng với các tiêu chuẩn chất lượng cao:
+
+- **Linter & Formatter:** Sử dụng **Prettier** để định dạng mã nguồn tự động.
+- **Unit & API Testing:** Sử dụng **Jest** và **Supertest** để kiểm thử tích hợp các endpoint API Backend và các hàm tiện ích của Client.
+- **Commit Quality:** Sử dụng **Husky** và **lint-staged** để tự động chạy Prettier trước khi commit.
+
+---
+
+## 🖥️ Dashboard & Layout Architecture
+
+Hệ thống thiết kế và Dashboard được xây dựng với khả năng tái sử dụng và phân quyền[cite: 7].
+
+- **Layout Components:** Sử dụng Tailwind CSS để tạo các thành phần layout tái sử dụng như **AppShell** (Header, Sidebar, Footer), **Card**, và **Button**.
+- **Role-Based UI:** Dashboard được thiết kế để thích ứng với vai trò của người dùng (Student, Instructor, Admin), chỉ hiển thị các widget và chức năng có liên quan (ví dụ: Student thấy tiến độ, Instructor thấy phân tích học viên).
+
+---
+
 ## 🔐 Auth Overview
 
-* **Access Token**
+- **Access Token**
+    - JWT sống ngắn (1 giờ).
+    - Lưu trong `localStogare` hoặc memory (tùy cấu hình).
+    - Gửi kèm mỗi request qua header `Authorization: Bearer <token>`.
 
-  * JWT sống ngắn (1 giờ).
-  * Lưu trong `localStogare` hoặc memory (tùy cấu hình).
-  * Gửi kèm mỗi request qua header `Authorization: Bearer <token>`.
+- **Refresh Token**
+    - JWT sống dài hơn (7 ngày).
+    - Lưu trong `httpOnly cookie` hoặc `localStogare` tùy thiết kế security.
+    - Dùng để xin **access token mới** khi access token hết hạn mà không cần đăng nhập lại.
 
-* **Refresh Token**
+- **Roles**
+    - Mỗi user có một role cố định:
+        - `student` — người học
+        - `instructor` — giảng viên
+        - `admin` — quản trị hệ thống
 
-  * JWT sống dài hơn (7 ngày).
-  * Lưu trong `httpOnly cookie` hoặc `localStogare` tùy thiết kế security.
-  * Dùng để xin **access token mới** khi access token hết hạn mà không cần đăng nhập lại.
+    - Backend sẽ ghi role trong payload của JWT để client biết quyền.
 
-* **Roles**
+- **Middleware Backend**
+    - **`protect`**
+        - Kiểm tra access token hợp lệ.
+        - Nếu token hết hạn → client sẽ dùng refresh token để lấy token mới.
+        - Chặn luôn request nếu không có token.
 
-  * Mỗi user có một role cố định:
+    - **`restrictTo(role)`**
+        - Chỉ cho phép truy cập route nếu user có đúng vai trò.
+        - Ví dụ:
+            - `restrictTo("admin")` → chỉ admin truy cập.
+            - `restrictTo("instructor", "admin")` → cho 2 role này.
 
-    * `student` — người học
-    * `instructor` — giảng viên
-    * `admin` — quản trị hệ thống
-  * Backend sẽ ghi role trong payload của JWT để client biết quyền.
-
-* **Middleware Backend**
-
-  * **`protect`**
-
-    * Kiểm tra access token hợp lệ.
-    * Nếu token hết hạn → client sẽ dùng refresh token để lấy token mới.
-    * Chặn luôn request nếu không có token.
-
-  * **`restrictTo(role)`**
-
-    * Chỉ cho phép truy cập route nếu user có đúng vai trò.
-    * Ví dụ:
-
-      * `restrictTo("admin")` → chỉ admin truy cập.
-      * `restrictTo("instructor", "admin")` → cho 2 role này.
-
-* **Flow tổng quát**
-
-  1. Người dùng login (password hoặc Google OAuth).
-  2. Backend trả về *access token* và *refresh token*.
-  3. Axios interceptor tự gắn access token vào request.
-  4. Khi access token hết hạn → axios tự gửi request refresh → lấy token mới → retry request.
-  5. Logout sẽ xoá cả hai token.
+- **Flow tổng quát**
+    1. Người dùng login (password hoặc Google OAuth).
+    2. Backend trả về _access token_ và _refresh token_.
+    3. Axios interceptor tự gắn access token vào request.
+    4. Khi access token hết hạn → axios tự gửi request refresh → lấy token mới → retry request.
+    5. Logout sẽ xoá cả hai token.
 
 ---
 
@@ -111,29 +122,24 @@ callbackURL = /api/auth/google/callback
 
 ## Decisions & Trade-offs
 
-* **JWT (Access + Refresh):**
+- **JWT (Access + Refresh):**
+    - ✔️ Phù hợp SPA, dễ scale, không cần session.
+    - ⚠️ Cần tự xử lý refresh, dễ lỗi nếu quản lý token sai.
 
-  * ✔️ Phù hợp SPA, dễ scale, không cần session.
-  * ⚠️ Cần tự xử lý refresh, dễ lỗi nếu quản lý token sai.
+- **Axios + Interceptor:**
+    - ✔️ Tự attach token, tự refresh khi 401 → tiện lợi.
+    - ⚠️ Interceptor phức tạp hơn, dễ loop nếu refresh lỗi.
 
-* **Axios + Interceptor:**
-
-  * ✔️ Tự attach token, tự refresh khi 401 → tiện lợi.
-  * ⚠️ Interceptor phức tạp hơn, dễ loop nếu refresh lỗi.
-
-* **Google OAuth:**
-
-  * ✔️ Đăng nhập nhanh, user không cần nhớ mật khẩu.
-  * ⚠️ Phụ thuộc Google, cần cấu hình redirect chuẩn.
+- **Google OAuth:**
+    - ✔️ Đăng nhập nhanh, user không cần nhớ mật khẩu.
+    - ⚠️ Phụ thuộc Google, cần cấu hình redirect chuẩn.
 
 ---
+
 ## Example Accounts
 
-| Email              | Password        | Role       |
-|--------------------|-----------------|------------|
-| user@gmail.com     | User123456789   | student    |
-| admin@gmail.com    | Admin123        | admin      |
+| Email                | Password      | Role       |
+| -------------------- | ------------- | ---------- |
+| user@gmail.com       | User123456789 | student    |
+| admin@gmail.com      | Admin123      | admin      |
 | instructor@gmail.com | Instructor123 | instructor |
-
-
-

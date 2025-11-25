@@ -1,20 +1,20 @@
-import React from "react";
-import BaseLayout from "../layouts/BaseLayout";
+import React from 'react';
+import BaseLayout from '../layouts/BaseLayout';
 
-import StudentDashboard from "../pages/Dashboard/StudentDashboard";
-import InstructorDashboard from "../pages/Dashboard/InstructorDashboard";
-import AdminDashboard from "../pages/Dashboard/AdminDashboard";
-import { getUserFromToken } from "../utils/authToken";
+import StudentDashboard from '../pages/Dashboard/StudentDashboard';
+import InstructorDashboard from '../pages/Dashboard/InstructorDashboard';
+import AdminDashboard from '../pages/Dashboard/AdminDashboard';
+import { getUserFromToken } from '../utils/authToken';
 const DashboardRouter = () => {
     const user = getUserFromToken();
     if (!user) return null;
 
     switch (user.role) {
-        case "student":
+        case 'student':
             return <StudentDashboard />;
-        case "instructor":
+        case 'instructor':
             return <InstructorDashboard />;
-        case "admin":
+        case 'admin':
             return <AdminDashboard />;
         default:
             return (

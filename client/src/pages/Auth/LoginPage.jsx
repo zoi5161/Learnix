@@ -3,7 +3,7 @@ import authService from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import BaseLayout from '../../layouts/BaseLayout';
 import { getUserFromToken, getAccessToken } from '../../utils/authToken';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ const LoginPage = () => {
     useEffect(() => {
         const token = getAccessToken();
         if (token && getUserFromToken()) {
-            navigate("/dashboard", { replace: true });
+            navigate('/dashboard', { replace: true });
         }
     }, [navigate]);
 
@@ -27,9 +27,9 @@ const LoginPage = () => {
             // login → authService lưu access + refresh token
             await authService.login(email, password);
 
-            navigate("/dashboard", { replace: true });
+            navigate('/dashboard', { replace: true });
         } catch (err) {
-            setError(err.response?.data?.message || "Login failed");
+            setError(err.response?.data?.message || 'Login failed');
         }
     };
 
@@ -60,7 +60,9 @@ const LoginPage = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Password
+                        </label>
                         <input
                             type="password"
                             value={password}
@@ -89,16 +91,28 @@ const LoginPage = () => {
                 >
                     {/* Google icon */}
                     <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 48 48">
-                        <path d="M24 9.5c3.54 0 6.7 1.25 9.21 3.52l6.59-6.59C35.29 2.5 29.87 0 24 0 14.88 0 7 5.48 3.55 13.08l6.81 5.23C12.3 13.72 17.65 9.5 24 9.5z" fill="#ea4335" />
-                        <path d="M4.09 18.31c-.13.38-.2.77-.2 1.19 0 4.67 3.55 8.78 8.44 10.37l5.23-6.81C13.88 22.8 11 20.8 11 18.31h-6.91z" fill="#fbbc04" />
-                        <path d="M24 48c7.87 0 14.83-2.6 19.66-6.95l-6.59-6.59c-3.11 2.3-7.23 3.65-11.57 3.65-6.35 0-11.7-4.22-13.56-10.05l-6.81 5.23C7.3 42.52 15.3 48 24 48z" fill="#34a853" />
-                        <path d="M44.42 24c0-1.66-.14-3.23-.4-4.75H24v8.99h12.18c-.46 2.37-1.8 4.4-3.79 5.86l6.59 6.59C42.8 38.6 44.42 32.74 44.42 24z" fill="#4285f4" />
+                        <path
+                            d="M24 9.5c3.54 0 6.7 1.25 9.21 3.52l6.59-6.59C35.29 2.5 29.87 0 24 0 14.88 0 7 5.48 3.55 13.08l6.81 5.23C12.3 13.72 17.65 9.5 24 9.5z"
+                            fill="#ea4335"
+                        />
+                        <path
+                            d="M4.09 18.31c-.13.38-.2.77-.2 1.19 0 4.67 3.55 8.78 8.44 10.37l5.23-6.81C13.88 22.8 11 20.8 11 18.31h-6.91z"
+                            fill="#fbbc04"
+                        />
+                        <path
+                            d="M24 48c7.87 0 14.83-2.6 19.66-6.95l-6.59-6.59c-3.11 2.3-7.23 3.65-11.57 3.65-6.35 0-11.7-4.22-13.56-10.05l-6.81 5.23C7.3 42.52 15.3 48 24 48z"
+                            fill="#34a853"
+                        />
+                        <path
+                            d="M44.42 24c0-1.66-.14-3.23-.4-4.75H24v8.99h12.18c-.46 2.37-1.8 4.4-3.79 5.86l6.59 6.59C42.8 38.6 44.42 32.74 44.42 24z"
+                            fill="#4285f4"
+                        />
                     </svg>
                     Google
                 </button>
 
                 <p className="text-center text-sm text-gray-600 mt-4">
-                    Bạn chưa có tài khoản?{" "}
+                    Bạn chưa có tài khoản?{' '}
                     <Link to="/register" className="text-blue-600 font-semibold hover:underline">
                         Đăng ký
                     </Link>

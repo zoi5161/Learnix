@@ -1,15 +1,26 @@
+/node_modules
 client/node_modules
 server/node_modules
 
 client/package-lock.json
 server/package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 client/.env
 server/.env
+.env
 
-.DS_Store
-Thumbs.db
+client/dist/
+client/build/
+client/.vite/
+
+server/dist/
 
 *.log
 npm-debug.log*
 yarn-error.log*
+
+.DS_Store
+Thumbs.db
+.vscode/

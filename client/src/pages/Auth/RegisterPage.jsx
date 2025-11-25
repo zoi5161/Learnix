@@ -26,7 +26,6 @@ const RegisterPage = () => {
             // localStorage.setItem("user", JSON.stringify(user));
             // if (user.accessToken) localStorage.setItem("accessToken", user.accessToken);
             // navigate("/dashboard");
-
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');
         }
@@ -65,7 +64,9 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Password
+                        </label>
                         <input
                             type="password"
                             value={password}
@@ -83,7 +84,10 @@ const RegisterPage = () => {
                 </form>
 
                 <p className="mt-4 text-center text-sm text-gray-600">
-                    Đã có tài khoản? <Link to="/login" className="text-blue-600 hover:text-blue-800">Đăng nhập</Link>
+                    Đã có tài khoản?{' '}
+                    <Link to="/login" className="text-blue-600 hover:text-blue-800">
+                        Đăng nhập
+                    </Link>
                 </p>
             </div>
         </BaseLayout>
