@@ -46,9 +46,21 @@ Dưới đây là phiên bản **đầy đủ – rõ ràng – ngắn gọn** c
 
 Dự án được xây dựng với các tiêu chuẩn chất lượng cao:
 
-- **Linter & Formatter:** Sử dụng **Prettier** để định dạng mã nguồn tự động.
+- **Linter & Formatter:** Sử dụng **Prettier** để định dạng mã nguồn tự động. **ESLint** cho kiểm tra code style FE (cài đặt tại `client/`, chạy: `npm run lint`).
 - **Unit & API Testing:** Sử dụng **Jest** và **Supertest** để kiểm thử tích hợp các endpoint API Backend và các hàm tiện ích của Client.
-- **Commit Quality:** Sử dụng **Husky** và **lint-staged** để tự động chạy Prettier trước khi commit.
+- **Commit Quality:** Sử dụng **lint-staged** để tự động chạy Prettier trước khi commit.
+
+### Hướng dẫn kiểm tra code style
+1. `cd client`
+2. Cài ESLint:
+   ```
+   npm install eslint --save-dev
+   npx eslint --init # chọn React, JS, browser, style (ấn Enter theo hướng dẫn)
+   ```
+3. Kiểm tra code:
+   ```
+   npm run lint
+   ```
 
 ---
 
