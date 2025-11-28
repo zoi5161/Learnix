@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { getUserFromToken, clearAuth } from '../utils/authToken';
 
-const Header = () => {
+const Header: React.FC = () => {
     const user = getUserFromToken();
 
-    const handleLogout = () => {
+    const handleLogout = (): void => {
         clearAuth();
         window.location.href = '/login';
     };
@@ -56,7 +56,11 @@ const Header = () => {
     );
 };
 
-const BaseLayout = ({ children }) => {
+interface BaseLayoutProps {
+    children: React.ReactNode;
+}
+
+const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />

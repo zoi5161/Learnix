@@ -8,7 +8,7 @@ import AppLoader from './components/AppLoader';
 import ProfilePage from './pages/Profile/ProfilePage';
 import OAuthSuccess from './pages/Auth/OAuthSuccess';
 
-const App = () => {
+const App: React.FC = () => {
     return (
         <Router>
             <AppLoader>
@@ -19,7 +19,7 @@ const App = () => {
                     <Route path="/register" element={<RegisterPage />} />
 
                     <Route
-                        path="/dashboard"
+                        path="/dashboard/*"
                         element={
                             <PrivateRoute>
                                 <DashboardRouter />

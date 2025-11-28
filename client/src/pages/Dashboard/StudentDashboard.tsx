@@ -3,8 +3,25 @@ import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
 
+interface ProgressSummaryCardProps {
+    title: string;
+    value: string | number;
+    color: string;
+}
+
+interface CourseCardProps {
+    title: string;
+    progress: number;
+}
+
+interface Course {
+    id: number;
+    title: string;
+    progress: number;
+}
+
 // Thẻ tóm tắt tiến độ (để giữ code Tailwind gọn gàng)
-const ProgressSummaryCard = ({ title, value, color }) => (
+const ProgressSummaryCard: React.FC<ProgressSummaryCardProps> = ({ title, value, color }) => (
     <div className={`bg-${color}-50 border border-${color}-200 p-6 rounded-lg shadow-md`}>
         <h3 className="text-xl font-semibold text-gray-700 mb-2">{title}</h3>
         <p className={`text-4xl font-extrabold text-${color}-600`}>{value}</p>
@@ -12,7 +29,7 @@ const ProgressSummaryCard = ({ title, value, color }) => (
 );
 
 // Thẻ khóa học đang học
-const CourseCard = ({ title, progress }) => (
+const CourseCard: React.FC<CourseCardProps> = ({ title, progress }) => (
     <div className="bg-white p-5 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-200">
         <h4 className="text-lg font-semibold text-gray-800 mb-2">{title}</h4>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -25,15 +42,16 @@ const CourseCard = ({ title, progress }) => (
     </div>
 );
 
-const StudentDashboard = () => {
+const StudentDashboard: React.FC = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
 
-    const enrolledCourses = [
+    const enrolledCourses: Course[] = [
         { id: 1, title: 'IT Foundation: Python Basics', progress: 45 },
         { id: 2, title: 'Web Development with React', progress: 80 },
         { id: 3, title: 'Database Management (SQL)', progress: 10 },
     ];
+    
     const totalProgress =
         Math.floor(
             enrolledCourses.reduce((sum, course) => sum + course.progress, 0) /

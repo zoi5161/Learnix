@@ -5,7 +5,8 @@ import StudentDashboard from '../pages/Dashboard/StudentDashboard';
 import InstructorDashboard from '../pages/Dashboard/InstructorDashboard';
 import AdminDashboard from '../pages/Dashboard/AdminDashboard';
 import { getUserFromToken } from '../utils/authToken';
-const DashboardRouter = () => {
+
+const DashboardRouter: React.FC = () => {
     const user = getUserFromToken();
     if (!user) return null;
 

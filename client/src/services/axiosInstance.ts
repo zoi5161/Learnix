@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import {
     getAccessToken,
     getRefreshToken,
@@ -7,26 +7,40 @@ import {
     clearAuth,
 } from '../utils/authToken';
 
-const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
+interface QueuedRequest {
+    resolve: (token: string) => void;
+    reject: (error: any) => void;
+}
+
+interface RefreshTokenResponse {
+    accessToken: string;
+    refreshToken?: string;
+}
+
+const api = axios.create({ 
+    baseURL: import.meta.env.VITE_API_BASE_URL as string 
+});
 
 let isRefreshing = false;
-let failedQueue = [];
+let failedQueue: QueuedRequest[] = [];
 
-const processQueue = (error, token = null) => {
-    failedQueue.forEach((p) => (error ? p.reject(error) : p.resolve(token)));
+const processQueue = (error: any, token: string | null = null): void => {
+    failedQueue.forEach((p) => (error ? p.reject(error) : p.resolve(token!)));
     failedQueue = [];
 };
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
 });
 
 api.interceptors.response.use(
-    (res) => res,
-    async (err) => {
-        const originalRequest = err.config;
+    (res: AxiosResponse) => res,
+    async (err: AxiosError) => {
+        const originalRequest = err.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         // Skip interceptor for refresh endpoint to avoid infinite loop
         if (originalRequest.url?.includes('/auth/refresh')) {
@@ -35,10 +49,12 @@ api.interceptors.response.use(
 
         if (err.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
-                return new Promise((resolve, reject) => {
+                return new Promise<string>((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
                 }).then((token) => {
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                    if (originalRequest.headers) {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                    }
                     return axios(originalRequest);
                 });
             }
@@ -51,7 +67,7 @@ api.interceptors.response.use(
                 if (!refreshToken) throw new Error('No refresh token');
 
                 // Use plain axios to avoid interceptor loop
-                const { data } = await axios.post(
+                const { data } = await axios.post<RefreshTokenResponse>(
                     `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
                     { refreshToken }
                 );
@@ -59,7 +75,9 @@ api.interceptors.response.use(
                 setAccessToken(data.accessToken);
                 if (data.refreshToken) setRefreshToken(data.refreshToken);
 
-                originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+                if (originalRequest.headers) {
+                    originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+                }
                 processQueue(null, data.accessToken);
 
                 return axios(originalRequest);

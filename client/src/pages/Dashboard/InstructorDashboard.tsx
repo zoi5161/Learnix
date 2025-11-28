@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
 
-const InstructorDashboard = () => {
+const InstructorDashboard: React.FC = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
 

@@ -5,13 +5,12 @@ import BaseLayout from '../../layouts/BaseLayout';
 import { getUserFromToken, getAccessToken } from '../../utils/authToken';
 import { Link } from 'react-router-dom';
 
-const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+const LoginPage: React.FC = () => {
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
 
-    // 🔥 Nếu đã login rồi → tự vào dashboard
     useEffect(() => {
         const token = getAccessToken();
         if (token && getUserFromToken()) {
@@ -19,7 +18,7 @@ const LoginPage = () => {
         }
     }, [navigate]);
 
-    const submitHandler = async (e) => {
+    const submitHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setError('');
 
@@ -28,12 +27,12 @@ const LoginPage = () => {
             await authService.login(email, password);
 
             navigate('/dashboard', { replace: true });
-        } catch (err) {
+        } catch (err: any) {
             setError(err.response?.data?.message || 'Login failed');
         }
     };
 
-    const handleGoogleLogin = () => {
+    const handleGoogleLogin = (): void => {
         window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
     };
 

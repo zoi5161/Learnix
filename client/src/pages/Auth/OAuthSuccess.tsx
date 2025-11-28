@@ -1,11 +1,16 @@
-// client/src/pages/Auth/OAuthSuccess.jsx
+// client/src/pages/Auth/OAuthSuccess.tsx
 
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setAccessToken, setRefreshToken } from '../../utils/authToken';
 import { jwtDecode } from 'jwt-decode'; // Thư viện giải mã JWT
 
-const OAuthSuccess = () => {
+interface DecodedToken {
+    role?: 'student' | 'instructor' | 'admin';
+    [key: string]: any;
+}
+
+const OAuthSuccess: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -14,13 +19,10 @@ const OAuthSuccess = () => {
         const accessToken = query.get('accessToken');
         const refreshToken = query.get('refreshToken');
 
-        let role = 'student'; // Mặc định là student
-
         if (accessToken) {
             try {
-                // Giải mã Access Token để lấy vai trò (Role)
-                const decoded = jwtDecode(accessToken);
-                role = decoded.role || 'student';
+                // Giải mã Access Token để verify validity
+                jwtDecode<DecodedToken>(accessToken);
 
                 // Lưu token
                 setAccessToken(accessToken);

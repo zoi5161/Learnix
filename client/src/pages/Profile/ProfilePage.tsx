@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import userService from '../../services/userService';
+import type { User } from '@/types';
 
-const ProfilePage = () => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+const ProfilePage: React.FC = () => {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         userService

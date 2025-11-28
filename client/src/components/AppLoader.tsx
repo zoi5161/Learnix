@@ -1,4 +1,4 @@
-// src/components/AppLoader.jsx
+// src/components/AppLoader.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import {
     getAccessToken,
@@ -9,16 +9,20 @@ import {
 } from '../utils/authToken';
 import authService from '../services/authService';
 
-const AppLoader = ({ children }) => {
-    const [loading, setLoading] = useState(true);
-    const hasCheckedRef = useRef(false);
+interface AppLoaderProps {
+    children: React.ReactNode;
+}
+
+const AppLoader: React.FC<AppLoaderProps> = ({ children }) => {
+    const [loading, setLoading] = useState<boolean>(true);
+    const hasCheckedRef = useRef<boolean>(false);
 
     useEffect(() => {
         // Prevent duplicate calls in React Strict Mode
         if (hasCheckedRef.current) return;
         hasCheckedRef.current = true;
 
-        const checkToken = async () => {
+        const checkToken = async (): Promise<void> => {
             const token = getAccessToken();
             if (!token) {
                 setLoading(false);
@@ -62,7 +66,7 @@ const AppLoader = ({ children }) => {
         );
     }
 
-    return children;
+    return <>{children}</>;
 };
 
 export default AppLoader;

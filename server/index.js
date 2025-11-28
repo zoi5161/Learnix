@@ -15,6 +15,8 @@ const { protect, restrictTo } = require('./middleware/authMiddleware');
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 
+console.log("process.env.CLIENT_URL", process.env.CLIENT_URL);
+
 const corsOptions = {
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

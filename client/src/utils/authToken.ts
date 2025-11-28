@@ -1,29 +1,45 @@
 import { jwtDecode } from 'jwt-decode';
 
+interface JWTPayload {
+  id: string;
+  name: string;
+  email: string;
+  role: 'student' | 'instructor' | 'admin';
+  exp: number;
+}
+
+interface UserInfo {
+  userId: string;
+  name: string;
+  email: string;
+  role: 'student' | 'instructor' | 'admin';
+  exp: number;
+}
+
 // Save access token
-export const setAccessToken = (token) => {
+export const setAccessToken = (token: string): void => {
     localStorage.setItem('accessToken', token);
 };
 
 // Get access token
-export const getAccessToken = () => {
+export const getAccessToken = (): string | null => {
     return localStorage.getItem('accessToken');
 };
 
 // Save refresh token
-export const setRefreshToken = (token) => {
+export const setRefreshToken = (token: string): void => {
     localStorage.setItem('refreshToken', token);
 };
 
 // Get refresh token
-export const getRefreshToken = () => {
+export const getRefreshToken = (): string | null => {
     return localStorage.getItem('refreshToken');
 };
 
 // Decode JWT to get user info
-export const decodeToken = (token) => {
+export const decodeToken = (token: string): UserInfo | null => {
     try {
-        const payload = jwtDecode(token);
+        const payload = jwtDecode<JWTPayload>(token);
         const { id, name, email, role, exp } = payload;
         return { userId: id, name, email, role, exp };
     } catch (err) {
@@ -37,7 +53,7 @@ export const decodeToken = (token) => {
  * - Nếu accessToken hết hạn → trả về null
  * - Không gọi refresh token
  */
-export const getUserFromToken = () => {
+export const getUserFromToken = (): UserInfo | null => {
     const token = getAccessToken();
     if (!token) return null;
 
@@ -56,7 +72,7 @@ export const getUserFromToken = () => {
 };
 
 // Clear all tokens
-export const clearAuth = () => {
+export const clearAuth = (): void => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
 };

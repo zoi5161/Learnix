@@ -3,14 +3,14 @@ import authService from '../../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
 import BaseLayout from '../../layouts/BaseLayout';
 
-const RegisterPage = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+const RegisterPage: React.FC = () => {
+    const [name, setName] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
 
-    const submitHandler = async (e) => {
+    const submitHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setError('');
 
@@ -26,7 +26,7 @@ const RegisterPage = () => {
             // localStorage.setItem("user", JSON.stringify(user));
             // if (user.accessToken) localStorage.setItem("accessToken", user.accessToken);
             // navigate("/dashboard");
-        } catch (err) {
+        } catch (err: any) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');
         }
     };
