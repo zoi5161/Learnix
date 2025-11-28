@@ -33,7 +33,8 @@ app.use('/api/auth', authRoutes);
 
 // Protected routes (Đã sửa: dùng /api/user thay vì /api/users)
 app.use('/api/user', protect, userRoutes); 
-app.use('/api/courses', protect, courseRoutes); 
+// Course routes - some are public, some are protected (handled in route file)
+app.use('/api/courses', courseRoutes); 
 
 // Example admin-only route
 app.get('/api/admin/status', protect, restrictTo(['admin']), (req, res) => {
