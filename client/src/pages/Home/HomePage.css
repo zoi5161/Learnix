@@ -1,0 +1,342 @@
+.home-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-main {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    width: 100%;
+}
+
+/* Hero Section */
+.home-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 80px 40px;
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 60px;
+}
+
+.home-hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.home-hero-title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.home-hero-subtitle {
+    font-size: 20px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.home-hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+/* Buttons */
+.home-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.home-button-primary {
+    background-color: #fbbf24;
+    color: #1f2937;
+}
+
+.home-button-primary:hover {
+    background-color: #f59e0b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+/* Section Styles */
+.home-section {
+    margin-bottom: 60px;
+}
+
+.home-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.home-section-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0;
+}
+
+.home-link-more {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.home-link-more:hover {
+    color: #764ba2;
+}
+
+/* Categories */
+.home-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.home-category-card {
+    background-color: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.home-category-card:hover {
+    border-color: #667eea;
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Tags */
+.home-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.home-tag {
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #1f2937;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.home-tag:hover {
+    background-color: #667eea;
+    color: #ffffff;
+    border-color: #667eea;
+}
+
+.home-tag-count {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.home-tag:hover .home-tag-count {
+    color: #ffffff;
+}
+
+/* Courses Grid */
+.home-courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.home-course-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-course-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+.home-course-thumbnail {
+    width: 100%;
+    height: 180px;
+    background-color: #f3f4f6;
+    overflow: hidden;
+}
+
+.home-course-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.home-course-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-course-header {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.home-course-level {
+    padding: 4px 12px;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.home-course-premium {
+    padding: 4px 12px;
+    border-radius: 12px;
+    background-color: #fbbf24;
+    color: #1f2937;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.home-course-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.home-course-title a {
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.home-course-title a:hover {
+    color: #667eea;
+}
+
+.home-course-instructor {
+    color: #6b7280;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+}
+
+.home-course-stats {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.home-course-price {
+    margin-top: auto;
+    font-size: 20px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* Loading & Error States */
+.home-loading,
+.home-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: #6b7280;
+}
+
+.home-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e5e7eb;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.home-empty {
+    text-align: center;
+    color: #6b7280;
+    padding: 40px;
+    font-size: 18px;
+}
+
+/* Footer */
+.home-footer {
+    background-color: #f9fafb;
+    padding: 24px;
+    text-align: center;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+    margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-hero {
+        padding: 60px 20px;
+    }
+
+    .home-hero-title {
+        font-size: 36px;
+    }
+
+    .home-hero-subtitle {
+        font-size: 18px;
+    }
+
+    .home-section-title {
+        font-size: 24px;
+    }
+
+    .home-courses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-categories {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+

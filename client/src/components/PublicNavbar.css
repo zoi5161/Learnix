@@ -1,0 +1,117 @@
+.public-navbar {
+    background-color: #1f2937;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.public-navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+}
+
+.public-navbar-logo {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.public-navbar-logo:hover {
+    color: #fbbf24;
+}
+
+.public-navbar-menu {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.public-navbar-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.public-navbar-link:hover {
+    color: #fbbf24;
+}
+
+.public-navbar-auth {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.public-navbar-user {
+    font-size: 14px;
+    color: #d1d5db;
+}
+
+.public-navbar-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.public-navbar-button-primary {
+    background-color: #fbbf24;
+    color: #1f2937;
+}
+
+.public-navbar-button-primary:hover {
+    background-color: #f59e0b;
+    color: #000000;
+}
+
+.public-navbar-button-logout {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.public-navbar-button-logout:hover {
+    background-color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+    .public-navbar-container {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 20px;
+    }
+
+    .public-navbar-menu {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #374151;
+    }
+
+    .public-navbar-auth {
+        gap: 12px;
+    }
+
+    .public-navbar-user {
+        display: none;
+    }
+}
+
