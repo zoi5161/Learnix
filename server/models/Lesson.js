@@ -32,6 +32,11 @@ const LessonSchema = new mongoose.Schema({
         type: Boolean,
         default: false // Premium lessons require course enrollment
     },
+    order: {
+        type: Number,
+        required: true,
+        default: 0
+    },
 }, {
     timestamps: true
 });

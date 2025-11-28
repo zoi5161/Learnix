@@ -37,6 +37,19 @@ const CourseSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    tags: [{
+        type: String,
+        trim: true
+    }],
+    category: {
+        type: String,
+        trim: true,
+        default: 'general'
+    },
+    summary: {
+        type: String,
+        trim: true
+    },
 }, {
     timestamps: true
 });
@@ -57,6 +70,11 @@ CourseSchema.virtual('enrollmentsCount', {
     foreignField: 'course_id',
     count: true
 });
+
+// Index for search functionality
+CourseSchema.index({ title: 'text', description: 'text', summary: 'text', tags: 'text' });
+CourseSchema.index({ category: 1 });
+CourseSchema.index({ status: 1, createdAt: -1 });
 
 const Course = mongoose.model('Course', CourseSchema);
 module.exports = Course;
