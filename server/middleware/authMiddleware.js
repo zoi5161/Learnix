@@ -47,4 +47,32 @@ const restrictTo = (roles) => (req, res, next) => {
     next();
 };
 
-module.exports = { protect, restrictTo };
+/**
+ * Optional authentication: sets req.user if token is valid, but doesn't fail if no token
+ */
+const optionalAuth = async (req, res, next) => {
+    let token;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+        return next();
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const user = await User.findById(decoded.id).select('-password_hash');
+        if (user) {
+            req.user = user;
+            req.user.id = user._id.toString();
+            req.role = decoded.role;
+        }
+    } catch (error) {
+        // Ignore errors for optional auth
+    }
+    next();
+};
+
+module.exports = { protect, restrictTo, optionalAuth };
