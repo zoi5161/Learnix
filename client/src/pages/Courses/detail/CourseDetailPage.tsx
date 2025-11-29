@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { courseService, CourseWithCounts } from '../../../services/courseService';
+import { enrollmentService } from '../../../services/enrollmentService';
 import { getUserFromToken } from '../../../utils/authToken';
 import PublicNavbar from '../../../components/PublicNavbar';
 import './CourseDetailPage.css';
@@ -26,6 +27,7 @@ const CourseDetailPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [enrolling, setEnrolling] = useState(false);
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -63,13 +65,50 @@ const CourseDetailPage: React.FC = () => {
         navigate(`/courses/${id}/lessons/${lesson._id}`);
     };
 
-    const handleEnrollClick = () => {
+    const handleEnrollClick = async () => {
         if (!user) {
             setShowLoginModal(true);
             return;
         }
-        // Navigate to enrollment (will be implemented in next phase)
-        navigate(`/courses/${id}/enroll`);
+
+        if (!id) return;
+
+        try {
+            setEnrolling(true);
+            const res = await enrollmentService.enrollCourse(id);
+            
+            if (res.success) {
+                // Update enrollment status
+                setIsEnrolled(true);
+                
+                // Show success message
+                alert(`Successfully enrolled! Remaining budget: $${res.data.remainingBudget.toFixed(2)}`);
+                
+                // Refresh course data to get updated enrollment status
+                const courseRes = await courseService.getCourseById(id);
+                if (courseRes.success) {
+                    setCourse(courseRes.data.course);
+                    setIsEnrolled(courseRes.data.isEnrolled);
+                    if (courseRes.data.course.lessons) {
+                        setLessons(courseRes.data.course.lessons);
+                    }
+                }
+            } else {
+                alert('Failed to enroll: ' + res.message);
+            }
+        } catch (err: any) {
+            if (err.response?.data?.message) {
+                if (err.response.data.message === 'Insufficient budget') {
+                    alert(`Insufficient budget. Required: $${err.response.data.data?.required || course?.price || 0}. Available: $${err.response.data.data?.available || 0}`);
+                } else {
+                    alert('Error: ' + err.response.data.message);
+                }
+            } else {
+                alert('Error: ' + (err.message || 'Failed to enroll'));
+            }
+        } finally {
+            setEnrolling(false);
+        }
     };
 
     const getLevelColor = (level: string) => {
@@ -273,9 +312,10 @@ const CourseDetailPage: React.FC = () => {
                                 {!isEnrolled ? (
                                     <button
                                         onClick={handleEnrollClick}
+                                        disabled={enrolling}
                                         className="course-detail-enroll-button"
                                     >
-                                        {user ? 'Enroll Now' : 'Sign Up to Enroll'}
+                                        {enrolling ? 'Enrolling...' : (user ? 'Enroll Now' : 'Sign Up to Enroll')}
                                     </button>
                                 ) : (
                                     <Link

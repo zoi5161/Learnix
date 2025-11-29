@@ -10,6 +10,8 @@ import OAuthSuccess from './pages/Auth/OAuthSuccess';
 import HomePage from './pages/Home/HomePage';
 import CourseListPage from './pages/Courses/list/CourseListPage';
 import CourseDetailPage from './pages/Courses/detail/CourseDetailPage';
+import LessonViewer from './pages/Courses/LessonViewer/LessonViewer';
+import CourseLearnPage from './pages/Courses/CourseLearn/CourseLearnPage';
 
 const App: React.FC = () => {
     return (
@@ -38,6 +40,22 @@ const App: React.FC = () => {
                         element={
                             <PrivateRoute>
                                 <ProfilePage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/courses/:courseId/learn"
+                        element={
+                            <PrivateRoute>
+                                <CourseLearnPage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/courses/:courseId/lessons/:lessonId"
+                        element={
+                            <PrivateRoute>
+                                <LessonViewer />
                             </PrivateRoute>
                         }
                     />
