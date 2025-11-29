@@ -7,6 +7,17 @@ const UserSchema = new mongoose.Schema({
     password_hash: { type: String, select: false },
     role: { type: String, enum: ['student', 'instructor', 'admin'], default: 'student' },
     googleId: { type: String, unique: true, sparse: true },
+    // Student budget/credits system
+    budget: {
+        type: Number,
+        default: 100, // Starting budget for new students
+        min: 0
+    },
+    bonus_credits: {
+        type: Number,
+        default: 0,
+        min: 0
+    }
 }, {
     timestamps: true
 });
