@@ -4,6 +4,8 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const studentRoute = require('./routes/studentRoutes');
+const enrollmentRoute = require('./routes/enrollmentRoutes');
 const passport = require('passport');
 require('./config/passport');
 const cors = require('cors');
@@ -34,7 +36,11 @@ app.use('/api/auth', authRoutes);
 // Protected routes (Đã sửa: dùng /api/user thay vì /api/users)
 app.use('/api/user', protect, userRoutes); 
 // Course routes - some are public, some are protected (handled in route file)
-app.use('/api/courses', courseRoutes); 
+app.use('/api/courses', courseRoutes);
+// Enrollment routes - protected, student only
+app.use('/api/enrollments', enrollmentRoute);
+// Student routes - protected, student only
+app.use('/api/student', studentRoute); 
 
 // Example admin-only route
 app.get('/api/admin/status', protect, restrictTo(['admin']), (req, res) => {
