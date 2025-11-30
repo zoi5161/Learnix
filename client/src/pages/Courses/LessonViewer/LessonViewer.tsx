@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { lessonService } from '../../../services/lessonService';
 import BaseLayout from '../../../layouts/BaseLayout';
 import './LessonViewer.css';
+
+// YouTube IFrame API types
+declare global {
+    interface Window {
+        YT: any;
+        onYouTubeIframeAPIReady: () => void;
+    }
+}
 
 interface LessonData {
     lesson: {
@@ -39,15 +47,51 @@ interface LessonData {
     };
 }
 
+// Utility function to extract YouTube video ID from URL (supports embed, watch, short links)
+const extractYouTubeVideoId = (url: string): string | null => {
+    // Handle embed URL: https://www.youtube.com/embed/VIDEO_ID
+    let match = url.match(/youtube\.com\/embed\/([^&\n?#]+)/);
+    if (match && match[1]) return match[1];
+    
+    // Handle watch URL: https://www.youtube.com/watch?v=VIDEO_ID
+    match = url.match(/youtube\.com\/watch\?v=([^&\n?#]+)/);
+    if (match && match[1]) return match[1];
+    
+    // Handle short URL: https://youtu.be/VIDEO_ID
+    match = url.match(/youtu\.be\/([^&\n?#]+)/);
+    if (match && match[1]) return match[1];
+    
+    // Handle v URL: https://www.youtube.com/v/VIDEO_ID
+    match = url.match(/youtube\.com\/v\/([^&\n?#]+)/);
+    if (match && match[1]) return match[1];
+    
+    return null;
+};
+
+// Check if URL is YouTube
+const isYouTubeUrl = (url: string): boolean => {
+    return /youtube\.com|youtu\.be/.test(url);
+};
+
 const LessonViewer: React.FC = () => {
     const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
-    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lessonData, setLessonData] = useState<LessonData | null>(null);
     const [notes, setNotes] = useState('');
     const [savingNotes, setSavingNotes] = useState(false);
+    
+    const [videoProgress, setVideoProgress] = useState(0); // For video tracking
+    const [textScrollProgress, setTextScrollProgress] = useState(0); // For text tracking
+    const [startTime] = useState(Date.now()); // Track time spent
+    
+    // YouTube player refs
+    const youtubePlayerRef = useRef<any>(null);
+    const youtubeContainerRef = useRef<HTMLDivElement>(null);
+    const [youtubeApiReady, setYoutubeApiReady] = useState(false);
+    const [isYouTubeVideo, setIsYouTubeVideo] = useState(false);
+    const youtubeVideoIdRef = useRef<string | null>(null);
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -60,11 +104,30 @@ const LessonViewer: React.FC = () => {
                     setLessonData(res.data);
                     setNotes(res.data.lesson.progress?.notes || '');
                     
+                    // Check if it's a YouTube video
+                    if (res.data.lesson.content_type === 'video' && res.data.lesson.content.startsWith('http')) {
+                        const isYouTube = isYouTubeUrl(res.data.lesson.content);
+                        setIsYouTubeVideo(isYouTube);
+                        
+                        if (isYouTube) {
+                            const videoId = extractYouTubeVideoId(res.data.lesson.content);
+                            youtubeVideoIdRef.current = videoId;
+                        }
+                    }
+                    
                     // Auto-mark as in_progress if not started
                     if (res.data.lesson.progress?.status === 'not_started') {
                         await lessonService.updateProgress(courseId, lessonId, {
-                            status: 'in_progress'
+                            status: 'in_progress',
+                            completion_percentage: 0
                         });
+                    }
+                    
+                    // Initialize progress tracking based on content type
+                    if (res.data.lesson.content_type === 'video') {
+                        setVideoProgress(res.data.lesson.progress?.completion_percentage || 0);
+                    } else if (res.data.lesson.content_type === 'text') {
+                        setTextScrollProgress(res.data.lesson.progress?.completion_percentage || 0);
                     }
                 } else {
                     setError('Failed to load lesson');
@@ -78,6 +141,41 @@ const LessonViewer: React.FC = () => {
 
         fetchLesson();
     }, [courseId, lessonId]);
+
+    // Load YouTube IFrame API
+    useEffect(() => {
+        // Check if API is already loaded
+        if (window.YT && window.YT.Player) {
+            setYoutubeApiReady(true);
+            return;
+        }
+
+        // Check if script is already being loaded
+        if (document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+            // Script exists, wait for callback
+            window.onYouTubeIframeAPIReady = () => {
+                setYoutubeApiReady(true);
+            };
+            return;
+        }
+
+        // Load YouTube IFrame API script
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        tag.async = true;
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+
+        // Set callback when API is ready
+        window.onYouTubeIframeAPIReady = () => {
+            setYoutubeApiReady(true);
+        };
+
+        return () => {
+            // Cleanup - reset callback
+            (window as any).onYouTubeIframeAPIReady = undefined;
+        };
+    }, []);
 
     const handleComplete = async () => {
         if (!courseId || !lessonId) return;
@@ -111,6 +209,231 @@ const LessonViewer: React.FC = () => {
         }
     };
 
+    // Initialize YouTube Player
+    useEffect(() => {
+        if (!youtubeApiReady || !isYouTubeVideo || !youtubeVideoIdRef.current || !youtubeContainerRef.current) {
+            return;
+        }
+
+        // Small delay to ensure DOM is ready
+        const timer = setTimeout(() => {
+            // Destroy existing player if any
+            if (youtubePlayerRef.current) {
+                try {
+                    youtubePlayerRef.current.destroy();
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
+
+            // Create new YouTube player
+            try {
+                youtubePlayerRef.current = new window.YT.Player(youtubeContainerRef.current, {
+                    videoId: youtubeVideoIdRef.current,
+                    playerVars: {
+                        autoplay: 0,
+                        controls: 1,
+                        rel: 0,
+                        modestbranding: 1,
+                    },
+                    events: {
+                        onReady: () => {
+                            console.log('YouTube player ready');
+                        },
+                        onStateChange: (event: any) => {
+                            if (event.data === window.YT.PlayerState.ENDED) {
+                                // Video ended - update progress to 100% but don't auto-complete
+                                handleYouTubeProgress(100);
+                            } else if (event.data === window.YT.PlayerState.PLAYING) {
+                                startYouTubeProgressTracking();
+                            } else if (event.data === window.YT.PlayerState.PAUSED) {
+                                stopYouTubeProgressTracking();
+                            }
+                        },
+                    },
+                });
+            } catch (error) {
+                console.error('Error creating YouTube player:', error);
+            }
+        }, 100);
+
+        return () => {
+            clearTimeout(timer);
+            stopYouTubeProgressTracking();
+            if (youtubePlayerRef.current) {
+                try {
+                    youtubePlayerRef.current.destroy();
+                } catch (e) {
+                    // Ignore errors
+                }
+                youtubePlayerRef.current = null;
+            }
+        };
+    }, [youtubeApiReady, isYouTubeVideo, youtubeVideoIdRef.current]);
+
+    // YouTube progress tracking interval
+    const youtubeProgressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const startYouTubeProgressTracking = () => {
+        // Clear existing interval
+        if (youtubeProgressIntervalRef.current) {
+            clearInterval(youtubeProgressIntervalRef.current);
+        }
+
+        // Track progress every 2 seconds
+        youtubeProgressIntervalRef.current = setInterval(() => {
+            if (youtubePlayerRef.current && youtubePlayerRef.current.getCurrentTime) {
+                try {
+                    const currentTime = youtubePlayerRef.current.getCurrentTime();
+                    const duration = youtubePlayerRef.current.getDuration();
+                    
+                    if (duration > 0) {
+                        const progress = Math.round((currentTime / duration) * 100);
+                        handleYouTubeProgress(progress);
+                    }
+                } catch (e) {
+                    console.error('Error getting YouTube progress:', e);
+                }
+            }
+        }, 5000); // Update every 2 seconds
+    };
+
+    const stopYouTubeProgressTracking = () => {
+        if (youtubeProgressIntervalRef.current) {
+            clearInterval(youtubeProgressIntervalRef.current);
+            youtubeProgressIntervalRef.current = null;
+        }
+    };
+
+    // Handle YouTube progress update
+    const handleYouTubeProgress = async (progress: number) => {
+        if (!courseId || !lessonId) return;
+        
+        // Only update if progress increased significantly (every 5% for YouTube)
+        if (Math.abs(progress - videoProgress) < 5 && progress < 100) {
+            return;
+        }
+
+        setVideoProgress(progress);
+
+        try {
+            // Calculate time spent
+            const timeSpent = Math.round((Date.now() - startTime) / 1000);
+            
+            const currentStatus = lessonData?.lesson.progress?.status as 'not_started' | 'in_progress' | 'completed' | undefined;
+            
+            // Only update progress percentage and time_spent, keep current status (don't auto-complete)
+            await lessonService.updateProgress(courseId, lessonId, {
+                completion_percentage: progress,
+                time_spent: timeSpent,
+                status: currentStatus || 'in_progress' // Keep current status, don't auto-change to completed
+            });
+
+            // Update local state
+            if (lessonData) {
+                setLessonData({
+                    ...lessonData,
+                    lesson: {
+                        ...lessonData.lesson,
+                        progress: {
+                            ...lessonData.lesson.progress!,
+                            completion_percentage: progress,
+                            time_spent: timeSpent
+                            // Keep status unchanged
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            // Silently fail to avoid interrupting user experience
+            console.error('Error updating YouTube progress:', err);
+        }
+    };
+
+    // Update video progress (throttled to avoid too many API calls) - for HTML5 video
+    const handleVideoProgress = async (progress: number) => {
+        if (!courseId || !lessonId || isYouTubeVideo) return; // Skip if YouTube video
+        
+        // Only update if progress increased significantly (every 10%)
+        if (Math.abs(progress - videoProgress) < 10 && progress < 100) {
+            return;
+        }
+
+        setVideoProgress(progress);
+
+        try {
+            // Calculate time spent
+            const timeSpent = Math.round((Date.now() - startTime) / 1000);
+            
+            const currentStatus = lessonData?.lesson.progress?.status as 'not_started' | 'in_progress' | 'completed' | undefined;
+            await lessonService.updateProgress(courseId, lessonId, {
+                completion_percentage: progress,
+                time_spent: timeSpent,
+                status: currentStatus || 'in_progress' // Keep current status, don't auto-change
+            });
+
+            // Update local state
+            if (lessonData) {
+                setLessonData({
+                    ...lessonData,
+                    lesson: {
+                        ...lessonData.lesson,
+                        progress: {
+                            ...lessonData.lesson.progress!,
+                            completion_percentage: progress,
+                            time_spent: timeSpent
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            // Silently fail to avoid interrupting user experience
+            console.error('Error updating video progress:', err);
+        }
+    };
+
+    // Update text scroll progress (throttled)
+    const handleTextScrollProgress = async (progress: number) => {
+        if (!courseId || !lessonId) return;
+        
+        // Only update if progress increased significantly (every 10%)
+        if (Math.abs(progress - textScrollProgress) < 10 && progress < 100) {
+            return;
+        }
+
+        setTextScrollProgress(progress);
+
+        try {
+            // Calculate time spent
+            const timeSpent = Math.round((Date.now() - startTime) / 1000);
+            
+            const currentStatus = lessonData?.lesson.progress?.status as 'not_started' | 'in_progress' | 'completed' | undefined;
+            await lessonService.updateProgress(courseId, lessonId, {
+                completion_percentage: progress,
+                time_spent: timeSpent,
+                status: currentStatus || 'in_progress' // Keep current status, don't auto-change
+            });
+
+            // Update local state
+            if (lessonData) {
+                setLessonData({
+                    ...lessonData,
+                    lesson: {
+                        ...lessonData.lesson,
+                        progress: {
+                            ...lessonData.lesson.progress!,
+                            completion_percentage: progress,
+                            time_spent: timeSpent
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            // Silently fail to avoid interrupting user experience
+            console.error('Error updating text progress:', err);
+        }
+    };
+
     const renderContent = () => {
         if (!lessonData) return null;
 
@@ -121,18 +444,47 @@ const LessonViewer: React.FC = () => {
                 return (
                     <div className="lesson-viewer-video-container">
                         {lesson.content.startsWith('http') ? (
-                            <iframe
-                                src={lesson.content}
-                                className="lesson-viewer-video"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                title={lesson.title}
-                            ></iframe>
+                            isYouTubeVideo && youtubeApiReady && youtubeVideoIdRef.current ? (
+                                // YouTube video with API tracking
+                                <div className="lesson-viewer-youtube-wrapper">
+                                    <div ref={youtubeContainerRef} className="lesson-viewer-youtube-player"></div>
+                                </div>
+                            ) : (
+                                // Other iframe videos (Vimeo, etc.) - no tracking
+                                <div className="lesson-viewer-iframe-wrapper">
+                                    <iframe
+                                        src={lesson.content}
+                                        className="lesson-viewer-video"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title={lesson.title}
+                                    ></iframe>
+                                    <div className="lesson-viewer-iframe-note">
+                                        <p>Note: Progress tracking for this video type is limited. 
+                                        Please mark this lesson as complete when finished.</p>
+                                    </div>
+                                </div>
+                            )
                         ) : (
+                            // HTML5 video with native tracking
                             <video
                                 src={lesson.content}
                                 controls
                                 className="lesson-viewer-video"
+                                onTimeUpdate={(e) => {
+                                    const video = e.currentTarget;
+                                    if (video.duration) {
+                                        const progress = Math.round((video.currentTime / video.duration) * 100);
+                                        handleVideoProgress(progress);
+                                    }
+                                }}
+                                onLoadedMetadata={(e) => {
+                                    const video = e.currentTarget;
+                                    if (video.duration && video.currentTime > 0) {
+                                        const progress = Math.round((video.currentTime / video.duration) * 100);
+                                        handleVideoProgress(progress);
+                                    }
+                                }}
                             >
                                 Your browser does not support the video tag.
                             </video>
@@ -142,7 +494,18 @@ const LessonViewer: React.FC = () => {
 
             case 'text':
                 return (
-                    <div className="lesson-viewer-text-content">
+                    <div 
+                        className="lesson-viewer-text-content"
+                        onScroll={(e) => {
+                            const element = e.currentTarget;
+                            const scrollTop = element.scrollTop;
+                            const scrollHeight = element.scrollHeight - element.clientHeight;
+                            if (scrollHeight > 0) {
+                                const progress = Math.round((scrollTop / scrollHeight) * 100);
+                                handleTextScrollProgress(progress);
+                            }
+                        }}
+                    >
                         <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
                     </div>
                 );
@@ -265,9 +628,16 @@ const LessonViewer: React.FC = () => {
                                         style={{ width: `${lesson.progress.completion_percentage}%` }}
                                     ></div>
                                 </div>
-                                <span className="lesson-viewer-progress-text">
-                                    {lesson.progress.completion_percentage}% Complete
-                                </span>
+                                <div className="lesson-viewer-progress-info-row">
+                                    <span className="lesson-viewer-progress-text">
+                                        {lesson.progress.completion_percentage}% Complete
+                                    </span>
+                                    {lesson.progress.time_spent > 0 && (
+                                        <span className="lesson-viewer-time-spent">
+                                            Time spent: {Math.round(lesson.progress.time_spent / 60)} min
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         )}
 
