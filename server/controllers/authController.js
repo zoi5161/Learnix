@@ -2,7 +2,7 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const { verifyRefreshToken, generateRefreshToken } = require('../utils/refreshToken');
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -10,7 +10,7 @@ const registerUser = async (req, res) => {
     if (!passwordRegex.test(password)) {
         return res.status(400).json({
             message:
-                'Password must be at least 8 characters long and include uppercase letters, lowercase letters, and numbers.',
+                'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and a special character (!@#$%^&*).',
         });
     }
 
