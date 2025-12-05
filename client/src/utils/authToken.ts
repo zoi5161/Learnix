@@ -9,7 +9,7 @@ interface JWTPayload {
 }
 
 interface UserInfo {
-  userId: string;
+  _id: string;
   name: string;
   email: string;
   role: 'student' | 'instructor' | 'admin';
@@ -41,7 +41,7 @@ export const decodeToken = (token: string): UserInfo | null => {
     try {
         const payload = jwtDecode<JWTPayload>(token);
         const { id, name, email, role, exp } = payload;
-        return { userId: id, name, email, role, exp };
+        return { _id: id, name, email, role, exp };
     } catch (err) {
         console.error('Invalid JWT token', err);
         return null;

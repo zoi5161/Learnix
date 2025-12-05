@@ -24,9 +24,15 @@ const LoginPage: React.FC = () => {
 
         try {
             // login → authService lưu access + refresh token
-            await authService.login(email, password);
+            const user = await authService.login(email, password);
 
-            navigate('/dashboard', { replace: true });
+            if (user) {
+                console.log("--- Login Success ---");
+                console.log("User Data Received:", user);
+                console.log("User Role:", user.role);
+                const rolePath = user.role === 'admin' ? 'admin' : user.role === 'instructor' ? 'instructor' : 'student';
+                navigate(`/${rolePath}/dashboard`, { replace: true });
+            }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Login failed');
         }

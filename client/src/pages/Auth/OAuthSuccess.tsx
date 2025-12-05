@@ -22,13 +22,20 @@ const OAuthSuccess: React.FC = () => {
         if (accessToken) {
             try {
                 // Giải mã Access Token để verify validity
-                jwtDecode<DecodedToken>(accessToken);
+                const decodedPayload = jwtDecode<DecodedToken>(accessToken);
+                const userRole = decodedPayload.role;
 
                 // Lưu token
                 setAccessToken(accessToken);
                 if (refreshToken) setRefreshToken(refreshToken);
 
-                navigate('/dashboard', { replace: true });
+                const rolePath = userRole === 'admin' 
+                    ? 'admin' 
+                    : userRole === 'instructor' 
+                    ? 'instructor' 
+                    : 'student';
+                    
+                navigate(`/${rolePath}/dashboard`, { replace: true });
             } catch (e) {
                 console.error('Invalid token:', e);
                 navigate('/login?error=invalid_token', { replace: true });

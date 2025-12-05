@@ -21,6 +21,10 @@ export interface RegisterCredentials {
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
+  _id: string;
+  name: string;
+  email: string;
+  role: 'student' | 'instructor' | 'admin';
 }
 
 export interface AuthState {

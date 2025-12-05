@@ -2,7 +2,16 @@
 import api from './axiosInstance';
 import axios from 'axios';
 import { setAccessToken, setRefreshToken, clearAuth } from '../utils/authToken';
-import type { AuthResponse } from '@/types';
+//import type { AuthResponse } from '@/types';
+
+export interface AuthResponse {
+    _id: string; 
+    name: string;
+    email: string;
+    role: 'student' | 'instructor' | 'admin';
+    accessToken: string;
+    refreshToken: string;
+}
 
 interface RefreshTokenResponse {
     accessToken: string;

@@ -23,11 +23,22 @@ const registerUser = async (req, res) => {
     const user = await User.create({ name, email, password_hash: password });
 
     if (user) {
+        const data = {
+            id: user._id,
+            role: user.role,
+            name: user.name,
+            email: user.email,
+        };
+        const accessToken = generateToken(data, '1h', 'access');
+        const refreshToken = generateToken(data, '7d', 'refresh');
+
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
+            accessToken,
+            refreshToken,
         });
     } else {
         res.status(400).json({ message: 'Invalid user data' });
@@ -46,9 +57,16 @@ const authUser = async (req, res) => {
             email: user.email,
         };
 
+        const accessToken = generateToken(data, '1h', 'access');
+        const refreshToken = generateToken(data, '7d', 'refresh');
+
         res.json({
-            accessToken: generateToken(data, '1h', 'access'), // access token 1h
-            refreshToken: generateToken(data, '7d', 'refresh'), // refresh token 7 ngày
+            accessToken,
+            refreshToken,
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
         });
     } else {
         res.status(401).json({ message: 'Invalid email or password' });
@@ -70,7 +88,7 @@ const googleLoginSuccess = async (req, res) => {
 
     const accessToken = generateToken(data, '1h', 'access');
     const refreshToken = generateToken(data, '7d', 'refresh');
-    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login/oauth/success?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login/oauth/success?accessToken=${accessToken}&refreshToken=${refreshToken}&role=${user.role}&name=${encodeURIComponent(user.name)}`; // Thêm role và name vào redirect
     res.redirect(redirectUrl);
 };
 
@@ -81,20 +99,21 @@ const refreshNewToken = async (req, res) => {
     try {
         const payload = verifyRefreshToken(refreshToken); // verify refresh token
 
-        // Generate new access token (15 phút) và refresh token nếu muốn
+        // Generate new access token (1h)
         const newAccessToken = generateToken(
             { id: payload.id, role: payload.role, email: payload.email, name: payload.name },
-            '1h'
+            '1h',
+            'access'
         );
+        // Generate new refresh token (7d)
         const newRefreshToken = generateRefreshToken({
             id: payload.id,
             role: payload.role,
             email: payload.email,
             name: payload.name,
-        }); // tuỳ logic backend
-        // console.log("New Access Token:", newAccessToken);
-        // console.log("Payload from Refresh Token:", payload);
-        res.json({ accessToken: newAccessToken });
+        });
+
+        res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken }); // Trả về cả refresh token mới
     } catch (err) {
         res.status(401).json({ message: 'Invalid refresh token' });
     }

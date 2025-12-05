@@ -72,17 +72,17 @@ const DashboardRouter: React.FC = () => {
 
         <Routes>
 
-            <Route path="/student/dashboard" element={<ProtectedRoute element={StudentDashboard} allowedRoles={['student']} />} />
+            <Route path="student/dashboard" element={<ProtectedRoute element={StudentDashboard} allowedRoles={['student']} />} />
 
-            <Route path="/instructor/dashboard" element={<ProtectedRoute element={InstructorDashboard} allowedRoles={['instructor', 'admin']} />} />
+            <Route path="instructor/dashboard" element={<ProtectedRoute element={InstructorDashboard} allowedRoles={['instructor', 'admin']} />} />
 
-            <Route path="/instructor/courses" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} />
+            <Route path="instructor/courses" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} />
 
-            <Route path="/instructor/courses/new" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} /> 
+            <Route path="instructor/courses/new" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} /> 
 
-            <Route path="/instructor/courses/:courseId/edit" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} /> 
+            <Route path="instructor/courses/:courseId/edit" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} /> 
 
-            <Route path="/admin/dashboard" element={<ProtectedRoute element={AdminDashboard} allowedRoles={['admin']} />} />
+            <Route path="admin/dashboard" element={<ProtectedRoute element={AdminDashboard} allowedRoles={['admin']} />} />
 
             <Route path="*" element={
 

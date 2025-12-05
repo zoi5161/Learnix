@@ -28,7 +28,7 @@ const App: React.FC = () => {
 
                     {/* Protected Routes */}
                     <Route
-                        path="/dashboard/*"
+                        path="/*"
                         element={
                             <PrivateRoute>
                                 <DashboardRouter />
