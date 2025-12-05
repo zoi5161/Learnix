@@ -5,7 +5,11 @@ const {
     getCourseById,
     getCategories,
     getTrendingTags,
-    searchCourses
+    searchCourses,
+    createCourse,
+    updateCourse,
+    deleteCourse,
+    publishCourse
 } = require('../controllers/courseController');
 const {
     getCourseLessons,
@@ -27,9 +31,14 @@ router.get('/:courseId/lessons', protect, restrictTo(['student']), getCourseLess
 router.get('/:courseId/lessons/:lessonId', protect, restrictTo(['student']), getLesson);
 router.put('/:courseId/lessons/:lessonId/progress', protect, restrictTo(['student']), updateProgress);
 
-// Protected routes - Course creation (instructor/admin)
-router.post('/', protect, restrictTo(['instructor', 'admin']), (req, res) => {
-    res.json({ message: 'Course created successfully (placeholder)' });
-});
+// Protected routes - Course Management (instructor/admin)
+router.route('/')
+    .post(protect, restrictTo(['instructor', 'admin']), createCourse);
+
+router.route('/:id')
+    .put(protect, restrictTo(['instructor', 'admin']), updateCourse)
+    .delete(protect, restrictTo(['instructor', 'admin']), deleteCourse);
+    
+router.put('/:id/publish', protect, restrictTo(['instructor', 'admin']), publishCourse);
 
 module.exports = router;

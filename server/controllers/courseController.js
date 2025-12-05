@@ -3,6 +3,21 @@ const User = require('../models/User');
 const Lesson = require('../models/Lesson');
 const Enrollment = require('../models/Enrollment');
 
+// Helper function to check course ownership
+const checkOwnership = async (req, res, next) => {
+    const courseId = req.params.id || req.body.course_id;
+    if (!courseId) return res.status(400).json({ success: false, message: 'Course ID required' });
+
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+    
+    // Admin có quyền chỉnh sửa tất cả, Giảng viên phải là người tạo
+    if (req.role !== 'admin' && course.instructor_id.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ success: false, message: 'Forbidden: You do not own this course' });
+    }
+    return course;
+}
+
 // Get all published courses (public)
 exports.getCourses = async (req, res) => {
     try {
@@ -286,3 +301,89 @@ exports.searchCourses = async (req, res) => {
     }
 };
 
+// Create course
+exports.createCourse = async (req, res) => {
+    try {
+        const { title, description, level, is_premium, tags, category, summary, thumbnail, price } = req.body;
+
+        const newCourse = await Course.create({
+            instructor_id: req.user._id,
+            title,
+            description,
+            level,
+            is_premium,
+            tags,
+            category,
+            summary,
+            thumbnail,
+            price,
+            status: 'draft' // Luôn tạo ở trạng thái draft
+        });
+
+        res.status(201).json({ success: true, data: newCourse });
+    } catch (error) {
+        res.status(400).json({ success: false, message: 'Validation failed', error: error.message });
+    }
+};
+
+// Update course
+exports.updateCourse = async (req, res) => {
+    try {
+        const course = await checkOwnership(req, res); // Sử dụng hàm kiểm tra quyền sở hữu
+
+        const updatedCourse = await Course.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            { new: true, runValidators: true, select: '-status' } // Không cho phép cập nhật status qua đây
+        ).select('-status');
+
+        res.json({ success: true, data: updatedCourse });
+    } catch (error) {
+        res.status(400).json({ success: false, message: 'Update failed', error: error.message });
+    }
+};
+
+// Delete course
+exports.deleteCourse = async (req, res) => {
+    try {
+        const course = await checkOwnership(req, res);
+        
+        // Kiểm tra logic trước khi xóa (ví dụ: không thể xóa nếu có học viên)
+        const enrollmentsCount = await Enrollment.countDocuments({ course_id: req.params.id });
+        if (enrollmentsCount > 0) {
+            return res.status(400).json({ success: false, message: 'Cannot delete course with active enrollments' });
+        }
+        
+        // Xóa tất cả lessons, quizzes, questions liên quan
+        // await Lesson.deleteMany({ course_id: req.params.id }); 
+        // Logic xóa này cần được bổ sung sau
+
+        await Course.findByIdAndDelete(req.params.id);
+
+        res.json({ success: true, message: 'Course deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error deleting course', error: error.message });
+    }
+};
+
+// Publish or unpublish course
+exports.publishCourse = async (req, res) => {
+    try {
+        const course = await checkOwnership(req, res);
+        const { status } = req.body;
+
+        if (!['draft', 'published', 'archived'].includes(status)) {
+            return res.status(400).json({ success: false, message: 'Invalid status provided' });
+        }
+        
+        const updatedCourse = await Course.findByIdAndUpdate(
+            req.params.id, 
+            { status }, 
+            { new: true }
+        );
+
+        res.json({ success: true, data: updatedCourse });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error updating course status', error: error.message });
+    }
+};

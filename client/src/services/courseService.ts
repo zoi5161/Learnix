@@ -114,5 +114,40 @@ export const courseService = {
     const response = await api.get<CourseListResponse>(`/courses/search?${params.toString()}`);
     return response.data;
   },
+
+  // Create Course
+  createCourse: async (data: CourseCreateData): Promise<CourseDetailResponse> => {
+    const response = await api.post<CourseDetailResponse>(`/courses`, data);
+    return response.data;
+  },
+
+  // Update Course
+  updateCourse: async (id: string, data: Partial<CourseCreateData>): Promise<CourseDetailResponse> => {
+    const response = await api.put<CourseDetailResponse>(`/courses/${id}`, data);
+    return response.data;
+  },
+
+  // Delete Course
+  deleteCourse: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const response = await api.delete<{ success: boolean; message: string }>(`/courses/${id}`);
+    return response.data;
+  },
+  
+  // Publish/Unpublish Course
+  publishCourse: async (id: string, status: 'draft' | 'published' | 'archived'): Promise<CourseDetailResponse> => {
+    const response = await api.put<CourseDetailResponse>(`/courses/${id}/publish`, { status });
+    return response.data;
+  },
 };
 
+export interface CourseCreateData {
+  title: string;
+  description: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  is_premium?: boolean;
+  tags?: string[];
+  category: string;
+  summary: string;
+  thumbnail?: string;
+  price?: number;
+}
