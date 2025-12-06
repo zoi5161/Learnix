@@ -17,8 +17,8 @@ interface RefreshTokenResponse {
     refreshToken?: string;
 }
 
-const api = axios.create({ 
-    baseURL: import.meta.env.VITE_API_BASE_URL as string 
+const api = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL as string
 });
 
 let isRefreshing = false;
@@ -48,6 +48,13 @@ api.interceptors.response.use(
         }
 
         if (err.response?.status === 401 && !originalRequest._retry) {
+
+            // Bypass login/register/google
+            const bypass = ['/auth/login', '/auth/register', '/auth/google'];
+            if (originalRequest.url && bypass.some(p => originalRequest.url?.includes(p))) {
+                return Promise.reject(err);
+            }
+
             if (isRefreshing) {
                 return new Promise<string>((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
@@ -66,7 +73,6 @@ api.interceptors.response.use(
                 const refreshToken = getRefreshToken();
                 if (!refreshToken) throw new Error('No refresh token');
 
-                // Use plain axios to avoid interceptor loop
                 const { data } = await axios.post<RefreshTokenResponse>(
                     `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
                     { refreshToken }
@@ -78,18 +84,25 @@ api.interceptors.response.use(
                 if (originalRequest.headers) {
                     originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
                 }
+
                 processQueue(null, data.accessToken);
 
                 return axios(originalRequest);
             } catch (e) {
                 processQueue(e, null);
-                clearAuth();
-                window.location.href = '/login';
+
+                // Chỉ redirect khi không phải là login
+                if (!originalRequest.url?.includes('/auth/login')) {
+                    clearAuth();
+                    window.location.href = '/login';
+                }
+
                 return Promise.reject(e);
             } finally {
                 isRefreshing = false;
             }
         }
+
 
         return Promise.reject(err);
     }
