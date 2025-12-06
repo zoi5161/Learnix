@@ -2,7 +2,8 @@ import React from 'react';
 import BaseLayout from '../layouts/BaseLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import InstructorCourseManager from '../pages/Courses/management/InstructorCourseManager.tsx';
-import InstructorLessonManager from '../pages/Courses/management/InstructorLessonManager.tsx'; // Cần import Lesson Manager
+import InstructorLessonManager from '../pages/Courses/management/InstructorLessonManager.tsx';
+import InstructorQuizManager from '../pages/Courses/management/InstructorQuizManager.tsx';
 
 import StudentDashboard from '../pages/Dashboard/StudentDashboard';
 import InstructorDashboard from '../pages/Dashboard/InstructorDashboard';
@@ -22,7 +23,7 @@ const InstructorCourseContentRouter: React.FC = () => {
             <Route path="lessons/:lessonId/edit" element={<InstructorLessonManager />} />
             
             {/* 3. Quản lý Quiz (sẽ được code sau) */}
-            <Route path="lessons/:lessonId/quiz" element={<BaseLayout><h1>Quiz Management UI</h1></BaseLayout>} />
+            <Route path="lessons/:lessonId/quiz" element={<ProtectedRoute element={InstructorQuizManager} allowedRoles={['instructor', 'admin']} />} />
         </Routes>
     );
 };
@@ -68,7 +69,6 @@ const DashboardRouter: React.FC = () => {
             <Route path="instructor/courses/new" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} /> 
             <Route path="instructor/courses/:courseId/edit" element={<ProtectedRoute element={InstructorCourseManager} allowedRoles={['instructor', 'admin']} />} /> 
 
-            {/* FIX LỖI 404: ROUTE LỒNG NHAU CHO QUẢN LÝ NỘI DUNG */}
             <Route 
                 path="instructor/courses/:courseId/*" 
                 element={<ProtectedRoute element={InstructorCourseContentRouter} allowedRoles={['instructor', 'admin']} />} 

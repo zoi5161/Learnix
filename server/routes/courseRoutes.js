@@ -1,8 +1,8 @@
 const express = require('express');
 const { protect, restrictTo, optionalAuth } = require('../middleware/authMiddleware');
+
 const {
     getCourses,
-    getCourseById,
     getCategories,
     getTrendingTags,
     searchCourses,
@@ -10,7 +10,8 @@ const {
     updateCourse,
     deleteCourse,
     publishCourse,
-    getInstructorCourses
+    getInstructorCourses,
+    getCourseById
 } = require('../controllers/courseController');
 const {
     getCourseLessons,
@@ -21,28 +22,63 @@ const {
     deleteLesson
 } = require('../controllers/lessonController');
 
+const {
+    createQuiz,
+    getQuizForInstructor,
+    getQuizForStudent,
+    submitQuiz,
+    updateQuiz
+} = require('../controllers/quizController');
+
 const router = express.Router();
 
-// Public routes
+// --- Public routes ---
 router.get('/', getCourses);
 router.get('/categories', getCategories);
 router.get('/tags/trending', getTrendingTags);
 router.get('/search', searchCourses);
 
-// Instructor/Admin cần quyền truy cập để quản lý và xem nội dung bài học.
+// --- Protected routes: Lesson Management (Instructor/Admin) ---
+// Route cho việc lấy danh sách Lesson và tạo Lesson mới
 router.route('/:courseId/lessons')
     .get(protect, restrictTo(['student', 'instructor', 'admin']), getCourseLessons)
     .post(protect, restrictTo(['instructor', 'admin']), createLesson); 
 
+// --- Protected routes: Quiz Management (Instructor/Admin/Student) ---
+router.route('/:courseId/lessons/:lessonId/quiz')
+    .get(protect, restrictTo(['instructor', 'admin']), getQuizForInstructor)
+    .post(protect, restrictTo(['instructor', 'admin']), createQuiz)
+    .put(protect, restrictTo(['instructor', 'admin']), updateQuiz);
+
+// Route cho việc lấy/cập nhật/xóa Lesson
 router.route('/:courseId/lessons/:lessonId')
     .get(protect, restrictTo(['student', 'instructor', 'admin']), getLesson) 
     .put(protect, restrictTo(['instructor', 'admin']), updateLesson)
     .delete(protect, restrictTo(['instructor', 'admin']), deleteLesson);
 
-// Protected routes - Lesson progress update (student)
+// Route Submit Quiz (Dùng POST để gửi dữ liệu bài làm)
+router.post(
+    '/:courseId/lessons/:lessonId/quiz/submit', 
+    protect, 
+    restrictTo('student'), 
+    submitQuiz
+);
+
+// Route cho Student xem Quiz (Không bao gồm đáp án)
+router.get(
+    '/:courseId/lessons/:lessonId/quiz/view', 
+    protect, 
+    restrictTo(['student', 'instructor', 'admin']), 
+    getQuizForStudent
+);
+
+
+// --- Protected routes ---
+
+// Lesson progress update (student)
 router.put('/:courseId/lessons/:lessonId/progress', protect, restrictTo(['student']), updateProgress);
 
-// Protected routes - Course Management (instructor/admin)
+// Course Management (instructor/admin)
 router.route('/mine')
     .get(protect, restrictTo(['instructor', 'admin']), getInstructorCourses)
     .post(protect, restrictTo(['instructor', 'admin']), createCourse);

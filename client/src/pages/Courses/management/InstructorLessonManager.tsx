@@ -104,7 +104,7 @@ const InstructorLessonManager: React.FC = () => {
                     &larr; Trở lại Quản lý Khóa học
                 </Link>
                 <div className="flex justify-between items-center mb-6 border-b pb-3">
-                    <h1 className="text-3xl font-bold text-gray-800">Quản lý Bài học: {courseTitle}</h1>
+                    <h1 className="text-3xl font-bold text-gray-800">Quản lý Bài học:</h1>
                     <button
                         onClick={openCreateForm}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
