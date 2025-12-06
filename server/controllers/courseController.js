@@ -353,25 +353,30 @@ exports.updateCourse = async (req, res) => {
 exports.deleteCourse = async (req, res) => {
     try {
         const course = await checkOwnership(req, res);
-        
-        // Kiểm tra logic trước khi xóa (ví dụ: không thể xóa nếu có học viên)
+
         const enrollmentsCount = await Enrollment.countDocuments({ course_id: req.params.id });
         if (enrollmentsCount > 0) {
-            return res.status(400).json({ success: false, message: 'Cannot delete course with active enrollments' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Cannot delete course with active enrollments' 
+            });
         }
         
-        const lessons = await Lesson.find({ course_id: req.params.id });
-        for (const lesson of lessons) {
-            // Tạm thời bỏ qua logic xóa Quiz/Question liên quan đến Lesson
-            // await Quiz.deleteMany({ lesson_id: lesson._id }); 
-        }
-        await Lesson.deleteMany({ course_id: req.params.id });
+        const result = await Course.findOneAndDelete({ _id: req.params.id }); 
         
-        // Xóa khóa học chính
-        await Course.findByIdAndDelete(req.params.id);
+        // Hook trong Course.js sẽ tự động xóa:
+        // - Tất cả Lessons thuộc Course này.
+        // - Tất cả Quizzes thuộc các Lessons đó.
+        // - Tất cả Questions & Submissions thuộc các Quizzes đó.
 
-        res.json({ success: true, message: 'Course deleted successfully' });
+        if (!result) {
+             return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        res.json({ success: true, message: 'Course and related data deleted successfully' });
     } catch (error) {
+        // Xử lý lỗi nếu việc xóa (hoặc hook) thất bại
+        console.error('Error during course deletion:', error);
         res.status(500).json({ success: false, message: 'Error deleting course', error: error.message });
     }
 };
