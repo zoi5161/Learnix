@@ -115,9 +115,15 @@ export const courseService = {
     return response.data;
   },
 
+  // Get Instructor's Courses
+  getInstructorCourses: async (): Promise<CourseListResponse> => {
+    const response = await api.get<CourseListResponse>(`/courses/mine`);
+    return response.data;
+  },
+
   // Create Course
   createCourse: async (data: CourseCreateData): Promise<CourseDetailResponse> => {
-    const response = await api.post<CourseDetailResponse>(`/courses`, data);
+    const response = await api.post<CourseDetailResponse>(`/courses/mine`, data);
     return response.data;
   },
 

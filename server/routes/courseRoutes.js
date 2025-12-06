@@ -9,12 +9,16 @@ const {
     createCourse,
     updateCourse,
     deleteCourse,
-    publishCourse
+    publishCourse,
+    getInstructorCourses
 } = require('../controllers/courseController');
 const {
     getCourseLessons,
     getLesson,
-    updateProgress
+    updateProgress,
+    createLesson, 
+    updateLesson,
+    deleteLesson
 } = require('../controllers/lessonController');
 
 const router = express.Router();
@@ -24,15 +28,23 @@ router.get('/', getCourses);
 router.get('/categories', getCategories);
 router.get('/tags/trending', getTrendingTags);
 router.get('/search', searchCourses);
-router.get('/:id', optionalAuth, getCourseById);
 
-// Protected routes - Lesson viewing (student only)
-router.get('/:courseId/lessons', protect, restrictTo(['student']), getCourseLessons);
-router.get('/:courseId/lessons/:lessonId', protect, restrictTo(['student']), getLesson);
+// Instructor/Admin cần quyền truy cập để quản lý và xem nội dung bài học.
+router.route('/:courseId/lessons')
+    .get(protect, restrictTo(['student', 'instructor', 'admin']), getCourseLessons)
+    .post(protect, restrictTo(['instructor', 'admin']), createLesson); 
+
+router.route('/:courseId/lessons/:lessonId')
+    .get(protect, restrictTo(['student', 'instructor', 'admin']), getLesson) 
+    .put(protect, restrictTo(['instructor', 'admin']), updateLesson)
+    .delete(protect, restrictTo(['instructor', 'admin']), deleteLesson);
+
+// Protected routes - Lesson progress update (student)
 router.put('/:courseId/lessons/:lessonId/progress', protect, restrictTo(['student']), updateProgress);
 
 // Protected routes - Course Management (instructor/admin)
-router.route('/')
+router.route('/mine')
+    .get(protect, restrictTo(['instructor', 'admin']), getInstructorCourses)
     .post(protect, restrictTo(['instructor', 'admin']), createCourse);
 
 router.route('/:id')
@@ -40,5 +52,6 @@ router.route('/:id')
     .delete(protect, restrictTo(['instructor', 'admin']), deleteCourse);
     
 router.put('/:id/publish', protect, restrictTo(['instructor', 'admin']), publishCourse);
+router.get('/:id', optionalAuth, getCourseById);
 
 module.exports = router;

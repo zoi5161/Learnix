@@ -3,6 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getUserFromToken, clearAuth } from '../utils/authToken';
 import './PublicNavbar.css';
 
+const getRolePath = (role: string): string => {
+    if (role === 'admin') return 'admin';
+    if (role === 'instructor') return 'instructor';
+    return 'student';
+};
+
 const PublicNavbar: React.FC = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
@@ -11,6 +17,8 @@ const PublicNavbar: React.FC = () => {
         clearAuth();
         navigate('/');
     };
+    
+    const dashboardPath = user ? `/${getRolePath(user.role)}/dashboard` : '/login';
 
     return (
         <header className="public-navbar">
@@ -31,7 +39,7 @@ const PublicNavbar: React.FC = () => {
                 <div className="public-navbar-auth">
                     {user ? (
                         <>
-                            <Link to="/dashboard" className="public-navbar-link">
+                            <Link to={dashboardPath} className="public-navbar-link">
                                 Dashboard
                             </Link>
                             <span className="public-navbar-user">

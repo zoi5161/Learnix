@@ -4,38 +4,38 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { courseService, CourseWithCounts } from '../../../services/courseService';
 import CourseForm from './CourseForm';
 
-const mockInstructorCourses: CourseWithCounts[] = [
-    { 
-        _id: '60c72b2f9f1b2c001f8e4d2a', 
-        title: 'Khóa học React nâng cao', 
-        level: 'advanced', 
-        status: 'draft', 
-        enrollmentsCount: 0, 
-        lessonsCount: 5,
-        instructor_id: { name: 'Giảng viên' },
-        category: 'Web Dev',
-        summary: 'Khóa học này đang ở trạng thái nháp.',
-        is_premium: true,
-        description: 'desc',
-        createdAt: '',
-        updatedAt: ''
-    } as CourseWithCounts,
-    { 
-        _id: '60c72b2f9f1b2c001f8e4d2b', 
-        title: 'Khóa học Python cho người mới', 
-        level: 'beginner', 
-        status: 'published', 
-        enrollmentsCount: 45, 
-        lessonsCount: 12,
-        instructor_id: { name: 'Giảng viên' },
-        category: 'Programming',
-        summary: 'Khóa học đã xuất bản.',
-        is_premium: false,
-        description: 'desc',
-        createdAt: '',
-        updatedAt: ''
-    } as CourseWithCounts,
-];
+// const mockInstructorCourses: CourseWithCounts[] = [
+//     { 
+//         _id: '60c72b2f9f1b2c001f8e4d2a', 
+//         title: 'Khóa học React nâng cao', 
+//         level: 'advanced', 
+//         status: 'draft', 
+//         enrollmentsCount: 0, 
+//         lessonsCount: 5,
+//         instructor_id: { name: 'Giảng viên' },
+//         category: 'Web Dev',
+//         summary: 'Khóa học này đang ở trạng thái nháp.',
+//         is_premium: true,
+//         description: 'desc',
+//         createdAt: '',
+//         updatedAt: ''
+//     } as CourseWithCounts,
+//     { 
+//         _id: '60c72b2f9f1b2c001f8e4d2b', 
+//         title: 'Khóa học Python cho người mới', 
+//         level: 'beginner', 
+//         status: 'published', 
+//         enrollmentsCount: 45, 
+//         lessonsCount: 12,
+//         instructor_id: { name: 'Giảng viên' },
+//         category: 'Programming',
+//         summary: 'Khóa học đã xuất bản.',
+//         is_premium: false,
+//         description: 'desc',
+//         createdAt: '',
+//         updatedAt: ''
+//     } as CourseWithCounts,
+// ];
 
 const InstructorCourseManager: React.FC = () => {
     const [courses, setCourses] = useState<CourseWithCounts[]>([]);
@@ -47,12 +47,21 @@ const InstructorCourseManager: React.FC = () => {
     const isNewMode = searchParams.get('mode') === 'new';
     const courseIdToEdit = searchParams.get('editId');
     
-    // Hàm gọi API (Cần tạo endpoint /courses/mine ở BE)
+    // Hàm gọi API thực để lấy khóa học của Giảng viên
     const fetchInstructorCourses = async () => {
         try {
-            setCourses(mockInstructorCourses); // Dùng mock data tạm thời
+
+            setLoading(true);
+            setError(null);
+            
+            const res = await courseService.getInstructorCourses();
+            
+            if (res.success) {
+                setCourses(res.data.courses);
+            }
         } catch (err: any) {
-             setError('Lỗi khi tải danh sách khóa học của bạn.');
+             // Lỗi 401/403 sẽ được xử lý bởi axiosInterceptor
+             setError(err.message || 'Lỗi khi tải danh sách khóa học của bạn.');
         } finally {
             setLoading(false);
         }
@@ -66,10 +75,9 @@ const InstructorCourseManager: React.FC = () => {
         }
 
         try {
-            // await courseService.publishCourse(courseId, newStatus); // Chức năng API
+            await courseService.publishCourse(courseId, newStatus as any); 
             alert(`Khóa học đã được chuyển sang ${newStatus}.`);
-            // Cập nhật UI ngay lập tức (Nếu API thành công)
-            setCourses(courses.map(c => c._id === courseId ? { ...c, status: newStatus } : c));
+            setCourses(courses.map(c => c._id === courseId ? { ...c, status: newStatus } as CourseWithCounts : c));
         } catch (error: any) {
             alert(error.message || 'Lỗi khi cập nhật trạng thái.');
         }
@@ -81,9 +89,8 @@ const InstructorCourseManager: React.FC = () => {
             return;
         }
         try {
-            // await courseService.deleteCourse(courseId); // Chức năng API
+            await courseService.deleteCourse(courseId);
             alert(`Khóa học "${title}" đã bị xóa.`);
-            // Cập nhật UI
             setCourses(courses.filter(c => c._id !== courseId));
         } catch (error: any) {
             alert(error.message || 'Lỗi khi xóa khóa học.');

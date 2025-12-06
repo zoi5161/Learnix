@@ -41,11 +41,16 @@ const CourseForm: React.FC<CourseFormProps> = ({ courseId, initialData }) => {
         setError(null);
         
         try {
+            const dataToSend = {
+                ...formData,
+                tags: formData.tags ? formData.tags : [],
+            };
+            
             if (courseId) {
-                await courseService.updateCourse(courseId, formData);
+                await courseService.updateCourse(courseId, dataToSend);
                 alert('Khóa học đã được cập nhật!');
             } else {
-                await courseService.createCourse(formData);
+                await courseService.createCourse(dataToSend);
                 alert('Khóa học mới đã được tạo!');
             }
             navigate('/instructor/courses');

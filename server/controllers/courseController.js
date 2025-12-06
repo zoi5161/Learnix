@@ -331,11 +331,17 @@ exports.updateCourse = async (req, res) => {
     try {
         const course = await checkOwnership(req, res); // Sử dụng hàm kiểm tra quyền sở hữu
 
+        // Chỉ cho phép cập nhật các trường cụ thể, loại trừ ID và status
+        const updates = { ...req.body };
+        delete updates._id; 
+        delete updates.instructor_id;
+        delete updates.status; 
+
         const updatedCourse = await Course.findByIdAndUpdate(
             req.params.id, 
-            req.body, 
-            { new: true, runValidators: true, select: '-status' } // Không cho phép cập nhật status qua đây
-        ).select('-status');
+            updates, 
+            { new: true, runValidators: true } 
+        ).select('-__v');
 
         res.json({ success: true, data: updatedCourse });
     } catch (error) {
@@ -354,10 +360,14 @@ exports.deleteCourse = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cannot delete course with active enrollments' });
         }
         
-        // Xóa tất cả lessons, quizzes, questions liên quan
-        // await Lesson.deleteMany({ course_id: req.params.id }); 
-        // Logic xóa này cần được bổ sung sau
-
+        const lessons = await Lesson.find({ course_id: req.params.id });
+        for (const lesson of lessons) {
+            // Tạm thời bỏ qua logic xóa Quiz/Question liên quan đến Lesson
+            // await Quiz.deleteMany({ lesson_id: lesson._id }); 
+        }
+        await Lesson.deleteMany({ course_id: req.params.id });
+        
+        // Xóa khóa học chính
         await Course.findByIdAndDelete(req.params.id);
 
         res.json({ success: true, message: 'Course deleted successfully' });
@@ -385,5 +395,21 @@ exports.publishCourse = async (req, res) => {
         res.json({ success: true, data: updatedCourse });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error updating course status', error: error.message });
+    }
+};
+
+// Get courses created by the logged-in instructor/admin
+exports.getInstructorCourses = async (req, res) => {
+    try {
+        const instructorId = req.user._id;
+        console.log('Instructor ID:', instructorId);
+        const courses = await Course.find({ instructor_id: instructorId })
+            .select('-description') // Lấy dữ liệu nhẹ hơn cho danh sách
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.json({ success: true, data: { courses } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching instructor courses', error: error.message });
     }
 };

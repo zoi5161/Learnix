@@ -1,6 +1,6 @@
 import api from './axiosInstance';
 
-export interface Lesson {
+export interface LessonData {
     _id: string;
     course_id: string;
     title: string;
@@ -16,6 +16,17 @@ export interface Lesson {
         time_spent: number;
         notes?: string;
     };
+}
+
+export interface Lesson extends LessonData {
+}
+
+export interface LessonOperationResponse {
+    success: boolean;
+    data?: {
+        lesson: Lesson;
+    };
+    message?: string;
 }
 
 export interface LessonResponse {
@@ -82,6 +93,24 @@ export const lessonService = {
         data: UpdateProgressRequest
     ): Promise<{ success: boolean; message: string }> => {
         const response = await api.put(`/courses/${courseId}/lessons/${lessonId}/progress`, data);
+        return response.data;
+    },
+
+    // Create a new lesson
+    createLesson: async (courseId: string, data: LessonData): Promise<LessonOperationResponse> => {
+        const response = await api.post<LessonOperationResponse>(`/courses/${courseId}/lessons`, data);
+        return response.data;
+    },
+
+    // Update an existing lesson
+    updateLesson: async (courseId: string, lessonId: string, data: Partial<LessonData>): Promise<LessonOperationResponse> => {
+        const response = await api.put<LessonOperationResponse>(`/courses/${courseId}/lessons/${lessonId}`, data);
+        return response.data;
+    },
+    
+    // Delete a lesson
+    deleteLesson: async (courseId: string, lessonId: string): Promise<{ success: boolean; message: string }> => {
+        const response = await api.delete<{ success: boolean; message: string }>(`/courses/${courseId}/lessons/${lessonId}`);
         return response.data;
     },
 };

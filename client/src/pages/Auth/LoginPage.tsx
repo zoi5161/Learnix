@@ -27,9 +27,6 @@ const LoginPage: React.FC = () => {
             const user = await authService.login(email, password);
 
             if (user) {
-                console.log("--- Login Success ---");
-                console.log("User Data Received:", user);
-                console.log("User Role:", user.role);
                 const rolePath = user.role === 'admin' ? 'admin' : user.role === 'instructor' ? 'instructor' : 'student';
                 navigate(`/${rolePath}/dashboard`, { replace: true });
             }
