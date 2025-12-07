@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const QuizSchema = new mongoose.Schema({
+    course_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course', // ⚠️ Tên này phải khớp với mongoose.model('Course', ...) bên file Course.js
+        required: true
+    },
     lesson_id: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Lesson', 

@@ -4,7 +4,6 @@ const CourseSchema = new mongoose.Schema({
     instructor_id: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
-        required: true 
     },
     title: { 
         type: String, 
@@ -27,7 +26,7 @@ const CourseSchema = new mongoose.Schema({
     status: { 
         type: String, 
         enum: ['draft', 'published', 'archived'], 
-        default: 'draft' 
+        default: 'published' 
     },
     thumbnail: {
         type: String, // URL to course image

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { courseService, CourseWithCounts } from '../../../services/courseService';
 import { enrollmentService } from '../../../services/enrollmentService';
+import { quizService } from '../../../services/quizService';
 import { getUserFromToken } from '../../../utils/authToken';
 import PublicNavbar from '../../../components/PublicNavbar';
 import './CourseDetailPage.css';
@@ -16,6 +17,14 @@ interface Lesson {
     order: number;
 }
 
+interface QuizItem {
+    id: string;
+    _id: string;
+    title: string;
+    questionsCount: number;
+    time_limit: number;
+}
+
 const CourseDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -23,6 +32,7 @@ const CourseDetailPage: React.FC = () => {
 
     const [course, setCourse] = useState<CourseWithCounts | null>(null);
     const [lessons, setLessons] = useState<Lesson[]>([]);
+    const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
     const [isEnrolled, setIsEnrolled] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -30,29 +40,34 @@ const CourseDetailPage: React.FC = () => {
     const [enrolling, setEnrolling] = useState(false);
 
     useEffect(() => {
-        const fetchCourse = async () => {
+        const fetchData = async () => {
             if (!id) return;
-
             try {
                 setLoading(true);
-                const res = await courseService.getCourseById(id);
+                const [courseRes, quizRes] = await Promise.all([
+                    courseService.getCourseById(id),
+                    quizService.getQuizzes({ course_id: id })
+                ]);
 
-                if (res.success) {
-                    setCourse(res.data.course);
-                    setIsEnrolled(res.data.isEnrolled);
-                    // Always set lessons (even if empty array)
-                    setLessons(res.data.course.lessons || []);
+                if (courseRes.success) {
+                    setCourse(courseRes.data.course);
+                    setIsEnrolled(courseRes.data.isEnrolled);
+                    setLessons(courseRes.data.course.lessons || []);
                 } else {
                     setError('Course not found');
                 }
+
+                if (quizRes.success) {
+                    setQuizzes(quizRes.data.quizzes || []);
+                }
+
             } catch (err: any) {
-                setError(err.message || 'Failed to load course');
+                setError(err.message || 'Failed to load course data');
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchCourse();
+        fetchData();
     }, [id]);
 
     const handleLessonClick = (lesson: Lesson) => {
@@ -61,8 +76,15 @@ const CourseDetailPage: React.FC = () => {
             setShowLoginModal(true);
             return;
         }
-        // Navigate to lesson viewer (will be implemented in next phase)
         navigate(`/courses/${id}/lessons/${lesson._id}`);
+    };
+
+    const handleQuizClick = (quizId: string) => {
+        if (!isEnrolled) {
+            setShowLoginModal(true);
+            return;
+        }
+        navigate(`/courses/${id}/quizzes/${quizId}/take`);
     };
 
     const handleEnrollClick = async () => {
@@ -70,39 +92,26 @@ const CourseDetailPage: React.FC = () => {
             setShowLoginModal(true);
             return;
         }
-
         if (!id) return;
 
         try {
             setEnrolling(true);
             const res = await enrollmentService.enrollCourse(id);
-            
             if (res.success) {
-                // Update enrollment status
                 setIsEnrolled(true);
-                
-                // Show success message
                 alert(`Successfully enrolled! Remaining budget: $${res.data.remainingBudget.toFixed(2)}`);
-                
-                // Refresh course data to get updated enrollment status
+                // Refresh data
                 const courseRes = await courseService.getCourseById(id);
                 if (courseRes.success) {
                     setCourse(courseRes.data.course);
                     setIsEnrolled(courseRes.data.isEnrolled);
-                    if (courseRes.data.course.lessons) {
-                        setLessons(courseRes.data.course.lessons);
-                    }
                 }
             } else {
                 alert('Failed to enroll: ' + res.message);
             }
         } catch (err: any) {
-            if (err.response?.data?.message) {
-                if (err.response.data.message === 'Insufficient budget') {
-                    alert(`Insufficient budget. Required: $${err.response.data.data?.required || course?.price || 0}. Available: $${err.response.data.data?.available || 0}`);
-                } else {
-                    alert('Error: ' + err.response.data.message);
-                }
+             if (err.response?.data?.message === 'Insufficient budget') {
+                alert(`Insufficient budget.`);
             } else {
                 alert('Error: ' + (err.message || 'Failed to enroll'));
             }
@@ -113,77 +122,76 @@ const CourseDetailPage: React.FC = () => {
 
     const getLevelColor = (level: string) => {
         switch (level) {
-            case 'beginner':
-                return '#10b981';
-            case 'intermediate':
-                return '#f59e0b';
-            case 'advanced':
-                return '#ef4444';
-            default:
-                return '#6b7280';
+            case 'beginner': return '#10b981';
+            case 'intermediate': return '#f59e0b';
+            case 'advanced': return '#ef4444';
+            default: return '#6b7280';
         }
     };
 
-    if (loading) {
-        return (
-            <div className="course-detail-page">
-                <PublicNavbar />
-                <div className="course-detail-loading">
-                    <div className="course-detail-spinner"></div>
-                    <p>Loading course...</p>
-                </div>
-            </div>
-        );
-    }
+    const isManageQuiz = user?.role === 'instructor' || user?.role === 'admin';
 
-    if (error || !course) {
-        return (
-            <div className="course-detail-page">
-                <PublicNavbar />
-                <div className="course-detail-error">
-                    <p>{error || 'Course not found'}</p>
-                    <Link to="/courses" className="course-detail-back-link">
-                        Back to Courses
-                    </Link>
-                </div>
+    if (loading) return (
+        <div className="course-detail-page">
+            <PublicNavbar />
+            <div className="course-detail-loading">
+                <div className="course-detail-spinner"></div>
+                <p>Loading course...</p>
             </div>
-        );
-    }
+        </div>
+    );
 
-    const instructorName = course.instructor_id && typeof course.instructor_id === 'object' && course.instructor_id !== null
-        ? course.instructor_id.name || 'Unknown'
-        : 'Unknown';
+    if (error || !course) return (
+        <div className="course-detail-page">
+            <PublicNavbar />
+            <div className="course-detail-error">
+                <p>{error || 'Course not found'}</p>
+                <Link to="/courses" className="course-detail-back-link">Back to Courses</Link>
+            </div>
+        </div>
+    );
+
+    const instructorName = typeof course.instructor_id === 'object' && course.instructor_id !== null
+        ? course.instructor_id.name || 'Unknown' : 'Unknown';
 
     return (
         <div className="course-detail-page">
             <PublicNavbar />
             <main className="course-detail-main">
                 <div className="course-detail-container">
-                    {/* Course Header */}
+                    
+                    {/* Header */}
                     <div className="course-detail-header">
+                        <div className="course-detail-back">
+                            <button onClick={() => navigate('/courses')} className="course-detail-back-btn">← Back to course</button>
+                        </div>
                         <div className="course-detail-header-content">
                             <div className="course-detail-badges">
-                                <span
-                                    className="course-detail-level"
-                                    style={{ backgroundColor: getLevelColor(course.level) }}
-                                >
+                                <span className="course-detail-level" style={{ backgroundColor: getLevelColor(course.level) }}>
                                     {course.level}
                                 </span>
-                                {course.is_premium && (
-                                    <span className="course-detail-premium">Premium</span>
-                                )}
+                                {course.is_premium && <span className="course-detail-premium">Premium</span>}
                             </div>
                             <h1 className="course-detail-title">{course.title}</h1>
                             <p className="course-detail-instructor">By {instructorName}</p>
+                            
+                            {/* 🔥 UPDATE: Instructor Toolbar đẹp hơn */}
+                            {isManageQuiz && (
+                                <div className="instructor-toolbar">
+                                    <span className="instructor-label">Instructor Tools:</span>
+                                    <button onClick={() => navigate(`/admin/quizzes`)} className="btn-manage">
+                                        <span className="btn-manage-icon">📝</span> Manage Quizzes
+                                    </button>
+                                    {/* Bạn có thể thêm nút Manage Lessons ở đây sau này */}
+                                </div>
+                            )}
+
                             <div className="course-detail-stats">
                                 <span>{course.enrollmentsCount || 0} students</span>
                                 <span>•</span>
                                 <span>{course.lessonsCount || 0} lessons</span>
                                 {course.price !== undefined && course.price > 0 && (
-                                    <>
-                                        <span>•</span>
-                                        <span className="course-detail-price">${course.price.toFixed(2)}</span>
-                                    </>
+                                    <><span>•</span><span className="course-detail-price">${course.price.toFixed(2)}</span></>
                                 )}
                             </div>
                         </div>
@@ -194,109 +202,112 @@ const CourseDetailPage: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Course Content */}
+                    {/* Content */}
                     <div className="course-detail-content">
                         <div className="course-detail-main-content">
-                            {/* Description */}
                             <section className="course-detail-section">
                                 <h2 className="course-detail-section-title">About This Course</h2>
                                 <div className="course-detail-description">
-                                    {course.description.split('\n').map((para, idx) => (
-                                        <p key={idx}>{para}</p>
-                                    ))}
+                                    {course.description.split('\n').map((para, idx) => <p key={idx}>{para}</p>)}
                                 </div>
                             </section>
 
-                            {/* Tags */}
                             {course.tags && course.tags.length > 0 && (
                                 <section className="course-detail-section">
                                     <h2 className="course-detail-section-title">Tags</h2>
                                     <div className="course-detail-tags">
                                         {course.tags.map((tag) => (
-                                            <Link
-                                                key={tag}
-                                                to={`/courses?tag=${encodeURIComponent(tag)}`}
-                                                className="course-detail-tag"
-                                            >
-                                                {tag}
-                                            </Link>
+                                            <Link key={tag} to={`/courses?tag=${encodeURIComponent(tag)}`} className="course-detail-tag">{tag}</Link>
                                         ))}
                                     </div>
                                 </section>
                             )}
 
-                            {/* Lessons */}
                             <section className="course-detail-section">
                                 <h2 className="course-detail-section-title">Course Content</h2>
-                                {lessons.length > 0 ? (
+                                
+                                {lessons.length === 0 && quizzes.length === 0 ? (
+                                    <p className="course-detail-empty">No content available yet.</p>
+                                ) : (
                                     <div className="course-detail-lessons">
+                                        
+                                        {/* Render Lessons */}
                                         {lessons.map((lesson, index) => {
                                             const isLocked = !isEnrolled && !lesson.is_free;
                                             return (
                                                 <div
                                                     key={lesson._id}
-                                                    className={`course-detail-lesson-item ${
-                                                        isLocked ? 'course-detail-lesson-locked' : ''
-                                                    }`}
+                                                    className={`course-detail-lesson-item ${isLocked ? 'course-detail-lesson-locked' : ''}`}
                                                     onClick={() => !isLocked && handleLessonClick(lesson)}
                                                 >
-                                                    <div className={`course-detail-lesson-number ${
-                                                        isLocked ? 'course-detail-lesson-number-locked' : ''
-                                                    }`}>
+                                                    <div className={`course-detail-lesson-number ${isLocked ? 'course-detail-lesson-number-locked' : ''}`}>
                                                         {isLocked ? '🔒' : index + 1}
                                                     </div>
                                                     <div className="course-detail-lesson-content">
                                                         <div className="course-detail-lesson-header">
-                                                            <h3 className={`course-detail-lesson-title ${
-                                                                isLocked ? 'course-detail-lesson-title-locked' : ''
-                                                            }`}>
+                                                            <h3 className={`course-detail-lesson-title ${isLocked ? 'course-detail-lesson-title-locked' : ''}`}>
                                                                 {lesson.title}
                                                             </h3>
-                                                            {isLocked && (
-                                                                <span className="course-detail-lesson-lock-badge">
-                                                                    Locked
-                                                                </span>
-                                                            )}
+                                                            {isLocked && <span className="course-detail-lesson-lock-badge">Locked</span>}
                                                         </div>
-                                                        {lesson.description && (
-                                                            <p className={`course-detail-lesson-description ${
-                                                                isLocked ? 'course-detail-lesson-description-locked' : ''
-                                                            }`}>
-                                                                {lesson.description}
-                                                            </p>
-                                                        )}
                                                         <div className="course-detail-lesson-meta">
-                                                            <span className="course-detail-lesson-type">
-                                                                {lesson.content_type}
-                                                            </span>
-                                                            {lesson.duration && (
-                                                                <>
-                                                                    <span>•</span>
-                                                                    <span>{lesson.duration} min</span>
-                                                                </>
-                                                            )}
-                                                            {lesson.is_free && (
-                                                                <>
-                                                                    <span>•</span>
-                                                                    <span className="course-detail-lesson-free">Free</span>
-                                                                </>
-                                                            )}
-                                                            {isLocked && (
-                                                                <>
-                                                                    <span>•</span>
-                                                                    <span className="course-detail-lesson-locked-text">
-                                                                        {user ? 'Enroll to unlock' : 'Sign up to unlock'}
-                                                                    </span>
-                                                                </>
-                                                            )}
+                                                            <span className="course-detail-lesson-type">{lesson.content_type}</span>
+                                                            {lesson.duration && <><span>•</span><span>{lesson.duration} min</span></>}
+                                                            {lesson.is_free && <><span>•</span><span className="course-detail-lesson-free">Free</span></>}
+                                                            {isLocked && <span className="course-detail-lesson-locked-text">Locked</span>}
                                                         </div>
                                                     </div>
                                                 </div>
                                             );
                                         })}
+
+                                        {/* 🔥 UPDATE: Render Quizzes với nút Start */}
+                                        {quizzes.map((quiz) => {
+                                            const isLocked = !isEnrolled;
+                                            const quizId = quiz._id || quiz.id;
+                                            return (
+                                                <div
+                                                    key={quizId}
+                                                    className={`course-detail-lesson-item ${isLocked ? 'course-detail-lesson-locked' : 'quiz-item-row'}`}
+                                                    onClick={() => !isLocked && handleQuizClick(quizId)}
+                                                >
+                                                    <div className={`course-detail-lesson-number ${isLocked ? 'course-detail-lesson-number-locked' : 'quiz-icon'}`}>
+                                                        {isLocked ? '🔒' : 'Q'}
+                                                    </div>
+                                                    <div className="course-detail-lesson-content">
+                                                        <div className="course-detail-lesson-header">
+                                                            <h3 className={`course-detail-lesson-title ${isLocked ? 'course-detail-lesson-title-locked' : ''}`} style={{ color: isLocked ? undefined : '#be185d' }}>
+                                                                {quiz.title}
+                                                            </h3>
+                                                            {!isLocked && <span className="quiz-badge">Quiz</span>}
+                                                            {isLocked && <span className="course-detail-lesson-lock-badge">Locked</span>}
+                                                        </div>
+                                                        
+                                                        <div className="course-detail-lesson-meta" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                            <span>❓ {quiz.questionsCount} Questions</span>
+                                                            {quiz.time_limit > 0 && <><span>•</span><span>⏱ {quiz.time_limit} mins</span></>}
+                                                            
+                                                            {/* 🔥 UPDATE: Nút Start Quiz cho Student */}
+                                                            {!isLocked && (
+                                                                <button 
+                                                                    className="btn-start-quiz"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation(); // Tránh kích hoạt onclick của parent
+                                                                        handleQuizClick(quizId);
+                                                                    }}
+                                                                >
+                                                                    Start Quiz →
+                                                                </button>
+                                                            )}
+                                                            
+                                                            {isLocked && <span className="course-detail-lesson-locked-text" style={{ marginLeft: 10 }}>Enroll to unlock</span>}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
                                     </div>
-                                ) : (
-                                    <p className="course-detail-empty">No lessons available yet.</p>
                                 )}
                             </section>
                         </div>
@@ -305,44 +316,23 @@ const CourseDetailPage: React.FC = () => {
                         <aside className="course-detail-sidebar">
                             <div className="course-detail-sidebar-card">
                                 {course.price !== undefined && course.price > 0 && (
-                                    <div className="course-detail-sidebar-price">
-                                        ${course.price.toFixed(2)}
-                                    </div>
+                                    <div className="course-detail-sidebar-price">${course.price.toFixed(2)}</div>
                                 )}
                                 {!isEnrolled ? (
-                                    <button
-                                        onClick={handleEnrollClick}
-                                        disabled={enrolling}
-                                        className="course-detail-enroll-button"
-                                    >
+                                    <button onClick={handleEnrollClick} disabled={enrolling} className="course-detail-enroll-button">
                                         {enrolling ? 'Enrolling...' : (user ? 'Enroll Now' : 'Sign Up to Enroll')}
                                     </button>
                                 ) : (
-                                    <Link
-                                        to={`/courses/${id}/learn`}
-                                        className="course-detail-enroll-button course-detail-enroll-button-enrolled"
-                                    >
+                                    <Link to={`/courses/${id}/learn`} className="course-detail-enroll-button course-detail-enroll-button-enrolled">
                                         Continue Learning
                                     </Link>
                                 )}
                                 <div className="course-detail-sidebar-info">
-                                    <div className="course-detail-sidebar-info-item">
-                                        <strong>Instructor:</strong> {instructorName}
-                                    </div>
-                                    {course.category && (
-                                        <div className="course-detail-sidebar-info-item">
-                                            <strong>Category:</strong> {course.category}
-                                        </div>
-                                    )}
-                                    <div className="course-detail-sidebar-info-item">
-                                        <strong>Level:</strong> {course.level}
-                                    </div>
-                                    <div className="course-detail-sidebar-info-item">
-                                        <strong>Lessons:</strong> {course.lessonsCount || 0}
-                                    </div>
-                                    <div className="course-detail-sidebar-info-item">
-                                        <strong>Students:</strong> {course.enrollmentsCount || 0}
-                                    </div>
+                                    <div className="course-detail-sidebar-info-item"><strong>Instructor:</strong> {instructorName}</div>
+                                    <div className="course-detail-sidebar-info-item"><strong>Level:</strong> {course.level}</div>
+                                    <div className="course-detail-sidebar-info-item"><strong>Lessons:</strong> {course.lessonsCount || 0}</div>
+                                    <div className="course-detail-sidebar-info-item"><strong>Quizzes:</strong> {quizzes.length}</div>
+                                    <div className="course-detail-sidebar-info-item"><strong>Students:</strong> {course.enrollmentsCount || 0}</div>
                                 </div>
                             </div>
                         </aside>
@@ -350,33 +340,15 @@ const CourseDetailPage: React.FC = () => {
                 </div>
             </main>
 
-            {/* Login Modal */}
             {showLoginModal && (
                 <div className="course-detail-modal-overlay" onClick={() => setShowLoginModal(false)}>
                     <div className="course-detail-modal" onClick={(e) => e.stopPropagation()}>
                         <h3 className="course-detail-modal-title">Sign Up Required</h3>
-                        <p className="course-detail-modal-message">
-                            Please sign up or log in to access this content.
-                        </p>
+                        <p className="course-detail-modal-message">Please sign up or log in to access this content.</p>
                         <div className="course-detail-modal-actions">
-                            <Link
-                                to="/login"
-                                className="course-detail-modal-button course-detail-modal-button-primary"
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                to="/register"
-                                className="course-detail-modal-button course-detail-modal-button-secondary"
-                            >
-                                Sign Up
-                            </Link>
-                            <button
-                                onClick={() => setShowLoginModal(false)}
-                                className="course-detail-modal-button course-detail-modal-button-cancel"
-                            >
-                                Cancel
-                            </button>
+                            <Link to="/login" className="course-detail-modal-button course-detail-modal-button-primary">Login</Link>
+                            <Link to="/register" className="course-detail-modal-button course-detail-modal-button-secondary">Sign Up</Link>
+                            <button onClick={() => setShowLoginModal(false)} className="course-detail-modal-button course-detail-modal-button-cancel">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -390,4 +362,3 @@ const CourseDetailPage: React.FC = () => {
 };
 
 export default CourseDetailPage;
-

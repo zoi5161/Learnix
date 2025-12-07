@@ -166,6 +166,7 @@
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
 }
 
 .course-list-card:hover {
@@ -369,3 +370,169 @@
     }
 }
 
+.course-list-back {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.course-list-back-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #3b82f6;
+    padding: 5px 0;
+    transition: 0.2s;
+}
+
+.course-list-back-btn:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* --- Buttons Styles --- */
+.btn-create {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.btn-create:hover {
+    background-color: #1d4ed8;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-edit, .btn-delete, .btn-detail {
+    flex: 1;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    min-height: 2rem;
+    max-height: 2rem;
+}
+
+.btn-edit {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-detail {
+    background-color: #b38ef2;
+    color: #f7e9e9;
+}
+
+
+.btn-edit:hover { background-color: #e5e7eb; }
+.btn-delete:hover { background-color: #fecaca; }
+.btn-detail:hover { background-color: #c8aef4; }
+
+/* --- Modal Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    padding: 8px 16px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-save {
+    padding: 8px 16px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-save:disabled {
+    background: #6ee7b7;
+}
+
+/* Sidebar collapse wrapper */
+.course-filters-collapse {
+    overflow: hidden;
+    max-height: 800px;
+    opacity: 1;
+    transition: max-height 0.35s ease, opacity 0.2s ease;
+}
+
+.course-filters-collapse.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* Optional: Collapse whole sidebar on mobile */
+.course-list-filters.collapsed {
+    width: auto;
+}
+
+.course-list-toggle-btn {
+    margin-right: 10px;
+    font-size: 13px;
+    padding: 5px 10px;
+}

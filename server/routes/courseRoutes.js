@@ -5,31 +5,60 @@ const {
     getCourseById,
     getCategories,
     getTrendingTags,
-    searchCourses
+    searchCourses,
+    createCourse,
+    updateCourse,
+    deleteCourse,
+    togglePublish,
+    assignInstructor,
+    manageTags
 } = require('../controllers/courseController');
-const {
-    getCourseLessons,
-    getLesson,
-    updateProgress
-} = require('../controllers/lessonController');
+
+// 1. Import Lesson Router
+const lessonRouter = require('./lessonRoutes');
 
 const router = express.Router();
 
-// Public routes
+// ==========================================
+// 🔄 MOUNT ROUTER (Kết nối Route con)
+// ==========================================
+// Bất cứ request nào có dạng "/:courseId/lessons" sẽ chuyển sang lessonRouter xử lý
+router.use('/:courseId/lessons', lessonRouter);
+
+
+// ==========================================
+// 🔓 PUBLIC COURSE ROUTES
+// ==========================================
 router.get('/', getCourses);
 router.get('/categories', getCategories);
 router.get('/tags/trending', getTrendingTags);
 router.get('/search', searchCourses);
-router.get('/:id', optionalAuth, getCourseById);
+router.get('/:id', optionalAuth, getCourseById); // Cho phép xem chi tiết (để check đã enroll chưa)
 
-// Protected routes - Lesson viewing (student only)
-router.get('/:courseId/lessons', protect, restrictTo(['student']), getCourseLessons);
-router.get('/:courseId/lessons/:lessonId', protect, restrictTo(['student']), getLesson);
-router.put('/:courseId/lessons/:lessonId/progress', protect, restrictTo(['student']), updateProgress);
+// ==========================================
+// 🔒 PROTECTED COURSE ROUTES
+// ==========================================
+// Từ dòng này trở xuống yêu cầu phải login
+router.use(protect);
 
-// Protected routes - Course creation (instructor/admin)
-router.post('/', protect, restrictTo(['instructor', 'admin']), (req, res) => {
-    res.json({ message: 'Course created successfully (placeholder)' });
-});
+// --- Create Course ---
+router.post('/', restrictTo(['instructor', 'admin']), createCourse);
+
+// --- Update & Delete Course ---
+router
+    .route('/:id')
+    .put(restrictTo(['instructor', 'admin']), updateCourse)
+    .delete(restrictTo(['instructor', 'admin']), deleteCourse);
+
+// --- Publish Management ---
+router.patch('/:id/publish', restrictTo(['instructor', 'admin']), togglePublish);
+router.patch('/:id/unpublish', restrictTo(['instructor', 'admin']), togglePublish);
+
+// --- Tags Management ---
+router.patch('/:id/tags/add', restrictTo(['instructor', 'admin']), manageTags);
+router.patch('/:id/tags/remove', restrictTo(['instructor', 'admin']), manageTags);
+
+// --- Admin Only Actions ---
+router.patch('/:id/assign-instructor', restrictTo(['admin']), assignInstructor);
 
 module.exports = router;

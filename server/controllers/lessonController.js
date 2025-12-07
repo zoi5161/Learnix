@@ -249,3 +249,138 @@ exports.getCourseLessons = async (req, res) => {
     }
 };
 
+
+// ============================================================
+// 🔥 INSTRUCTOR / ADMIN OPERATIONS
+// ============================================================
+
+// 📌 Get all lessons (For Instructor/Admin - No enrollment check required)
+exports.getLessonsByCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        
+        // Check course existence
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+
+        // Check permission (Admin or Owner)
+        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Permission denied' });
+        }
+
+        const lessons = await Lesson.find({ course_id: courseId }).sort('order');
+        
+        res.json({ success: true, data: lessons });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// 📌 Create Lesson
+exports.createLesson = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { title, content_type, content, description, duration, is_free } = req.body;
+
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+
+        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Permission denied' });
+        }
+
+        // Auto-calculate order (Append to end)
+        const lastLesson = await Lesson.findOne({ course_id: courseId }).sort('-order');
+        const newOrder = lastLesson ? lastLesson.order + 1 : 1;
+
+        const newLesson = await Lesson.create({
+            course_id: courseId,
+            title,
+            content_type,
+            content,
+            description,
+            duration,
+            is_free,
+            order: newOrder
+        });
+
+        res.status(201).json({ success: true, data: newLesson });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// 📌 Update Lesson
+exports.updateLesson = async (req, res) => {
+    try {
+        const { courseId, lessonId } = req.params;
+        
+        // Verify Course & Ownership
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+        
+        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Permission denied' });
+        }
+
+        const updatedLesson = await Lesson.findOneAndUpdate(
+            { _id: lessonId, course_id: courseId },
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedLesson) return res.status(404).json({ success: false, message: 'Lesson not found' });
+
+        res.json({ success: true, data: updatedLesson });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// 📌 Delete Lesson
+exports.deleteLesson = async (req, res) => {
+    try {
+        const { courseId, lessonId } = req.params;
+
+        const course = await Course.findById(courseId);
+        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Permission denied' });
+        }
+
+        const deletedLesson = await Lesson.findOneAndDelete({ _id: lessonId, course_id: courseId });
+        if (!deletedLesson) return res.status(404).json({ success: false, message: 'Lesson not found' });
+
+        // Optional: Re-order remaining lessons could be done here, 
+        // but typically we handle that via a separate reorder endpoint or just leave gaps.
+        
+        // Also delete associated progress
+        await Progress.deleteMany({ lesson_id: lessonId });
+
+        res.json({ success: true, message: 'Lesson deleted' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// 📌 Reorder Lessons (Optional but highly recommended)
+exports.reorderLessons = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { lessons } = req.body; // Array of { lessonId, order }
+
+        const course = await Course.findById(courseId);
+        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Permission denied' });
+        }
+
+        // Use Promise.all to update concurrently
+        await Promise.all(lessons.map(item => 
+            Lesson.updateOne({ _id: item.lessonId, course_id: courseId }, { order: item.order })
+        ));
+
+        res.json({ success: true, message: 'Lessons reordered successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+

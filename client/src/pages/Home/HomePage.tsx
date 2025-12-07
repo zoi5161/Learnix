@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { courseService, CourseWithCounts, TrendingTag } from '../../services/courseService';
 import PublicNavbar from '../../components/PublicNavbar';
 import './HomePage.css';
+import {getUserFromToken} from '../../utils/authToken';
 
 const HomePage: React.FC = () => {
     const [latestCourses, setLatestCourses] = useState<CourseWithCounts[]>([]);
@@ -10,13 +11,15 @@ const HomePage: React.FC = () => {
     const [trendingTags, setTrendingTags] = useState<TrendingTag[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const user = getUserFromToken();
 
     useEffect(() => {
+        const status = (user?.role === 'admin' || user?.role === 'instructor') ? 'all' : 'published';
         const fetchData = async () => {
             try {
                 setLoading(true);
                 const [coursesRes, categoriesRes, tagsRes] = await Promise.all([
-                    courseService.getCourses({ page: 1, limit: 12, sort: 'createdAt', order: 'desc' }),
+                    courseService.getCourses({ page: 1, limit: 12, sort: 'createdAt', order: 'desc', status }),
                     courseService.getCategories(),
                     courseService.getTrendingTags(10)
                 ]);
@@ -174,11 +177,15 @@ const HomePage: React.FC = () => {
                                             <span>•</span>
                                             <span>{course.lessonsCount || 0} lessons</span>
                                         </div>
-                                        {course.price !== undefined && course.price > 0 && (
+                                        {course.price !== undefined && course.price > 0 ? (
                                             <div className="home-course-price">
                                                 ${course.price.toFixed(2)}
                                             </div>
-                                        )}
+                                        ) :
+                                            <div className="home-course-price">
+                                                $0.00
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             ))}

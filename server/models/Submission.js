@@ -11,6 +11,11 @@ const SubmissionSchema = new mongoose.Schema({
         ref: 'User', 
         required: true 
     },
+    // Thêm field này để index unique hoạt động đúng
+    attempt_number: {
+        type: Number,
+        default: 1
+    },
     answers: [{
         question_id: { 
             type: mongoose.Schema.Types.ObjectId, 
@@ -18,9 +23,9 @@ const SubmissionSchema = new mongoose.Schema({
             required: true 
         },
         answer: { 
-            type: String, 
+            type: String, // Lưu text đáp án hoặc index dạng string
             required: true 
-        }, // Student's answer
+        },
         is_correct: {
             type: Boolean,
             default: false
@@ -32,8 +37,6 @@ const SubmissionSchema = new mongoose.Schema({
     }],
     score: { 
         type: Number, 
-        min: 0, 
-        max: 100,
         default: 0 
     },
     total_points: {
@@ -44,16 +47,8 @@ const SubmissionSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Calculate score before saving
-SubmissionSchema.pre('save', function(next) {
-    if (this.total_points > 0) {
-        this.score = Math.round((this.earned_points / this.total_points) * 100);
-    }
-    next();
-});
-
-// Index for finding user's submissions
-SubmissionSchema.index({ student_id: 1, quiz_id: 1, attempt_number: 1 }, { unique: true });
+// Index: Mỗi user chỉ được làm 1 lần cho mỗi attempt (VD: lần 1, lần 2...)
+SubmissionSchema.index({ student_id: 1, quiz_id: 1, attempt_number: 1 });
 
 const Submission = mongoose.model('Submission', SubmissionSchema);
 module.exports = Submission;

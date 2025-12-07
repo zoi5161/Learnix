@@ -1,257 +1,376 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
 import { studentService } from '../../services/studentService';
 import { enrollmentService } from '../../services/enrollmentService';
+import { quizService } from '../../services/quizService';
 import BaseLayout from '../../layouts/BaseLayout';
 import './StudentDashboard.css';
 
-interface EnrolledCourse {
+// --- Interfaces ---
+
+interface QuizAnswer {
     _id: string;
-    title: string;
-    description: string;
-    level: string;
-    thumbnail?: string;
-    category?: string;
-    tags?: string[];
-    instructor: {
-        _id: string;
-        name: string;
-        email: string;
-    };
-    progress: {
-        completed: number;
-        total: number;
-        percentage: number;
-    };
-    status: 'in-progress' | 'completed';
-    enrolledAt: string;
+    question_id: string;
+    answer: string;
+    is_correct: boolean;
+    points_earned: number;
 }
 
-interface SuggestedCourse {
+interface QuizSubmission {
     _id: string;
-    title: string;
-    description: string;
-    level: string;
-    thumbnail?: string;
-    price?: number;
-    category?: string;
-    tags?: string[];
-    summary?: string;
-    instructor_id: {
+    quiz_id: {
         _id: string;
-        name: string;
-        email: string;
+        title: string;
+        course_id?: string;
     };
-    enrollmentsCount: number;
-    lessonsCount: number;
+    student_id: string;
+    attempt_number: number;
+    answers: QuizAnswer[];
+    score: number;          // Điểm quy đổi (%)
+    total_points: number;   // Tổng điểm gốc
+    passed: boolean;        // Calculated field (nếu API thiếu)
+    createdAt: string;
 }
 
+// --- SUB-COMPONENT: Modal Review ---
+const QuizReviewModal: React.FC<{
+    submission: QuizSubmission | null;
+    onClose: () => void;
+    onRetake: (courseId: string, quizId: string) => void;
+}> = ({ submission, onClose, onRetake }) => {
+    if (!submission) return null;
+
+    // Tính toán tổng điểm đạt được từ answers
+    const totalPointsEarned = submission.answers.reduce((acc, curr) => acc + curr.points_earned, 0);
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <h3 className="modal-title">Review: {submission.quiz_id?.title}</h3>
+                    <button className="modal-close-btn" onClick={onClose}>&times;</button>
+                </div>
+
+                <div className="modal-body">
+                    {/* CARD TỔNG QUAN */}
+                    <div className="review-summary-card">
+                        <div className="review-stats-grid">
+                            <div className="review-stat-item">
+                                <span className="label">Attempt #</span>
+                                <span className="value">{submission.attempt_number}</span>
+                            </div>
+                            <div className="review-stat-item">
+                                <span className="label">Score</span>
+                                <span className={`value ${submission.passed ? 'text-green' : 'text-orange'}`}>
+                                    {submission.score}%
+                                </span>
+                            </div>
+                            <div className="review-stat-item">
+                                <span className="label">Result</span>
+                                <span className={`badge ${submission.passed ? 'badge-pass' : 'badge-fail'}`}>
+                                    {submission.passed ? 'PASSED' : 'FAILED'}
+                                </span>
+                            </div>
+                            <div className="review-stat-item">
+                                <span className="label">Date</span>
+                                <span className="value-sm">{new Date(submission.createdAt).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* DANH SÁCH CHI TIẾT CÂU TRẢ LỜI */}
+                    <h4 className="text-xl font-semibold mb-4 text-gray-800">Detailed Answers</h4>
+
+                    <div className="space-y-4">
+
+                        {submission.answers.map((ans, index) => (
+                            <div
+                                key={ans._id || index}
+                                className={`rounded-lg border p-4 shadow-sm transition-all 
+                ${ans.is_correct
+                                        ? 'border-green-300 bg-green-50 hover:shadow-md'
+                                        : 'border-red-300 bg-red-50 hover:shadow-md'
+                                    }`}
+                            >
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-sm font-medium text-gray-700">
+                                        Question {index + 1}
+                                    </span>
+
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-sm font-semibold 
+                        ${ans.is_correct
+                                                ? 'bg-green-500 text-white'
+                                                : 'bg-red-500 text-white'
+                                            }`}
+                                    >
+                                        {ans.is_correct
+                                            ? `Correct (+${ans.points_earned})`
+                                            : 'Incorrect (0)'}
+                                    </span>
+                                </div>
+
+                                {/* Body */}
+                                <div className="space-y-2">
+                                    <div className="flex gap-2">
+                                        <span className="text-gray-600 min-w-28">Your Answer:</span>
+                                        <span className="font-bold text-gray-900">{ans.answer}</span>
+                                    </div>
+
+                                    {!ans.is_correct && (
+                                        <div className="flex gap-2">
+                                            <span className="text-gray-600 min-w-28">Result:</span>
+                                            <span className="font-semibold text-red-600">0 points</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+
+                        {submission.answers.length === 0 && (
+                            <p className="text-gray-500 text-center py-6">
+                                No detailed answers available for this submission.
+                            </p>
+                        )}
+                    </div>
+
+                </div>
+
+                <div className="modal-footer">
+                    <button className="btn-secondary" onClick={onClose}>Close</button>
+                    <button
+                        className="btn-primary"
+                        onClick={() => {
+                            if (submission.quiz_id.course_id) {
+                                onRetake(submission.quiz_id.course_id, submission.quiz_id._id);
+                            }
+                        }}
+                    >
+                        Retake Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- MAIN COMPONENT ---
 const StudentDashboard: React.FC = () => {
     const navigate = useNavigate();
+    const dataFetchedRef = useRef(false);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [studentData, setStudentData] = useState<{
-        student: {
-            name: string;
-            email: string;
-            budget: number;
-            bonus_credits: number;
-            total_budget: number;
-        };
-        statistics: {
-            totalEnrolled: number;
-            totalCompleted: number;
-            overallProgress: number;
-        };
-        enrolledCourses: EnrolledCourse[];
-        suggestedCourses: SuggestedCourse[];
-    } | null>(null);
+
+    const [studentData, setStudentData] = useState<any>(null);
+    const [quizHistory, setQuizHistory] = useState<QuizSubmission[]>([]);
+    const [selectedSubmission, setSelectedSubmission] = useState<QuizSubmission | null>(null);
+
+    const [quizMetrics, setQuizMetrics] = useState({
+        totalTaken: 0,
+        averageScore: 0,
+        passedCount: 0
+    });
 
     useEffect(() => {
-        // Get fresh user data inside useEffect to avoid dependency issues
         const currentUser = getUserFromToken();
-        
-        // Check user role first
         if (!currentUser || currentUser.role !== 'student') {
             navigate('/login');
             return;
         }
 
-        const fetchDashboard = async () => {
+        if (dataFetchedRef.current) return;
+        dataFetchedRef.current = true;
+
+        const fetchAllData = async () => {
             try {
                 setLoading(true);
                 setError(null);
-                const res = await studentService.getDashboard();
-                console.log('Dashboard API Response:', res);
-                if (res.success) {
-                    console.log('Dashboard Data:', res.data);
-                    setStudentData(res.data);
-                } else {
-                    setError('Failed to load dashboard');
+
+                const [dashboardRes, quizRes] = await Promise.all([
+                    studentService.getDashboard(),
+                    quizService.getMySubmissions()
+                ]);
+
+                // 1. Xử lý Dashboard Data
+                if (dashboardRes.success) {
+                    setStudentData(dashboardRes.data);
+                }
+
+                // 2. Xử lý Quiz Data
+                if (quizRes.success) {
+                    const rawSubmissions = quizRes.data || [];
+
+                    // 🔥 NORMALIZE DATA: Đảm bảo field 'passed' tồn tại
+                    // Nếu API không trả về 'passed', ta tự tính (ví dụ score >= 50)
+                    const normalizedSubmissions: QuizSubmission[] = rawSubmissions.map((item: any) => ({
+                        ...item,
+                        passed: item.passed !== undefined ? item.passed : (item.score >= 50)
+                    }));
+
+                    setQuizHistory(normalizedSubmissions);
+
+                    if (normalizedSubmissions.length > 0) {
+                        const totalTaken = normalizedSubmissions.length;
+                        const totalScore = normalizedSubmissions.reduce((sum, sub) => sum + sub.score, 0);
+                        // 🔥 FIX TYPO: s.s -> s.passed
+                        const passedCount = normalizedSubmissions.filter(s => s.passed).length;
+
+                        setQuizMetrics({
+                            totalTaken,
+                            averageScore: Math.round(totalScore / totalTaken),
+                            passedCount
+                        });
+                    }
                 }
             } catch (err: any) {
-                console.error('Dashboard Error:', err);
-                setError(err.response?.data?.message || err.message || 'Failed to load dashboard');
+                console.error('Dashboard Load Error:', err);
+                setError('Failed to load dashboard data');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchDashboard();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Only run once on mount
+        fetchAllData();
+    }, [navigate]);
 
-    const handleUnenroll = async (courseId: string, courseTitle: string) => {
-        if (!window.confirm(`Are you sure you want to unenroll from "${courseTitle}"?`)) {
-            return;
-        }
-
-        try {
-            const res = await enrollmentService.unenrollCourse(courseId);
-            if (res.success) {
-                // Refresh dashboard
-                const dashboardRes = await studentService.getDashboard();
-                if (dashboardRes.success) {
-                    setStudentData(dashboardRes.data);
-                }
-            } else {
-                alert('Failed to unenroll: ' + res.message);
-            }
-        } catch (err: any) {
-            alert('Error: ' + err.message);
+    const handleRetake = (courseId: string, quizId: string) => {
+        if (window.confirm('Retake quiz?')) {
+            navigate(`/courses/${courseId}/quizzes/${quizId}/take?retake=true`);
         }
     };
 
-    const getLevelColor = (level: string) => {
-        switch (level) {
-            case 'beginner':
-                return '#10b981';
-            case 'intermediate':
-                return '#f59e0b';
-            case 'advanced':
-                return '#ef4444';
-            default:
-                return '#6b7280';
-        }
-    };
+    if (loading) return (
+        <BaseLayout>
+            <div className="student-dashboard-loading">
+                <div className="student-dashboard-spinner"></div>
+                <p>Loading dashboard...</p>
+            </div>
+        </BaseLayout>
+    );
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'completed':
-                return '#10b981';
-            case 'in-progress':
-                return '#667eea';
-            default:
-                return '#6b7280';
-        }
-    };
-
-    if (loading) {
-        return (
-            <BaseLayout>
-                <div className="student-dashboard">
-                    <div className="student-dashboard-loading">
-                        <div className="student-dashboard-spinner"></div>
-                        <p>Loading dashboard...</p>
-                    </div>
-                </div>
-            </BaseLayout>
-        );
-    }
-
-    if (error || !studentData) {
-        return (
-            <BaseLayout>
-                <div className="student-dashboard">
-                    <div className="student-dashboard-error">
-                        <p>Error: {error || 'Failed to load dashboard'}</p>
-                    </div>
-                </div>
-            </BaseLayout>
-        );
-    }
+    if (error || !studentData) return (
+        <BaseLayout>
+            <div className="student-dashboard-error"><p>{error}</p></div>
+        </BaseLayout>
+    );
 
     return (
         <BaseLayout>
             <div className="student-dashboard">
-                {/* Header */}
+                {/* --- HEADER & BUDGET --- */}
                 <div className="student-dashboard-header">
-                    <h1 className="student-dashboard-title">
-                        Welcome, {studentData.student.name}!
-                    </h1>
+                    <h1 className="student-dashboard-title">Welcome, {studentData.student.name}!</h1>
                     <div className="student-dashboard-budget">
                         <div className="student-dashboard-budget-item">
                             <span className="student-dashboard-budget-label">Budget:</span>
-                            <span className="student-dashboard-budget-value">
-                                ${studentData.student.budget.toFixed(2)}
-                            </span>
+                            <span className="student-dashboard-budget-value">${studentData.student.budget.toFixed(2)}</span>
                         </div>
                         <div className="student-dashboard-budget-item">
-                            <span className="student-dashboard-budget-label">Bonus Credits:</span>
-                            <span className="student-dashboard-budget-value student-dashboard-budget-bonus">
-                                ${studentData.student.bonus_credits.toFixed(2)}
-                            </span>
+                            <span className="student-dashboard-budget-label">Bonus:</span>
+                            <span className="student-dashboard-budget-value student-dashboard-budget-bonus">${studentData.student.bonus_credits.toFixed(2)}</span>
                         </div>
                         <div className="student-dashboard-budget-item student-dashboard-budget-total">
                             <span className="student-dashboard-budget-label">Total:</span>
-                            <span className="student-dashboard-budget-value">
-                                ${studentData.student.total_budget.toFixed(2)}
-                            </span>
+                            <span className="student-dashboard-budget-value">${studentData.student.total_budget.toFixed(2)}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Statistics Cards */}
+                {/* --- STATS CARDS --- */}
                 <div className="student-dashboard-stats">
                     <div className="student-dashboard-stat-card">
-                        <h3 className="student-dashboard-stat-title">Courses Enrolled</h3>
+                        <h3 className="student-dashboard-stat-title">Enrolled</h3>
                         <p className="student-dashboard-stat-value">{studentData.statistics.totalEnrolled}</p>
                     </div>
                     <div className="student-dashboard-stat-card">
-                        <h3 className="student-dashboard-stat-title">Courses Completed</h3>
-                        <p className="student-dashboard-stat-value">{studentData.statistics.totalCompleted}</p>
+                        <h3 className="student-dashboard-stat-title">Quizzes</h3>
+                        <p className="student-dashboard-stat-value">{quizMetrics.totalTaken}</p>
                     </div>
                     <div className="student-dashboard-stat-card">
-                        <h3 className="student-dashboard-stat-title">Overall Progress</h3>
-                        <p className="student-dashboard-stat-value">{studentData.statistics.overallProgress}%</p>
+                        <h3 className="student-dashboard-stat-title">Avg Score</h3>
+                        <p className="student-dashboard-stat-value" style={{ color: quizMetrics.averageScore >= 70 ? '#10b981' : '#f59e0b' }}>
+                            {quizMetrics.averageScore}%
+                        </p>
                     </div>
                 </div>
 
-                {/* Enrolled Courses */}
-                <section className="student-dashboard-section">
+                {/* --- RECENT QUIZ ACTIVITY TABLE --- */}
+                {quizHistory.length > 0 && (
+                    <section className="student-dashboard-section">
+                        <h2 className="student-dashboard-section-title">Recent Quiz Activity</h2>
+                        <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quiz</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {quizHistory.slice(0, 5).map((sub) => (
+                                        <tr key={sub._id} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {sub.quiz_id?.title || 'Unknown Quiz'}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-500">
+                                                    {new Date(sub.createdAt).toLocaleDateString()}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`px-2 inline-flex text-xs leading-5 font-bold rounded-full ${sub.passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                    {sub.score}%
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button
+                                                    onClick={() => setSelectedSubmission(sub)}
+                                                    className="text-indigo-600 hover:text-indigo-900 mr-4 font-semibold bg-transparent border-none cursor-pointer"
+                                                >
+                                                    Review
+                                                </button>
+
+                                                <button
+                                                    onClick={() => {
+                                                        if (sub.quiz_id.course_id) handleRetake(sub.quiz_id.course_id, sub.quiz_id._id)
+                                                    }}
+                                                    className="text-orange-600 hover:text-orange-900 font-semibold bg-transparent border-none cursor-pointer"
+                                                >
+                                                    Retake
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                )}
+
+                {/* --- MY COURSES --- */}
+                <section className="student-dashboard-section" style={{ marginTop: 30 }}>
                     <h2 className="student-dashboard-section-title">My Courses</h2>
                     {studentData.enrolledCourses.length > 0 ? (
                         <div className="student-dashboard-courses-grid">
-                            {studentData.enrolledCourses.map((course) => (
+                            {studentData.enrolledCourses.map((course: any) => (
                                 <div key={course._id} className="student-dashboard-course-card">
                                     {course.thumbnail && (
                                         <div className="student-dashboard-course-thumbnail">
                                             <img src={course.thumbnail} alt={course.title} />
                                         </div>
                                     )}
+
                                     <div className="student-dashboard-course-content">
-                                        <div className="student-dashboard-course-header">
-                                            <span
-                                                className="student-dashboard-course-level"
-                                                style={{ backgroundColor: getLevelColor(course.level) }}
-                                            >
-                                                {course.level}
-                                            </span>
-                                            <span
-                                                className="student-dashboard-course-status"
-                                                style={{ backgroundColor: getStatusColor(course.status) }}
-                                            >
-                                                {course.status === 'completed' ? 'Completed' : 'In Progress'}
-                                            </span>
-                                        </div>
                                         <h3 className="student-dashboard-course-title">
                                             <Link to={`/courses/${course._id}`}>{course.title}</Link>
                                         </h3>
-                                        <p className="student-dashboard-course-instructor">
-                                            By {course.instructor && typeof course.instructor === 'object' && course.instructor.name || 'Unknown Instructor'}
-                                        </p>
                                         <div className="student-dashboard-course-progress">
                                             <div className="student-dashboard-course-progress-bar">
                                                 <div
@@ -260,7 +379,7 @@ const StudentDashboard: React.FC = () => {
                                                 ></div>
                                             </div>
                                             <span className="student-dashboard-course-progress-text">
-                                                {course.progress.completed} / {course.progress.total} lessons ({course.progress.percentage}%)
+                                                {course.progress.percentage}% Complete
                                             </span>
                                         </div>
                                         <div className="student-dashboard-course-actions">
@@ -268,82 +387,27 @@ const StudentDashboard: React.FC = () => {
                                                 to={`/courses/${course._id}/learn`}
                                                 className="student-dashboard-course-button student-dashboard-course-button-primary"
                                             >
-                                                Continue Learning
+                                                Continue
                                             </Link>
-                                            <button
-                                                onClick={() => handleUnenroll(course._id, course.title)}
-                                                className="student-dashboard-course-button student-dashboard-course-button-secondary"
-                                            >
-                                                Unenroll
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="student-dashboard-empty">
-                            <p>You haven't enrolled in any courses yet.</p>
-                            <Link to="/courses" className="student-dashboard-empty-link">
-                                Browse Courses
-                            </Link>
-                        </div>
+                        <p className="text-gray-500">You are not enrolled in any courses yet.</p>
                     )}
                 </section>
-
-                {/* Suggested Courses */}
-                {studentData.suggestedCourses.length > 0 && (
-                    <section className="student-dashboard-section">
-                        <h2 className="student-dashboard-section-title">Suggested Courses</h2>
-                        <div className="student-dashboard-courses-grid">
-                            {studentData.suggestedCourses.map((course) => (
-                                <div key={course._id} className="student-dashboard-course-card">
-                                    {course.thumbnail && (
-                                        <div className="student-dashboard-course-thumbnail">
-                                            <img src={course.thumbnail} alt={course.title} />
-                                        </div>
-                                    )}
-                                    <div className="student-dashboard-course-content">
-                                        <div className="student-dashboard-course-header">
-                                            <span
-                                                className="student-dashboard-course-level"
-                                                style={{ backgroundColor: getLevelColor(course.level) }}
-                                            >
-                                                {course.level}
-                                            </span>
-                                        </div>
-                                        <h3 className="student-dashboard-course-title">
-                                            <Link to={`/courses/${course._id}`}>{course.title}</Link>
-                                        </h3>
-                                        <p className="student-dashboard-course-instructor">
-                                            By {course.instructor_id && typeof course.instructor_id === 'object' && course.instructor_id.name || 'Unknown Instructor'}
-                                        </p>
-                                        {course.summary && (
-                                            <p className="student-dashboard-course-summary">{course.summary}</p>
-                                        )}
-                                        <div className="student-dashboard-course-stats">
-                                            <span>{course.enrollmentsCount} students</span>
-                                            <span>•</span>
-                                            <span>{course.lessonsCount} lessons</span>
-                                        </div>
-                                        {course.price !== undefined && course.price > 0 && (
-                                            <div className="student-dashboard-course-price">
-                                                ${course.price.toFixed(2)}
-                                            </div>
-                                        )}
-                                        <Link
-                                            to={`/courses/${course._id}`}
-                                            className="student-dashboard-course-button student-dashboard-course-button-primary"
-                                        >
-                                            View Course
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
             </div>
+
+            {/* --- MODAL --- */}
+            {selectedSubmission && (
+                <QuizReviewModal
+                    submission={selectedSubmission}
+                    onClose={() => setSelectedSubmission(null)}
+                    onRetake={handleRetake}
+                />
+            )}
         </BaseLayout>
     );
 };
