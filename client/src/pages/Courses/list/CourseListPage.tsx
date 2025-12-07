@@ -287,13 +287,15 @@ const CourseListPage: React.FC = () => {
                                                         {/* <p className="course-list-card-instructor">By {typeof course.instructor_id === 'object' && course.instructor_id ? course.instructor_id.name : 'Unknown'}</p> */}
                                                         <div className="course-list-card-stats"><span>{course.enrollmentsCount} students</span> • <span>{course.lessonsCount} lessons</span></div>
                                                         <div className="course-list-card-price">{course.price ? `$${course.price}` : 'Free'}</div>
-                                                        {user?.role !== 'student' &&
-                                                            <div className="card-actions">
-                                                                <button className="btn-edit" onClick={() => openEditModal(course)}>Edit</button>
-                                                                <button className="btn-delete" onClick={() => handleDelete(course._id)}>Delete</button>
-                                                            </div>}
+
                                                     </div>
                                                 </Link>
+                                                {user?.role !== 'student' &&
+                                                    <div className="card-actions">
+                                                        <button className="btn-edit" onClick={() => openEditModal(course)}>Edit</button>
+                                                        <button className="btn-delete" onClick={() => handleDelete(course._id)}>Delete</button>
+                                                    </div>
+                                                }
                                                 {user?.role !== 'student' &&
                                                     <button className="btn-detail" onClick={() => navigate(`/courses/${course._id}/manage-lessons`)}>Manage lesson</button>
                                                 }

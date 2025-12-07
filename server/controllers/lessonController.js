@@ -264,7 +264,7 @@ exports.getLessonsByCourse = async (req, res) => {
         if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
 
         // Check permission (Admin or Owner)
-        if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
+        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && req.user.role !== 'instructor') {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 
@@ -285,7 +285,7 @@ exports.createLesson = async (req, res) => {
         const course = await Course.findById(courseId);
         if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
 
-        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && course.instructor_id.toString() !== req.user.id) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 
@@ -319,7 +319,7 @@ exports.updateLesson = async (req, res) => {
         const course = await Course.findById(courseId);
         if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
         
-        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && course.instructor_id.toString() !== req.user.id) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 
@@ -343,7 +343,7 @@ exports.deleteLesson = async (req, res) => {
         const { courseId, lessonId } = req.params;
 
         const course = await Course.findById(courseId);
-        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && course.instructor_id.toString() !== req.user.id) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 
@@ -369,7 +369,7 @@ exports.reorderLessons = async (req, res) => {
         const { lessons } = req.body; // Array of { lessonId, order }
 
         const course = await Course.findById(courseId);
-        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && course.instructor_id.toString() !== req.user.id) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 

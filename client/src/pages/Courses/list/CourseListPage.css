@@ -409,9 +409,10 @@
 .card-actions {
     display: flex;
     gap: 10px;
-    margin-top: 15px;
+    margin: 15px 10px;
     padding-top: 10px;
     border-top: 1px solid #e5e7eb;
+
 }
 
 .btn-edit, .btn-delete, .btn-detail {
@@ -436,14 +437,14 @@
 }
 
 .btn-detail {
-    background-color: #b38ef2;
-    color: #f7e9e9;
+    background-color: #b7d5f1;
+    color: #4f3535;
 }
 
 
 .btn-edit:hover { background-color: #e5e7eb; }
 .btn-delete:hover { background-color: #fecaca; }
-.btn-detail:hover { background-color: #c8aef4; }
+.btn-detail:hover { background-color: #9ec9f2; }
 
 /* --- Modal Styles --- */
 .modal-overlay {
