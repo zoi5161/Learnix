@@ -99,7 +99,7 @@ const QuizListPage: React.FC = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Quiz Management</h1>
             </div>
-            <Link to="/admin/quizzes/create" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow-sm transition-colors">
+            <Link to="/quizzes/create" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow-sm transition-colors">
               + Create New Quiz
             </Link>
           </div>
@@ -117,86 +117,107 @@ const QuizListPage: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
-            {loading ? (
-              <div className="p-10 text-center text-gray-500">
-                 <div className="animate-spin inline-block w-8 h-8 border-4 border-current border-t-transparent text-blue-600 rounded-full mb-2"></div>
-                 <p>Loading quizzes...</p>
-              </div>
-            ) : filteredItems.length === 0 ? (
-              <div className="p-10 text-center text-gray-500">
-                <span className="text-4xl block mb-2">📭</span>
-                No quizzes found.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quiz Title</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Context</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stats</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4">
-                            <div className="font-bold text-gray-900">{item.title}</div>
-                            {item.createdAt && <div className="text-xs text-gray-400 mt-1">{new Date(item.createdAt).toLocaleDateString()}</div>}
-                        </td>
-                        
-                        <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-                                {item.courseTitle}
-                            </span>
-                        </td>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {filteredItems.map((item) => (
+    <div
+      key={item.id}
+      className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col hover:shadow-md transition"
+    >
+      {/* QUIZ TITLE (2 lines fixed height) */}
+      <h3
+        title={item.title}
+        className="
+          text-lg font-semibold text-gray-900 leading-snug 
+          line-clamp-2
+        "
+        style={{ minHeight: "3.2rem" }}
+      >
+        {item.title}
+      </h3>
 
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {item.lessonTitle ? (
-                                <span className="flex items-center gap-2 text-gray-700">
-                                    <span className="bg-gray-100 p-1 rounded">📄</span> 
-                                    {item.lessonTitle}
-                                </span>
-                            ) : (
-                                <span className="flex items-center gap-2 text-purple-700 font-medium">
-                                    <span className="bg-purple-100 p-1 rounded">🎓</span> 
-                                    Final Exam
-                                </span>
-                            )}
-                        </td>
+      {/* DATE */}
+      {item.createdAt && (
+        <p className="text-xs text-gray-400 mt-1">
+          {new Date(item.createdAt).toLocaleDateString()}
+        </p>
+      )}
 
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div className="flex flex-col gap-1">
-                                <span className="flex items-center gap-1">❓ <strong>{item.questionsCount}</strong> Qs</span>
-                                <span className="flex items-center gap-1">⏱ <strong>{item.timeLimit}</strong> min</span>
-                            </div>
-                        </td>
+      {/* COURSE (only 1 line, always truncate) */}
+      <div className="mt-4">
+        <span
+          className="
+            inline-block px-3 py-1 text-xs font-semibold rounded-full 
+            bg-blue-100 text-blue-800 border border-blue-200 
+            max-w-full truncate
+          "
+          title={item.courseTitle}
+        >
+          {item.courseTitle}
+        </span>
+      </div>
 
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button 
-                            onClick={() => navigate(`/admin/quizzes/${item.id}/edit`)} 
-                            className="text-indigo-600 hover:text-indigo-900 mr-4 font-semibold"
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(item.id)} 
-                            disabled={deletingId === item.id}
-                            className={`${deletingId === item.id ? 'text-gray-400' : 'text-red-600 hover:text-red-900'} font-semibold`}
-                          >
-                            {deletingId === item.id ? 'Deleting...' : 'Delete'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+      {/* CONTEXT */}
+      <div className="mt-4">
+        {item.lessonTitle ? (
+          <div
+            className="
+              flex items-center gap-2 text-gray-700 text-sm 
+              bg-gray-50 border border-gray-200 
+              p-2 rounded-lg overflow-hidden
+            "
+          >
+            <span className="text-lg">📄</span>
+            <span className="truncate">{item.lessonTitle}</span>
           </div>
+        ) : (
+          <div
+            className="
+              flex items-center gap-2 text-purple-700 bg-purple-50 
+              border border-purple-200 p-2 rounded-lg 
+              text-sm font-medium
+            "
+          >
+            <span className="text-lg">🎓</span>
+            <span>Final Exam</span>
+          </div>
+        )}
+      </div>
+
+      {/* STATS */}
+      <div className="mt-4 flex gap-6 text-sm text-gray-600">
+        <div className="flex items-center gap-1">
+          ❓ <strong>{item.questionsCount}</strong> Qs
+        </div>
+        <div className="flex items-center gap-1">
+          ⏱ <strong>{item.timeLimit}</strong> min
+        </div>
+      </div>
+
+      {/* ACTIONS */}
+      <div className="mt-6 flex justify-end gap-4 text-sm font-medium">
+        <button
+          onClick={() => navigate(`/quizzes/${item.id}/edit`)}
+          className="text-indigo-600 hover:text-indigo-900"
+        >
+          Edit
+        </button>
+
+        <button
+          onClick={() => handleDelete(item.id)}
+          disabled={deletingId === item.id}
+          className={`${
+            deletingId === item.id
+              ? "text-gray-400"
+              : "text-red-600 hover:text-red-900"
+          }`}
+        >
+          {deletingId === item.id ? "Deleting..." : "Delete"}
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
         </div>
       </div>
     </BaseLayout>

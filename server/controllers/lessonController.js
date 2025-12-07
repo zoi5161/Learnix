@@ -264,7 +264,7 @@ exports.getLessonsByCourse = async (req, res) => {
         if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
 
         // Check permission (Admin or Owner)
-        if (req.user.role !== 'admin' && course.instructor_id.toString() !== req.user.id) {
+        if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 

@@ -78,7 +78,7 @@ const App: React.FC = () => {
 
                     {/* Courses */}
                     <Route
-                        path="/admin/courses"
+                        path="/courses"
                         element={
                             <PrivateRoute>
                                 <CourseListPage />
@@ -88,7 +88,7 @@ const App: React.FC = () => {
 
                     {/* Quizzes */}
                     <Route
-                        path="/admin/quizzes"
+                        path="/quizzes"
                         element={
                             <PrivateRoute>
                                 <QuizListPage />
@@ -96,7 +96,7 @@ const App: React.FC = () => {
                         }
                     />
                     <Route
-                        path="/admin/quizzes/create"
+                        path="/quizzes/create"
                         element={
                             <PrivateRoute>
                                 <QuizFormPage />
@@ -104,7 +104,7 @@ const App: React.FC = () => {
                         }
                     />
                     <Route
-                        path="/admin/quizzes/:id/edit"
+                        path="/quizzes/:id/edit"
                         element={
                             <PrivateRoute>
                                 <QuizFormPage />

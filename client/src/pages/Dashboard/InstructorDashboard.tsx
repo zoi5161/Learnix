@@ -22,20 +22,49 @@ const InstructorDashboard: React.FC = () => {
                     Hello, {user.name}! Manage your courses and students here.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-lg shadow-md">
-                        <h3 className="text-xl font-semibold text-indigo-700">My Courses</h3>
-                        <p className="text-3xl font-bold mt-2">5 Active</p>
-                        <button className="mt-3 bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700">
-                            Create New Course
-                        </button>
-                    </div>
-                    <div className="bg-pink-50 border border-pink-200 p-4 rounded-lg shadow-md">
-                        <h3 className="text-xl font-semibold text-pink-700">Student Enrollment</h3>
-                        <p className="text-3xl font-bold mt-2">150 Total Students</p>
-                        <button className="mt-3 bg-pink-600 text-white px-3 py-1 rounded text-sm hover:bg-pink-700">
-                            View Analytics
-                        </button>
+                <div className="my-12">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-8">Management</h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        {/* Course */}
+                        <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
+                        transition-all duration-300 hover:-translate-y-1 
+                        bg-gradient-to-br from-white to-gray-50">
+                            <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                                Course Management
+                            </h4>
+                            <p className="text-gray-600 mb-6">
+                                Create, edit, publish or delete courses.
+                            </p>
+                            <button
+                                onClick={() => navigate('/courses')}
+                                className="w-full bg-blue-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-blue-700 hover:shadow-lg 
+                           transition">
+                                Manage Courses
+                            </button>
+                        </div>
+
+                        {/* Quiz */}
+                        <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
+                        transition-all duration-300 hover:-translate-y-1 
+                        bg-gradient-to-br from-white to-gray-50">
+                            <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                                Quiz Management
+                            </h4>
+                            <p className="text-gray-600 mb-6">
+                                Create quizzes and add manual MCQ questions.
+                            </p>
+                            <button
+                                onClick={() => navigate('/quizzes')}
+                                className="w-full bg-green-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-green-700 hover:shadow-lg 
+                           transition">
+                                Manage Quizzes
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>

@@ -160,7 +160,7 @@ const QuizFormPage: React.FC = () => {
                 // @ts-ignore
                 await quizService.createQuiz(payload);
             }
-            navigate('/admin/quizzes');
+            navigate('/quizzes');
         } catch (error: any) {
             alert('Error: ' + (error.response?.data?.message || error.message));
         } finally {
@@ -173,7 +173,7 @@ const QuizFormPage: React.FC = () => {
             <div className="max-w-5xl mx-auto p-6 bg-gray-50 min-h-screen">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">{id ? 'Edit Quiz' : 'Create New Quiz'}</h2>
-                    <button type="button" onClick={() => navigate('/admin/quizzes')} className="text-gray-600 hover:text-gray-900">Cancel</button>
+                    <button type="button" onClick={() => navigate('/quizzes')} className="text-gray-600 hover:text-gray-900">Cancel</button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -182,7 +182,7 @@ const QuizFormPage: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium mb-1">Title</label>
-                                <input required className="w-full border rounded px-3 py-2" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+                                <input required className="w-full border rounded px-3 py-2" placeholder="Enter quiz title e.g. Final Exam ReactJS" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
                             </div>
 
                             <div>
@@ -246,9 +246,10 @@ const QuizFormPage: React.FC = () => {
                                             />
                                             <input
                                                 className="flex-1 bg-transparent border-none focus:ring-0"
-                                                value={opt || '...'}
+                                                value={opt}
                                                 onChange={e => handleOptionChange(idx, optIdx, e.target.value)}
                                                 required
+                                                placeholder={`Option ${optIdx + 1}`}
                                             />
                                         </div>
                                     ))}

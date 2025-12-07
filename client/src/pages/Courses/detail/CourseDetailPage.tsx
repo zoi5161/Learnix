@@ -179,7 +179,7 @@ const CourseDetailPage: React.FC = () => {
                             {isManageQuiz && (
                                 <div className="instructor-toolbar">
                                     <span className="instructor-label">Instructor Tools:</span>
-                                    <button onClick={() => navigate(`/admin/quizzes`)} className="btn-manage">
+                                    <button onClick={() => navigate(`/quizzes`)} className="btn-manage">
                                         <span className="btn-manage-icon">📝</span> Manage Quizzes
                                     </button>
                                     {/* Bạn có thể thêm nút Manage Lessons ở đây sau này */}

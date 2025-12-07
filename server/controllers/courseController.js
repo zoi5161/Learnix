@@ -102,7 +102,7 @@ exports.getCourseById = async (req, res) => {
 
         if (!course || course.status !== 'published') {
             // Cho phép Admin/Instructor xem course của chính mình dù chưa publish (Draft)
-            const isOwnerOrAdmin = req.user && (req.user.role === 'admin' || req.user._id.toString() === course?.instructor_id?._id.toString());
+            const isOwnerOrAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'instructor' || req.user._id.toString() === course?.instructor_id?._id.toString());
 
             if (!course || (!isOwnerOrAdmin && course.status !== 'published')) {
                 return res.status(404).json({ success: false, message: 'Course not found' });

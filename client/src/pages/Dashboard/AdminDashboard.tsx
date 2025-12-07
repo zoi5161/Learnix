@@ -28,37 +28,52 @@ const AdminDashboard: React.FC = () => {
                     Welcome, {user.name}! Manage courses, lessons, quizzes, and track student performance.
                 </p>
                 {/* Management Section */}
-                <div className="my-10">
-                    <h3 className="text-2xl font-semibold text-gray-800 mb-4">Management</h3>
+                <div className="my-12">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-8">Management</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-                        <div className="bg-gray-50 border p-6 rounded-lg shadow-sm flex flex-col h-full">
-                            <h4 className="text-xl font-semibold text-gray-900 mb-2">Course Management</h4>
-                            <p className="text-gray-600 mb-4 flex-grow">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        {/* Course */}
+                        <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
+                        transition-all duration-300 hover:-translate-y-1 
+                        bg-gradient-to-br from-white to-gray-50">
+                            <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                                Course Management
+                            </h4>
+                            <p className="text-gray-600 mb-6">
                                 Create, edit, publish or delete courses.
                             </p>
                             <button
-                                onClick={() => navigate('/admin/courses')}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                onClick={() => navigate('/courses')}
+                                className="w-full bg-blue-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-blue-700 hover:shadow-lg 
+                           transition">
                                 Manage Courses
                             </button>
                         </div>
 
-
-                        <div className="bg-gray-50 border p-6 rounded-lg shadow-sm flex flex-col h-full">
-                            <h4 className="text-xl font-semibold text-gray-900 mb-2">Quiz Management</h4>
-                            <p className="text-gray-600 mb-4 flex-grow">
+                        {/* Quiz */}
+                        <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
+                        transition-all duration-300 hover:-translate-y-1 
+                        bg-gradient-to-br from-white to-gray-50">
+                            <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                                Quiz Management
+                            </h4>
+                            <p className="text-gray-600 mb-6">
                                 Create quizzes and add manual MCQ questions.
                             </p>
                             <button
-                                onClick={() => navigate('/admin/quizzes')}
-                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                                onClick={() => navigate('/quizzes')}
+                                className="w-full bg-green-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-green-700 hover:shadow-lg 
+                           transition">
                                 Manage Quizzes
                             </button>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
+
 
                 {/* Stats */}
                 <div className="stats-row">
