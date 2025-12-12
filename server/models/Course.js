@@ -25,8 +25,8 @@ const CourseSchema = new mongoose.Schema({
     },
     status: { 
         type: String, 
-        enum: ['draft', 'published', 'archived'], 
-        default: 'published' 
+        enum: ['draft', 'pending', 'approved', 'published', 'rejected', 'hidden'], 
+        default: 'draft' 
     },
     thumbnail: {
         type: String, // URL to course image

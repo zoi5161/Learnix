@@ -50,6 +50,11 @@ router
     .put(restrictTo(['instructor', 'admin']), updateCourse)
     .delete(restrictTo(['instructor', 'admin']), deleteCourse);
 
+// --- Status Management ---
+const { updateCourseStatus } = require('../controllers/courseController');
+router.patch('/:id/status', restrictTo(['instructor', 'admin']), updateCourseStatus);
+
+
 // --- Publish Management ---
 router.patch('/:id/publish', restrictTo(['instructor', 'admin']), togglePublish);
 router.patch('/:id/unpublish', restrictTo(['instructor', 'admin']), togglePublish);

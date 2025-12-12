@@ -4,7 +4,7 @@ const Lesson = require('../models/Lesson');
 const Enrollment = require('../models/Enrollment');
 
 // ============================================================
-// 🔓 PUBLIC OPERATIONS (READ ONLY)
+// PUBLIC OPERATIONS (READ ONLY)
 // ============================================================
 
 // Get all published courses (public)
@@ -221,10 +221,10 @@ exports.searchCourses = async (req, res) => {
 };
 
 // ============================================================
-// 🔥 ADMIN / INSTRUCTOR CRUD OPERATIONS
+// ADMIN / INSTRUCTOR CRUD OPERATIONS
 // ============================================================
 
-// 📌 CREATE COURSE
+// CREATE COURSE
 exports.createCourse = async (req, res) => {
     try {
         // Nếu là Instructor tạo, tự động gán instructor_id là chính họ
@@ -243,7 +243,7 @@ exports.createCourse = async (req, res) => {
     }
 };
 
-// 📌 UPDATE COURSE
+// UPDATE COURSE
 exports.updateCourse = async (req, res) => {
     try {
         let course = await Course.findById(req.params.id);
@@ -271,7 +271,7 @@ exports.updateCourse = async (req, res) => {
     }
 };
 
-// 📌 DELETE COURSE
+// DELETE COURSE
 exports.deleteCourse = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
@@ -296,7 +296,7 @@ exports.deleteCourse = async (req, res) => {
     }
 };
 
-// 📌 PUBLISH / UNPUBLISH (Toggle Status)
+// PUBLISH / UNPUBLISH (Toggle Status)
 exports.togglePublish = async (req, res) => {
     try {
         const isPublish = req.path.includes('publish') && !req.path.includes('unpublish');
@@ -325,7 +325,7 @@ exports.togglePublish = async (req, res) => {
     }
 };
 
-// 📌 ASSIGN INSTRUCTOR (Admin only)
+// ASSIGN INSTRUCTOR (Admin only)
 exports.assignInstructor = async (req, res) => {
     try {
         const { instructorId } = req.body;
@@ -350,7 +350,7 @@ exports.assignInstructor = async (req, res) => {
     }
 };
 
-// 📌 MANAGE TAGS (Add/Remove)
+// MANAGE TAGS (Add/Remove)
 exports.manageTags = async (req, res) => {
     try {
         const { tag } = req.body;
@@ -376,6 +376,37 @@ exports.manageTags = async (req, res) => {
             success: true,
             data: course
         });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Update course status
+exports.updateCourseStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const allowedStatuses = ['draft', 'pending', 'approved', 'published', 'rejected', 'hidden'];
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ success: false, message: 'Invalid status' });
+        }
+
+        const course = await Course.findById(id);
+        if (!course) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        // Only admin or course owner (instructor) can update status
+        if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
+            return res.status(403).json({ success: false, message: 'Permission denied' });
+        }
+        if (req.user.role === 'instructor' && course.instructor_id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: 'Not your course' });
+        }
+
+        course.status = status;
+        await course.save();
+        res.json({ success: true, message: 'Course status updated', data: course });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
