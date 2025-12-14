@@ -207,4 +207,12 @@ export const courseService = {
     const response = await api.patch(`/courses/${courseId}/category`, { category });
     return response.data;
   },
+
+  // ==========================
+  // 📌 UPDATE COURSE STATUS
+  // ==========================
+  updateCourseStatus: async (id: string, status: string): Promise<any> => {
+    const response = await api.patch(`/courses/${id}/status`, { status });
+    return response.data;
+  },
 };

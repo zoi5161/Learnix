@@ -20,8 +20,16 @@ const userService = {
     },
 
     getAllUsers: async (): Promise<User[]> => {
-        const { data } = await api.get<ApiResponse<User[]>>('/user');
-        return data.data!;
+        const { data } = await api.get<User[]>('/user/all');
+        return data;
+    },
+
+    updateUserRole: async (userId: string, role: string): Promise<void> => {
+        await api.put('/user/role', { userId, role });
+    },
+
+    setUserLock: async (userId: string, isLocked: boolean): Promise<void> => {
+        await api.put('/user/lock', { userId, isLocked });
     },
 };
 

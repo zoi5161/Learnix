@@ -4,6 +4,7 @@ export interface User {
   email: string;
   role: 'student' | 'instructor' | 'admin';
   googleId?: string;
+  isLocked?: boolean;
 }
 
 export interface LoginCredentials {

@@ -1,6 +1,9 @@
 const User = require('../models/User');
+const Course = require('../models/Course');
+const Enrollment = require('../models/Enrollment');
 
-const getUserProfile = async (req, res) => {
+
+exports.getUserProfile = async (req, res) => {
     const user = {
         _id: req.user._id,
         name: req.user.name,
@@ -11,12 +14,12 @@ const getUserProfile = async (req, res) => {
     res.json(user);
 };
 
-const updateUserProfile = async (req, res) => {
+exports.updateUserProfile = async (req, res) => {
     res.json({ message: 'Profile updated successfully (placeholder)' });
 };
 
 // ADMIN: Get all users
-const getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find({}, '-password_hash');
         res.json(users);
@@ -26,7 +29,7 @@ const getAllUsers = async (req, res) => {
 };
 
 // ADMIN: Update user role
-const updateUserRole = async (req, res) => {
+exports.updateUserRole = async (req, res) => {
     const { userId, role } = req.body;
     if (!userId || !role) return res.status(400).json({ message: 'Missing userId or role' });
     try {
@@ -41,7 +44,7 @@ const updateUserRole = async (req, res) => {
 };
 
 // ADMIN: Lock/unlock user
-const setUserLock = async (req, res) => {
+exports.setUserLock = async (req, res) => {
     const { userId, isLocked } = req.body;
     if (typeof isLocked !== 'boolean' || !userId) return res.status(400).json({ message: 'Missing userId or isLocked' });
     try {
@@ -55,4 +58,20 @@ const setUserLock = async (req, res) => {
     }
 };
 
-module.exports = { getUserProfile, updateUserProfile, getAllUsers, updateUserRole, setUserLock };
+// ADMIN: System statistics
+exports.getSystemStats = async (req, res) => {
+    try {
+        const [userCount, courseCount, enrollmentCount] = await Promise.all([
+            User.countDocuments(),
+            Course.countDocuments(),
+            Enrollment.countDocuments()
+        ]);
+        res.json({
+            users: userCount,
+            courses: courseCount,
+            enrollments: enrollmentCount
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};

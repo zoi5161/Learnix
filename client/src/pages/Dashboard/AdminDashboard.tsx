@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
 import './AdminDashboard.css'
+
+import axios from 'axios';
 
 const AdminDashboard: React.FC = () => {
     const user = getUserFromToken();
@@ -15,6 +17,31 @@ const AdminDashboard: React.FC = () => {
     }, [user, navigate]);
 
     if (!user || user.role !== 'admin') return null;
+
+    // System Statistics state
+    const [stats, setStats] = useState<{ users: number; courses: number; enrollments: number } | null>(null);
+    const [statsLoading, setStatsLoading] = useState(true);
+    const [statsError, setStatsError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            setStatsLoading(true);
+            setStatsError(null);
+            try {
+                const token = localStorage.getItem('accessToken');
+                const apiBase = import.meta.env.VITE_API_BASE_URL || '';
+                const res = await axios.get(`${apiBase}/user/stats`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setStats(res.data);
+            } catch {
+                setStatsError('Failed to fetch statistics');
+            } finally {
+                setStatsLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
 
     return (
         <BaseLayout>
@@ -32,6 +59,26 @@ const AdminDashboard: React.FC = () => {
                     <h3 className="text-3xl font-bold text-gray-900 mb-8">Management</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+
+                        {/* User Management */}
+                        <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
+                        transition-all duration-300 hover:-translate-y-1 
+                        bg-gradient-to-br from-white to-gray-50">
+                            <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                                User Management
+                            </h4>
+                            <p className="text-gray-600 mb-6">
+                                View, assign roles, lock/unlock user accounts.
+                            </p>
+                            <button
+                                onClick={() => navigate('/admin/users')}
+                                className="w-full bg-purple-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-purple-700 hover:shadow-lg 
+                           transition">
+                                Manage Users
+                            </button>
+                        </div>
 
                         {/* Course */}
                         <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
@@ -75,25 +122,29 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
 
-                {/* Stats */}
-                <div className="stats-row">
-                    <div className="stat-card">
-                        <div className="stat-label">Total Courses</div>
-                        <div className="stat-value">45</div>
-                        <div className="stat-sub">+5% this month</div>
-                    </div>
-
-                    <div className="stat-card">
-                        <div className="stat-label">Total Lessons</div>
-                        <div className="stat-value">320</div>
-                        <div className="stat-sub">+18 new lessons</div>
-                    </div>
-
-                    <div className="stat-card">
-                        <div className="stat-label">Student Avg Quiz Score</div>
-                        <div className="stat-value">82%</div>
-                        <div className="stat-sub">Stable from last week</div>
-                    </div>
+                {/* System Statistics */}
+                <div className="my-8">
+                    <h3 className="text-2xl font-bold mb-4">System Statistics</h3>
+                    {statsLoading ? (
+                        <div>Loading...</div>
+                    ) : statsError ? (
+                        <div className="text-red-500">{statsError}</div>
+                    ) : stats ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-blue-100 rounded-lg p-6 text-center">
+                                <div className="text-4xl font-bold">{stats.users}</div>
+                                <div className="text-lg mt-2">Total Users</div>
+                            </div>
+                            <div className="bg-green-100 rounded-lg p-6 text-center">
+                                <div className="text-4xl font-bold">{stats.courses}</div>
+                                <div className="text-lg mt-2">Total Courses</div>
+                            </div>
+                            <div className="bg-yellow-100 rounded-lg p-6 text-center">
+                                <div className="text-4xl font-bold">{stats.enrollments}</div>
+                                <div className="text-lg mt-2">Total Enrollments</div>
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
 
 
@@ -118,6 +169,26 @@ const AdminDashboard: React.FC = () => {
                         </ul>
                     </div>
                 </div>
+
+
+                {/* Course Moderation */}
+                        <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
+                        transition-all duration-300 hover:-translate-y-1 
+                        bg-gradient-to-br from-white to-gray-50">
+                            <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                                Course Moderation
+                            </h4>
+                            <p className="text-gray-600 mb-6">
+                                Review and change course status (draft, pending, approved, etc).
+                            </p>
+                            <button
+                                onClick={() => navigate('/admin/courses/moderation')}
+                                className="w-full bg-orange-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-orange-700 hover:shadow-lg 
+                           transition">
+                                Moderate Courses
+                            </button>
+                        </div>
 
             </div>
         </BaseLayout>

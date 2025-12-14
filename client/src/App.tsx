@@ -17,6 +17,9 @@ import LessonManager from './pages/Courses/LessonViewer/LessonManager';
 import QuizListPage from './pages/Quizzes/QuizListPage';
 import QuizFormPage from './pages/Quizzes/QuizFormPage';
 import StudentQuizPage from './pages/Quizzes/StudentQuizPage'
+import UserManagementPage from './pages/Dashboard/UserManagementPage';
+import CourseModerationPage from './pages/Dashboard/CourseModerationPage';
+import SystemStatistics from './pages/Dashboard/SystemStatistics';
 
 const App: React.FC = () => {
     return (
@@ -75,6 +78,36 @@ const App: React.FC = () => {
                     {/* ================================
                        ADMIN ROUTES (Protected)
                     ================================= */}
+
+                    {/* User Management */}
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <PrivateRoute>
+                                <UserManagementPage />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* Course Moderation (Admin) */}
+                    <Route
+                        path="/admin/courses/moderation"
+                        element={
+                            <PrivateRoute>
+                                <CourseModerationPage />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* System Statistics (Admin) */}
+                    <Route
+                        path="/admin/stats"
+                        element={
+                            <PrivateRoute>
+                                <SystemStatistics />
+                            </PrivateRoute>
+                        }
+                    />
 
                     {/* Courses */}
                     <Route

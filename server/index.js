@@ -22,7 +22,7 @@ console.log("process.env.CLIENT_URL", process.env.CLIENT_URL);
 
 const corsOptions = {
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'], // Thêm Authorization header
 };
