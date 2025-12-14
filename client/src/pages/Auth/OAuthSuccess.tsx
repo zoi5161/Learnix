@@ -1,5 +1,3 @@
-// client/src/pages/Auth/OAuthSuccess.tsx
-
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setAccessToken, setRefreshToken } from '../../utils/authToken';
