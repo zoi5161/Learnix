@@ -252,8 +252,9 @@ exports.updateCourse = async (req, res) => {
             return res.status(404).json({ success: false, message: 'No course found with that ID' });
         }
 
-        // Check quyền: Chỉ Admin hoặc Instructor sở hữu khóa học mới được sửa
-        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && course.instructor_id.toString() !== req.user._id.toString()) {
+        // Only admin or the owning instructor can edit
+        const isOwner = course.instructor_id?.toString() === req.user._id.toString();
+        if (req.user.role !== 'admin' && !isOwner) {
             return res.status(403).json({ success: false, message: 'You do not have permission to edit this course' });
         }
 
@@ -279,8 +280,9 @@ exports.deleteCourse = async (req, res) => {
             return res.status(404).json({ success: false, message: 'No course found with that ID' });
         }
 
-        // Check quyền
-        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && course.instructor_id.toString() !== req.user._id.toString()) {
+        // Only admin or the owning instructor can delete
+        const isOwner = course.instructor_id?.toString() === req.user._id.toString();
+        if (req.user.role !== 'admin' && !isOwner) {
             return res.status(403).json({ success: false, message: 'You do not have permission to delete this course' });
         }
 
@@ -306,7 +308,8 @@ exports.togglePublish = async (req, res) => {
         const courseCheck = await Course.findById(req.params.id);
         if (!courseCheck) return res.status(404).json({ success: false, message: 'No course found' });
 
-        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && courseCheck.instructor_id.toString() !== req.user._id.toString()) {
+        const isOwner = courseCheck.instructor_id?.toString() === req.user._id.toString();
+        if (req.user.role !== 'admin' && !isOwner) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 
@@ -359,7 +362,8 @@ exports.manageTags = async (req, res) => {
         const courseCheck = await Course.findById(req.params.id);
         if (!courseCheck) return res.status(404).json({ success: false, message: 'No course found' });
 
-        if ((req.user.role !== 'admin' && req.user.role !== 'instructor' ) && courseCheck.instructor_id.toString() !== req.user._id.toString()) {
+        const isOwner = courseCheck.instructor_id?.toString() === req.user._id.toString();
+        if (req.user.role !== 'admin' && !isOwner) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
 

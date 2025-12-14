@@ -140,6 +140,23 @@ const CourseListPage: React.FC = () => {
     };
 
     // CRUD Handlers
+    // Determine if current user can manage a course
+    const isCourseOwner = (course: CourseWithCounts) => {
+        if (!user) return false;
+        if (user.role === 'admin') return true;
+        if (user.role !== 'instructor') return false;
+
+        const instructorId = typeof course.instructor_id === 'object' && course.instructor_id !== null
+            ? (course.instructor_id as any)._id || (course.instructor_id as any).id
+            : course.instructor_id;
+
+        if (!instructorId) return false;
+        const currentUserId = (user as any).userId || (user as any)._id || (user as any).id;
+        if (!currentUserId) return false;
+
+        return instructorId.toString() === currentUserId.toString();
+    };
+
     // CRUD Handlers
     const openCreateModal = () => {
         setFormData(INITIAL_FORM_DATA);
@@ -149,6 +166,10 @@ const CourseListPage: React.FC = () => {
     };
 
     const openEditModal = (course: CourseWithCounts) => {
+        if (!isCourseOwner(course)) {
+            alert('Only the course owner can edit this course.');
+            return;
+        }
         setFormData({
             title: course.title || '',
             description: course.description || '',
@@ -194,10 +215,14 @@ const CourseListPage: React.FC = () => {
         } finally { setCrudLoading(false); }
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (course: CourseWithCounts) => {
+        if (!isCourseOwner(course)) {
+            alert('Only the course owner can delete this course.');
+            return;
+        }
         if (window.confirm('Delete this course?')) {
             try {
-                await courseService.deleteCourse(id);
+                await courseService.deleteCourse(course._id);
                 // Refresh lại list
                 setCurrentPage(1);
                 fetchCourses(1, false);
@@ -290,13 +315,13 @@ const CourseListPage: React.FC = () => {
 
                                                     </div>
                                                 </Link>
-                                                {user?.role !== 'student' &&
+                                                {user && isCourseOwner(course) &&
                                                     <div className="card-actions">
                                                         <button className="btn-edit" onClick={() => openEditModal(course)}>Edit</button>
-                                                        <button className="btn-delete" onClick={() => handleDelete(course._id)}>Delete</button>
+                                                        <button className="btn-delete" onClick={() => handleDelete(course)}>Delete</button>
                                                     </div>
                                                 }
-                                                {user?.role !== 'student' &&
+                                                {user && isCourseOwner(course) &&
                                                     <button className="btn-detail" onClick={() => navigate(`/courses/${course._id}/manage-lessons`)}>Manage lesson</button>
                                                 }
                                             </div>

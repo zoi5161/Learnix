@@ -129,7 +129,17 @@ const CourseDetailPage: React.FC = () => {
         }
     };
 
-    const isManageQuiz = user?.role === 'instructor' || user?.role === 'admin';
+    const isOwnerOrAdmin = (() => {
+        if (!user) return false;
+        if (user.role === 'admin') return true;
+        if (user.role !== 'instructor') return false;
+
+        const instructorId = typeof course?.instructor_id === 'object' && course?.instructor_id !== null
+            ? (course.instructor_id as any)._id || (course.instructor_id as any).id
+            : course?.instructor_id;
+        const currentUserId = (user as any)._id || (user as any).id;
+        return instructorId?.toString() === currentUserId?.toString();
+    })();
 
     if (loading) return (
         <div className="course-detail-page">
@@ -176,7 +186,7 @@ const CourseDetailPage: React.FC = () => {
                             <p className="course-detail-instructor">By {instructorName}</p>
                             
                             {/* 🔥 UPDATE: Instructor Toolbar đẹp hơn */}
-                            {isManageQuiz && (
+                            {isOwnerOrAdmin && (
                                 <div className="instructor-toolbar">
                                     <span className="instructor-label">Instructor Tools:</span>
                                     <button onClick={() => navigate(`/quizzes`)} className="btn-manage">
