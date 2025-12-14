@@ -49,7 +49,7 @@ const AdminDashboard: React.FC = () => {
 
                 {/* Header */}
                 <h1 className="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">
-                    Admin Instructor Dashboard
+                    Admin Dashboard
                 </h1>
                 <p className="text-lg text-gray-600 mb-6">
                     Welcome, {user.name}! Manage courses, lessons, quizzes, and track student performance.
