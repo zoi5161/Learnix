@@ -116,6 +116,13 @@ const AdminDashboard: React.FC = () => {
                            transition">
                                 Manage Quizzes
                             </button>
+                            <button
+                                onClick={() => navigate('/quizzes/ai-draft')}
+                                className="mt-3 w-full bg-purple-600 text-white font-medium px-5 py-2.5 
+                           rounded-xl shadow hover:bg-purple-700 hover:shadow-lg 
+                           transition">
+                                AI Quiz Generator (Draft)
+                            </button>
                         </div>
 
                     </div>

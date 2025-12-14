@@ -20,6 +20,7 @@ import StudentQuizPage from './pages/Quizzes/StudentQuizPage'
 import UserManagementPage from './pages/Dashboard/UserManagementPage';
 import CourseModerationPage from './pages/Dashboard/CourseModerationPage';
 import SystemStatistics from './pages/Dashboard/SystemStatistics';
+import AIQuizDraftPage from './pages/Quizzes/AIQuizDraftPage';
 
 const App: React.FC = () => {
     return (
@@ -105,6 +106,16 @@ const App: React.FC = () => {
                         element={
                             <PrivateRoute>
                                 <SystemStatistics />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* AI Quiz Draft (Instructor/Admin) */}
+                    <Route
+                        path="/quizzes/ai-draft"
+                        element={
+                            <PrivateRoute>
+                                <AIQuizDraftPage />
                             </PrivateRoute>
                         }
                     />
