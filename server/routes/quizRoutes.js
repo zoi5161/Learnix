@@ -29,3 +29,5 @@ router.put('/:id', protect, restrictTo(['instructor', 'admin']), quizController.
 router.delete('/:id', protect, restrictTo(['instructor', 'admin']), quizController.deleteQuiz);
 module.exports = router;
 
+// Generate MCQ from lesson text (AI)
+router.post('/generate-mcq', protect, restrictTo(['instructor', 'admin']), quizController.generateMCQFromText);

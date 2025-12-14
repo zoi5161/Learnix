@@ -19,5 +19,8 @@
         "lint-staged": "^16.2.7",
         "prettier": "^3.6.2",
         "supertest": "^7.1.4"
+    },
+    "dependencies": {
+        "openai": "^6.10.0"
     }
 }

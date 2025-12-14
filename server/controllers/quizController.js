@@ -1,11 +1,12 @@
 const Quiz = require('../models/Quiz');
 const Question = require('../models/Question');
-const Submission = require('../models/Submission'); // Optional: Nếu bạn muốn lưu lịch sử
+const Submission = require('../models/Submission');
 const Course = require('../models/Course');
 const Lesson = require('../models/Lesson');
-// ==============================================
-// 1. GET ALL QUIZZES (Filter by course_id)
-// ==============================================
+
+// Gemini (Google Generative AI)
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // ==============================================
 // 1. GET ALL QUIZZES (Filter by course_id)
@@ -370,5 +371,39 @@ exports.getMySubmissions = async (req, res) => {
     } catch (error) {
         console.error("Get My Submissions Error:", error);
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// ==============================================
+// Generate MCQ from lesson text (AI draft)
+// ==============================================
+exports.generateMCQFromText = async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text || typeof text !== 'string' || text.length < 20) {
+            return res.status(400).json({ success: false, message: 'Missing or invalid lesson text.' });
+        }
+
+        // Prompt cho Gemini
+        const prompt = `Given the following lesson text, generate 5-10 multiple choice questions (MCQ) in JSON array format. Each MCQ should have: question (string), options (array of 4 strings), answer (index of correct option, 0-3). Only return the JSON array, no explanation.\n\nLesson text:\n${text}`;
+
+        const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const aiText = response.text().trim();
+
+        let mcqs = [];
+        try {
+            // Remove markdown code fences like ```json and ```
+            const cleanText = aiText.replace(/```json|```/g, '').trim();
+            mcqs = JSON.parse(cleanText);
+        } catch (e) {
+            // Nếu AI trả về không đúng JSON, trả về lỗi
+            return res.status(500).json({ success: false, message: 'AI response is not valid JSON', aiText });
+        }
+        res.json({ success: true, mcqs });
+    } catch (error) {
+        console.error('Generate MCQ Error:', error);
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
 };
