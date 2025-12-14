@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import quizService from '../../services/quizService';
+import api from '../../services/axiosInstance';
 import { Link, useNavigate } from 'react-router-dom';
+import { getUserFromToken } from '../../utils/authToken';
 
 type QuizItem = {
   id: string;
@@ -11,6 +13,14 @@ type QuizItem = {
   questionsCount: number;
   timeLimit: number;
   createdAt?: string;
+  instructorId?: string;
+  courseId?: string;
+};
+
+type CourseItem = {
+  _id: string;
+  title: string;
+  instructor_id?: string | { _id?: string; id?: string };
 };
 
 const QuizListPage: React.FC = () => {
@@ -19,6 +29,9 @@ const QuizListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [courseOwners, setCourseOwners] = useState<Record<string, string>>({});
+
+  const user = getUserFromToken();
 
   const navigate = useNavigate();
 
@@ -40,16 +53,51 @@ const QuizListPage: React.FC = () => {
   const loadQuizzes = async () => {
     setLoading(true);
     try {
-      // Gọi API
-      const res = await quizService.getQuizzes({ limit: 100 });
-      const quizzes = res?.data?.quizzes ?? [];
+      // Gọi API: lấy quiz + course để biết instructor
+      const [quizRes, courseRes] = await Promise.all([
+        quizService.getQuizzes({ limit: 200 }),
+        api.get('/courses', { params: { status: 'all', limit: 500 } })
+      ]);
+
+      const quizzes = quizRes?.data?.data?.quizzes
+        ?? quizRes?.data?.quizzes
+        ?? quizRes?.quizzes
+        ?? [];
+      const courses: CourseItem[] = courseRes?.data?.data?.courses ?? [];
+
+      const ownerMap: Record<string, string> = {};
+      const ownedCourseIds = new Set<string>();
+      courses.forEach((c) => {
+        const instructorRaw = typeof c.instructor_id === 'object'
+          ? c.instructor_id?._id || c.instructor_id?.id
+          : c.instructor_id;
+        const instructor = instructorRaw ? String(instructorRaw) : '';
+        const courseKey = c._id ? String(c._id) : '';
+        if (courseKey && instructor) {
+          ownerMap[courseKey] = instructor;
+          if (user?.role === 'instructor' && instructor === user.userId) {
+            ownedCourseIds.add(courseKey);
+          }
+        }
+      });
+      setCourseOwners(ownerMap);
 
       // 🛠 FIX: Mapping dữ liệu an toàn
       const formatted: QuizItem[] = quizzes.map((q: any) => {
         // Kiểm tra an toàn: course_id có phải object (đã populate) không?
-        const courseTitle = (q.course_id && typeof q.course_id === 'object') 
-            ? q.course_id.title 
-            : 'Unknown Course';
+        const courseObj = q.course_id && typeof q.course_id === 'object' ? q.course_id : null;
+        const courseTitle = courseObj ? courseObj.title : 'Unknown Course';
+
+        const courseIdRaw = courseObj ? courseObj._id : q.course_id;
+        const courseKey = courseIdRaw ? String(courseIdRaw) : '';
+        const instructorIdFromCourse = courseKey ? ownerMap[courseKey] : undefined;
+
+        // Lấy instructorId từ course đã populate (nếu có)
+        const instructorId = courseObj
+          ? (typeof courseObj.instructor_id === 'object'
+            ? String(courseObj.instructor_id?._id || courseObj.instructor_id?.id || '')
+            : String(courseObj.instructor_id || ''))
+          : instructorIdFromCourse;
 
         // Kiểm tra an toàn: lesson_id có phải object không?
         const lessonTitle = (q.lesson_id && typeof q.lesson_id === 'object') 
@@ -63,12 +111,18 @@ const QuizListPage: React.FC = () => {
             lessonTitle: lessonTitle,
             questionsCount: q.questionsCount || 0, // Backend mới đã trả về field này
             timeLimit: q.time_limit || 0,
-            createdAt: q.createdAt
+            createdAt: q.createdAt,
+            instructorId,
+            courseId: courseKey
         };
       });
 
-      setItems(formatted);
-      setFilteredItems(formatted);
+      const ownedOnly = user?.role === 'instructor'
+        ? formatted.filter(item => item.courseId && ownedCourseIds.has(item.courseId))
+        : formatted;
+
+      setItems(ownedOnly);
+      setFilteredItems(ownedOnly);
     } catch (err) {
       console.error('Load quizzes error:', err);
     } finally {
@@ -96,7 +150,16 @@ const QuizListPage: React.FC = () => {
           
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <div>
+            <div className="flex items-center space-x-4">
+              <button
+                className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                onClick={() => navigate('/dashboard')}
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </button>
               <h1 className="text-3xl font-bold text-gray-900">Quiz Management</h1>
             </div>
             <Link to="/quizzes/create" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow-sm transition-colors">

@@ -13,6 +13,7 @@ interface MCQItem {
 interface Course {
   _id: string;
   title: string;
+  instructor_id?: string | { _id?: string; id?: string };
 }
 
 interface Lesson {
@@ -44,7 +45,14 @@ const AIQuizDraftPage: React.FC = () => {
       try {
         const res = await api.get('/courses');
         const coursesList = res.data?.data?.courses || [];
-        setCourses(coursesList);
+        const filteredByOwner = coursesList.filter((course: Course) => {
+          if (user?.role === 'admin') return true; // Admins can see all courses
+          const instructorId = typeof course.instructor_id === 'object'
+            ? course.instructor_id?._id || course.instructor_id?.id
+            : course.instructor_id;
+          return instructorId === user?.userId;
+        });
+        setCourses(filteredByOwner);
       } catch (e) {
         console.error('Failed to fetch courses', e);
         setCourses([]);
@@ -138,21 +146,21 @@ const AIQuizDraftPage: React.FC = () => {
       setError('Please keep at least 5 questions');
       return;
     }
-    const payload = {
-      title,
-      course_id: courseId,
-      lesson_id: lessonId,
-      description: 'AI generated quiz',
-      time_limit: 0,
-      questions: mcqs.map(q => ({
-        question: q.question,
-        options: q.options,
-        correctAnswer: q.answer,
-      })),
-    };
+    // const payload = {
+    //   title,
+    //   course_id: courseId,
+    //   lesson_id: lessonId,
+    //   description: 'AI generated quiz',
+    //   time_limit: 0,
+    //   questions: mcqs.map(q => ({
+    //     question: q.question,
+    //     options: q.options,
+    //     correctAnswer: q.answer,
+    //   })),
+    // };
     try {
-      const res = await api.post('/quizzes', payload);
-      const quizId = res.data?.data?._id || res.data?.data?.id;
+      // const res = await api.post('/quizzes', payload);
+      // const quizId = res.data?.data?._id || res.data?.data?.id;
       navigate(`/quizzes`);
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Failed to save quiz');

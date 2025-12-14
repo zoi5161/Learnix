@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import quizService, { QuizQuestion } from '../../services/quizService';
 import { courseService } from '../../services/courseService';
 import { lessonService } from '../../services/lessonService';
+import { getUserFromToken } from '../../utils/authToken';
 
 // Type Form
 type QuizFormState = {
@@ -36,6 +37,7 @@ const QuizFormPage: React.FC = () => {
     const { id } = useParams<{ id?: string }>();
     const navigate = useNavigate();
 
+    const user = getUserFromToken();
     const [form, setForm] = useState<QuizFormState>(defaultForm);
     const [courses, setCourses] = useState<any[]>([]);
     const [lessons, setLessons] = useState<any[]>([]);
@@ -46,11 +48,23 @@ const QuizFormPage: React.FC = () => {
         const fetchCourses = async () => {
             try {
                 const res = await courseService.getCourses();
-                setCourses(res.data.courses || []);
+                let coursesList = res.data.courses || [];
+                
+                // Filter courses: instructor chỉ thấy course của mình, admin thấy tất cả
+                if (user?.role === 'instructor') {
+                    coursesList = coursesList.filter((c: any) => {
+                        const instructorId = typeof c.instructor_id === 'object'
+                            ? c.instructor_id?._id || c.instructor_id?.id
+                            : c.instructor_id;
+                        return String(instructorId) === user.userId;
+                    });
+                }
+                
+                setCourses(coursesList);
             } catch (err) { console.error(err); }
         };
         fetchCourses();
-    }, []);
+    }, [user]);
 
     // 2. Load Data Quiz để Edit (Logic quan trọng)
     useEffect(() => {
