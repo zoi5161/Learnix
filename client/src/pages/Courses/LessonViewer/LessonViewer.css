@@ -508,6 +508,50 @@
     }
 }
 
+/* Programming Exercises */
+.lesson-viewer-exercises {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 2px solid #e5e7eb;
+}
+
+.lesson-viewer-exercises-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 20px 0;
+}
+
+.lesson-viewer-exercise-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.lesson-viewer-exercise-tab {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.lesson-viewer-exercise-tab:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.lesson-viewer-exercise-tab.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
 @media (max-width: 768px) {
     .lesson-viewer-title {
         font-size: 24px;

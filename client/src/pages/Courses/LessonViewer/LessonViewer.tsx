@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { lessonService } from '../../../services/lessonService';
+import { programmingService, ProgrammingExercise } from '../../../services/programmingService';
 import BaseLayout from '../../../layouts/BaseLayout';
+import ProgrammingIDE from '../../../components/ProgrammingIDE/ProgrammingIDE';
 import './LessonViewer.css';
 
 // YouTube IFrame API types
@@ -93,6 +95,11 @@ const LessonViewer: React.FC = () => {
     const [isYouTubeVideo, setIsYouTubeVideo] = useState(false);
     const youtubeVideoIdRef = useRef<string | null>(null);
 
+    // Programming exercises
+    const [exercises, setExercises] = useState<ProgrammingExercise[]>([]);
+    const [selectedExercise, setSelectedExercise] = useState<ProgrammingExercise | null>(null);
+    const [loadingExercises, setLoadingExercises] = useState(false);
+
     useEffect(() => {
         const fetchLesson = async () => {
             if (!courseId || !lessonId) return;
@@ -140,6 +147,35 @@ const LessonViewer: React.FC = () => {
         };
 
         fetchLesson();
+    }, [courseId, lessonId]);
+
+    // Fetch exercises for this lesson
+    useEffect(() => {
+        const fetchExercises = async () => {
+            if (!courseId || !lessonId) return;
+            try {
+                setLoadingExercises(true);
+                const res = await programmingService.getExercisesByLesson(courseId, lessonId);
+                if (res.success && res.data.length > 0) {
+                    setExercises(res.data);
+                    // Auto-select first exercise
+                    const firstExerciseRes = await programmingService.getExercise(
+                        courseId,
+                        lessonId,
+                        res.data[0]._id
+                    );
+                    if (firstExerciseRes.success) {
+                        setSelectedExercise(firstExerciseRes.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching exercises:', error);
+            } finally {
+                setLoadingExercises(false);
+            }
+        };
+
+        fetchExercises();
     }, [courseId, lessonId]);
 
     // Load YouTube IFrame API
@@ -674,6 +710,66 @@ const LessonViewer: React.FC = () => {
                                 {savingNotes ? 'Saving...' : 'Save Notes'}
                             </button>
                         </div>
+
+                        {/* Programming Exercises Section */}
+                        {loadingExercises ? (
+                            <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
+                                Loading exercises...
+                            </div>
+                        ) : exercises.length > 0 && (
+                            <div className="lesson-viewer-exercises">
+                                <h3 className="lesson-viewer-exercises-title">💻 Programming Exercises</h3>
+                                
+                                {exercises.length > 1 && (
+                                    <div className="lesson-viewer-exercise-selector">
+                                        {exercises.map(exercise => (
+                                            <button
+                                                key={exercise._id}
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await programmingService.getExercise(
+                                                            courseId!,
+                                                            lessonId!,
+                                                            exercise._id
+                                                        );
+                                                        if (res.success) {
+                                                            setSelectedExercise(res.data);
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Error loading exercise:', error);
+                                                    }
+                                                }}
+                                                className={`lesson-viewer-exercise-tab ${
+                                                    selectedExercise?._id === exercise._id ? 'active' : ''
+                                                }`}
+                                            >
+                                                {exercise.title}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {selectedExercise && courseId && lessonId && (
+                                    <ProgrammingIDE
+                                        courseId={courseId}
+                                        lessonId={lessonId}
+                                        exercise={selectedExercise}
+                                        onSubmissionComplete={(submission) => {
+                                            // Refresh exercise data
+                                            programmingService.getExercise(
+                                                courseId,
+                                                lessonId,
+                                                selectedExercise._id
+                                            ).then(res => {
+                                                if (res.success) {
+                                                    setSelectedExercise(res.data);
+                                                }
+                                            });
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Sidebar - Navigation */}
