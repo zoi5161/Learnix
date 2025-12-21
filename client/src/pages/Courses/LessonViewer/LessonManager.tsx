@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { lessonService, Lesson } from '../../../services/lessonService';
+import { programmingService, ProgrammingExercise } from '../../../services/programmingService';
 import PublicNavbar from '../../../components/PublicNavbar';
+import ExerciseFormModal from '../../../components/ProgrammingIDE/ExerciseFormModal';
 
 // Type for Form
 interface LessonFormData {
@@ -23,6 +25,8 @@ const LessonManager: React.FC = () => {
 
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [loading, setLoading] = useState(true);
+    const [exercisesMap, setExercisesMap] = useState<Record<string, ProgrammingExercise[]>>({});
+    const [expandedLessons, setExpandedLessons] = useState<Record<string, boolean>>({});
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +34,10 @@ const LessonManager: React.FC = () => {
     const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
     const [formData, setFormData] = useState<LessonFormData>(INITIAL_FORM);
     const [submitting, setSubmitting] = useState(false);
+
+    // Exercise Modal State
+    const [isExerciseModalOpen, setIsExerciseModalOpen] = useState(false);
+    const [selectedLessonForExercise, setSelectedLessonForExercise] = useState<string | null>(null);
 
     // Fetch lessons
     const fetchLessons = async () => {
@@ -52,6 +60,48 @@ const LessonManager: React.FC = () => {
     useEffect(() => {
         fetchLessons();
     }, [courseId]);
+
+    // Fetch exercises for all lessons
+    useEffect(() => {
+        if (lessons.length > 0 && courseId) {
+            lessons.forEach(lesson => {
+                fetchExercisesForLesson(lesson._id);
+            });
+        }
+    }, [lessons, courseId]);
+
+    const fetchExercisesForLesson = async (lessonId: string) => {
+        if (!courseId) return;
+        try {
+            const res = await programmingService.getExercisesByLesson(courseId, lessonId);
+            if (res.success) {
+                setExercisesMap(prev => ({
+                    ...prev,
+                    [lessonId]: res.data
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching exercises:', error);
+        }
+    };
+
+    const handleAddExercise = (lessonId: string) => {
+        setSelectedLessonForExercise(lessonId);
+        setIsExerciseModalOpen(true);
+    };
+
+    const handleExerciseSuccess = () => {
+        if (selectedLessonForExercise) {
+            fetchExercisesForLesson(selectedLessonForExercise);
+        }
+    };
+
+    const toggleLessonExpanded = (lessonId: string) => {
+        setExpandedLessons(prev => ({
+            ...prev,
+            [lessonId]: !prev[lessonId]
+        }));
+    };
 
     // Handlers
     const openCreateModal = () => {
@@ -157,7 +207,11 @@ const LessonManager: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', gap: 10 }}>
+                                        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                                            <button
+                                                onClick={() => handleAddExercise(lesson._id)}
+                                                style={{ padding: '6px 12px', border: '1px solid #10b981', borderRadius: '4px', background: 'white', color: '#10b981', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}
+                                            >💻 + Exercise</button>
                                             <button
                                                 onClick={() => openEditModal(lesson)}
                                                 style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '4px', background: 'white', cursor: 'pointer', fontSize: '13px' }}
@@ -171,6 +225,60 @@ const LessonManager: React.FC = () => {
                                 ))}
                             </ul>
                         )}
+                    </div>
+                )}
+
+                {/* Exercises List */}
+                {lessons.length > 0 && (
+                    <div style={{ marginTop: 30 }}>
+                        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: 20 }}>Programming Exercises</h2>
+                        {lessons.map(lesson => {
+                            const exercises = exercisesMap[lesson._id] || [];
+                            const isExpanded = expandedLessons[lesson._id];
+                            
+                            if (exercises.length === 0) return null;
+
+                            return (
+                                <div key={lesson._id} style={{ marginBottom: 16, backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+                                    <div
+                                        onClick={() => toggleLessonExpanded(lesson._id)}
+                                        style={{ padding: '16px 24px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: isExpanded ? '1px solid #e5e7eb' : 'none' }}
+                                    >
+                                        <div>
+                                            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>{lesson.title}</h3>
+                                            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#6b7280' }}>
+                                                {exercises.length} exercise{exercises.length !== 1 ? 's' : ''}
+                                            </p>
+                                        </div>
+                                        <span style={{ fontSize: '20px', color: '#6b7280' }}>
+                                            {isExpanded ? '▼' : '▶'}
+                                        </span>
+                                    </div>
+                                    {isExpanded && (
+                                        <div style={{ padding: '16px 24px' }}>
+                                            {exercises.map(exercise => (
+                                                <div key={exercise._id} style={{ padding: '12px', marginBottom: 8, backgroundColor: '#f9fafb', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <div>
+                                                            <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>{exercise.title}</h4>
+                                                            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
+                                                                {exercise.languages.join(', ')} • {exercise.difficulty}
+                                                            </p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleAddExercise(lesson._id)}
+                                                            style={{ padding: '4px 8px', fontSize: '12px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -196,6 +304,7 @@ const LessonManager: React.FC = () => {
                                 <div style={{ flex: 1 }}>
                                     <label style={{ display: 'block', marginBottom: 5, fontWeight: 500 }}>Type</label>
                                     <select
+                                        title="Type"
                                         value={formData.content_type} onChange={e => setFormData({ ...formData, content_type: e.target.value as any })}
                                         style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
                                     >
@@ -207,6 +316,7 @@ const LessonManager: React.FC = () => {
                                 <div style={{ flex: 1 }}>
                                     <label style={{ display: 'block', marginBottom: 5, fontWeight: 500 }}>Duration (min)</label>
                                     <input
+                                        title="Duration"
                                         type="number" min="0"
                                         value={formData.duration} onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) })}
                                         style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
@@ -239,6 +349,7 @@ const LessonManager: React.FC = () => {
                             <div>
                                 <label style={{ display: 'block', marginBottom: 5, fontWeight: 500 }}>Description (Optional)</label>
                                 <textarea
+                                    title="Description"
                                     value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}
                                     rows={2}
                                     style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
@@ -269,6 +380,19 @@ const LessonManager: React.FC = () => {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {/* Exercise Form Modal */}
+            {isExerciseModalOpen && selectedLessonForExercise && courseId && (
+                <ExerciseFormModal
+                    courseId={courseId}
+                    lessonId={selectedLessonForExercise}
+                    onClose={() => {
+                        setIsExerciseModalOpen(false);
+                        setSelectedLessonForExercise(null);
+                    }}
+                    onSuccess={handleExerciseSuccess}
+                />
             )}
         </div>
     );
