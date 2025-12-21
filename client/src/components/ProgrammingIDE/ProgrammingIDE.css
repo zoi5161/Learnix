@@ -1,0 +1,440 @@
+.programming-ide {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+/* Header */
+.programming-ide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.programming-ide-title-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.programming-ide-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.programming-ide-difficulty {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.difficulty-easy {
+    background: rgba(16, 185, 129, 0.3);
+}
+
+.difficulty-medium {
+    background: rgba(251, 191, 36, 0.3);
+}
+
+.difficulty-hard {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.programming-ide-language-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.programming-ide-lang-btn {
+    padding: 8px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.programming-ide-lang-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.programming-ide-lang-btn.active {
+    background: white;
+    color: #667eea;
+    border-color: white;
+}
+
+/* Description */
+.programming-ide-description {
+    padding: 20px 24px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.programming-ide-description-content {
+    line-height: 1.6;
+    color: #374151;
+}
+
+.programming-ide-description-content p {
+    margin: 0 0 12px 0;
+}
+
+.programming-ide-description-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Editor Section */
+/* .programming-ide-editor-section {
+    border-bottom: 1px solid #e5e7eb;
+} */
+
+.programming-ide-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.programming-ide-editor-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+}
+
+.programming-ide-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.programming-ide-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.programming-ide-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.programming-ide-btn-run {
+    background: #3b82f6;
+    color: white;
+}
+
+.programming-ide-btn-run:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.programming-ide-btn-submit {
+    background: #10b981;
+    color: white;
+}
+
+.programming-ide-btn-submit:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
+
+.programming-ide-code-editor {
+    width: 100%;
+    min-height: 400px;
+    padding: 20px;
+    border: none;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    tab-size: 4;
+}
+
+.programming-ide-code-editor:focus {
+    outline: none;
+}
+
+.programming-ide-code-editor::placeholder {
+    color: #6b7280;
+}
+
+/* Results Section */
+.programming-ide-results-section {
+    padding: 20px 24px;
+}
+
+/* Output */
+.programming-ide-output {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+.programming-ide-output-header {
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+}
+
+.programming-ide-output-content {
+    padding: 16px;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.programming-ide-output-content.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Test Results */
+.programming-ide-test-results {
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.programming-ide-test-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+}
+
+.programming-ide-test-summary {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.programming-ide-test-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.programming-ide-test-item {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.2s;
+}
+
+.programming-ide-test-item:last-child {
+    border-bottom: none;
+}
+
+.programming-ide-test-item.passed {
+    background: #f0fdf4;
+}
+
+.programming-ide-test-item.failed {
+    background: #fef2f2;
+}
+
+.programming-ide-test-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.programming-ide-test-icon {
+    font-size: 18px;
+}
+
+.programming-ide-test-name {
+    flex: 1;
+    font-weight: 600;
+    color: #374151;
+}
+
+.programming-ide-test-time {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.programming-ide-test-details {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.programming-ide-test-detail-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.programming-ide-test-detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.programming-ide-test-detail-row .label {
+    font-weight: 600;
+    color: #6b7280;
+    min-width: 80px;
+}
+
+.programming-ide-test-detail-row code {
+    flex: 1;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 12px;
+    color: #1f2937;
+    word-break: break-all;
+}
+
+.programming-ide-test-detail-row.error code {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Submission Result */
+.programming-ide-submission-result {
+    margin-top: 20px;
+    padding: 24px;
+    border-radius: 12px;
+    border: 2px solid;
+}
+
+.programming-ide-submission-result.success {
+    background: #f0fdf4;
+    border-color: #10b981;
+}
+
+.programming-ide-submission-result.failed {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+.programming-ide-submission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.programming-ide-submission-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.programming-ide-submission-score {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.programming-ide-submission-result.success .programming-ide-submission-score {
+    color: #10b981;
+}
+
+.programming-ide-submission-result.failed .programming-ide-submission-score {
+    color: #ef4444;
+}
+
+.programming-ide-submission-result p {
+    margin: 8px 0;
+    color: #374151;
+    line-height: 1.6;
+}
+
+.programming-ide-submission-success-msg {
+    margin-top: 12px !important;
+    font-weight: 600;
+    color: #059669 !important;
+}
+
+/* Scrollbar Styling */
+.programming-ide-code-editor::-webkit-scrollbar,
+.programming-ide-test-list::-webkit-scrollbar,
+.programming-ide-output-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.programming-ide-code-editor::-webkit-scrollbar-track,
+.programming-ide-test-list::-webkit-scrollbar-track,
+.programming-ide-output-content::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+.programming-ide-code-editor::-webkit-scrollbar-thumb,
+.programming-ide-test-list::-webkit-scrollbar-thumb,
+.programming-ide-output-content::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+.programming-ide-code-editor::-webkit-scrollbar-thumb:hover,
+.programming-ide-test-list::-webkit-scrollbar-thumb:hover,
+.programming-ide-output-content::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.programming-ide-test-list::-webkit-scrollbar-track {
+    background: #f9fafb;
+}
+
+.programming-ide-test-list::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+}
+
+.programming-ide-test-list::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Monaco Editor Container */
+.programming-ide-code-editor {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Custom Monaco Editor Theme (optional) */
+.programming-ide-editor-section {
+    position: relative;
+}
+
+.programming-ide-editor-section .monaco-editor {
+    border-radius: 8px;
+}
