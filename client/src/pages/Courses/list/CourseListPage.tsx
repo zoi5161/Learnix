@@ -266,14 +266,14 @@ const CourseListPage: React.FC = () => {
                             <div style={{ textAlign: 'right', marginBottom: 5 }}><button onClick={clearFilters} className="course-list-clear-filters">Clear</button></div>
                             <div className="course-list-filter-group">
                                 <label>Category</label>
-                                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="course-list-filter-select">
+                                <select title="Category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="course-list-filter-select">
                                     <option value="">All</option>
                                     {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
                                 </select>
                             </div>
                             <div className="course-list-filter-group">
                                 <label>Level</label>
-                                <select value={selectedLevel} onChange={(e) => setSelectedLevel(e.target.value)} className="course-list-filter-select">
+                                <select title="Level" value={selectedLevel} onChange={(e) => setSelectedLevel(e.target.value)} className="course-list-filter-select">
                                     <option value="">All</option>
                                     <option value="beginner">Beginner</option>
                                     <option value="intermediate">Intermediate</option>
@@ -282,7 +282,7 @@ const CourseListPage: React.FC = () => {
                             </div>
                             <div className="course-list-filter-group">
                                 <label>Sort By</label>
-                                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="course-list-filter-select">
+                                <select title="Sort By" value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="course-list-filter-select">
                                     <option value="createdAt">Newest</option>
                                     <option value="title">A-Z</option>
                                     <option value="price">Price</option>
@@ -392,7 +392,7 @@ const CourseListPage: React.FC = () => {
                                 </div>
                                 <div className="form-group" style={{ flex: 1 }}>
                                     <label>Level</label>
-                                    <select value={formData.level} onChange={e => setFormData({ ...formData, level: e.target.value as any })}>
+                                    <select title="Level" value={formData.level} onChange={e => setFormData({ ...formData, level: e.target.value as any })}>
                                         <option value="beginner">Beginner</option>
                                         <option value="intermediate">Intermediate</option>
                                         <option value="advanced">Advanced</option>
