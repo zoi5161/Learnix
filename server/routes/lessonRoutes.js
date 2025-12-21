@@ -11,6 +11,9 @@ const {
     reorderLessons
 } = require('../controllers/lessonController');
 
+// Import programming routes
+const programmingRouter = require('./programmingRoutes');
+
 // ⚠️ QUAN TRỌNG: mergeParams: true giúp lấy được :courseId từ router cha
 const router = express.Router({ mergeParams: true });
 
@@ -58,5 +61,12 @@ router.route('/:lessonId')
 // 6. Cập nhật tiến độ học tập (Chỉ Student)
 // PUT /api/courses/:courseId/lessons/:lessonId/progress
 router.put('/:lessonId/progress', restrictTo(['student']), updateProgress);
+
+// ==========================================
+// 💻 PROGRAMMING EXERCISES ROUTES
+// ==========================================
+// Mount programming router for exercises
+// Routes: /api/courses/:courseId/lessons/:lessonId/exercises
+router.use('/:lessonId/exercises', programmingRouter);
 
 module.exports = router;
