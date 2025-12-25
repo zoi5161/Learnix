@@ -1,3 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --f8-orange: #ff7731;
+        --f8-orange-hover: #ff5722;
+        --f8-dark: #1e1e1e;
+        --f8-dark-secondary: #2c2d3a;
+        --f8-dark-footer: #1a1b1f;
+        --f8-blue: #4c7bff;
+        --f8-purple: #a24cff;
+        --f8-pink: #ff2d87;
+        --f8-yellow: #ffd600;
+        --f8-text-gray: #757575;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f5f5f5;
+        color: #1e1e1e;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    button {
+        font-family: inherit;
+        cursor: pointer;
+    }
+}

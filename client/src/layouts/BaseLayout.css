@@ -1,0 +1,39 @@
+/* BaseLayout F8 Style */
+.base-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+}
+
+.base-layout-main {
+    flex: 1;
+    width: 100%;
+}
+
+.base-layout-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* BaseLayout Footer */
+.base-layout-footer {
+    background-color: #2c2d3a;
+    color: #e5e7eb;
+    padding: 24px 20px;
+    text-align: center;
+    border-top: 1px solid #3f4150;
+}
+
+.base-layout-footer p {
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .base-layout-content {
+        padding: 24px 16px;
+    }
+}

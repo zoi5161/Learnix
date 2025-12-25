@@ -1,117 +1,186 @@
-.public-navbar {
-    background-color: #1f2937;
-    color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.f8-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
     position: sticky;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.public-navbar-container {
+.f8-navbar-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 64px;
-}
-
-.public-navbar-logo {
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: #ffffff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.public-navbar-logo:hover {
-    color: #fbbf24;
-}
-
-.public-navbar-menu {
-    display: flex;
+    height: 66px;
     gap: 24px;
-    align-items: center;
 }
 
-.public-navbar-link {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.public-navbar-link:hover {
-    color: #fbbf24;
-}
-
-.public-navbar-auth {
+.f8-navbar-left {
     display: flex;
-    gap: 16px;
     align-items: center;
+    min-width: 200px;
 }
 
-.public-navbar-user {
-    font-size: 14px;
-    color: #d1d5db;
+.f8-navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #1e1e1e;
 }
 
-.public-navbar-button {
-    padding: 8px 16px;
-    border: none;
+.f8-logo-box {
+    width: 40px;
+    height: 40px;
+    border: 2px dashed #ccc;
     border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #999;
+    font-weight: 600;
+}
+
+.f8-logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.f8-slogan {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e1e1e;
+    letter-spacing: 0.5px;
+}
+
+.f8-navbar-center {
+    flex: 1;
+    max-width: 500px;
+}
+
+.f8-search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.f8-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.f8-search-input {
+    width: 100%;
+    padding: 10px 16px 10px 48px;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 14px;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.f8-search-input::placeholder {
+    color: #9ca3af;
+}
+
+.f8-search-input:focus {
+    background-color: #ffffff;
+    border-color: #ff7731;
+    box-shadow: 0 0 0 3px rgba(255, 119, 49, 0.1);
+}
+
+.f8-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.f8-nav-link {
+    color: #1e1e1e;
     font-size: 14px;
     font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.f8-nav-link:hover {
+    color: #ff7731;
+}
+
+.f8-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
-.public-navbar-button-primary {
-    background-color: #fbbf24;
-    color: #1f2937;
-}
-
-.public-navbar-button-primary:hover {
-    background-color: #f59e0b;
-    color: #000000;
-}
-
-.public-navbar-button-logout {
-    background-color: #dc2626;
+.f8-btn-primary {
+    background-color: #ff7731;
     color: #ffffff;
 }
 
-.public-navbar-button-logout:hover {
-    background-color: #b91c1c;
+.f8-btn-primary:hover {
+    background-color: #ff5722;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 119, 49, 0.3);
+}
+
+.f8-btn-logout {
+    background-color: #e5e7eb;
+    color: #1e1e1e;
+}
+
+.f8-btn-logout:hover {
+    background-color: #d1d5db;
+}
+
+@media (max-width: 992px) {
+    .f8-navbar-center {
+        display: none;
+    }
 }
 
 @media (max-width: 768px) {
-    .public-navbar-container {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 12px 20px;
-    }
-
-    .public-navbar-menu {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid #374151;
-    }
-
-    .public-navbar-auth {
+    .f8-navbar-container {
         gap: 12px;
+        padding: 0 12px;
     }
 
-    .public-navbar-user {
+    .f8-navbar-left {
+        min-width: auto;
+    }
+
+    .f8-slogan {
+        font-size: 16px;
+    }
+
+    .f8-navbar-right {
+        gap: 8px;
+    }
+
+    .f8-nav-link {
         display: none;
+    }
+
+    .f8-btn {
+        padding: 8px 16px;
+        font-size: 13px;
     }
 }
 

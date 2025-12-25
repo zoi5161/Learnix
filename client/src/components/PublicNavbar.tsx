@@ -13,47 +13,54 @@ const PublicNavbar: React.FC = () => {
     };
 
     return (
-        <header className="public-navbar">
-            <nav className="public-navbar-container">
-                <Link to="/" className="public-navbar-logo">
-                    Learnix
-                </Link>
-
-                <div className="public-navbar-menu">
-                    <Link to="/" className="public-navbar-link">
-                        Home
-                    </Link>
-                    <Link to="/courses" className="public-navbar-link">
-                        Courses
+        <header className="f8-navbar">
+            <nav className="f8-navbar-container">
+                <div className="f8-navbar-left">
+                    <Link to="/" className="f8-navbar-logo">
+                        <img src="/logo.png" alt="Learnix Logo" className="f8-logo-img" />
+                        <span className="f8-slogan">Learnix</span>
                     </Link>
                 </div>
 
-                <div className="public-navbar-auth">
+                <div className="f8-navbar-center">
+                    <div className="f8-search-wrapper">
+                        <svg className="f8-search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            placeholder="Tìm kiếm khóa học, bài viết, video, ..."
+                            className="f8-search-input"
+                        />
+                    </div>
+                </div>
+
+                <div className="f8-navbar-right">
                     {user ? (
                         <>
-                            <Link to="/dashboard" className="public-navbar-link">
+                            <Link to="/courses" className="f8-nav-link">
+                                Khóa học của tôi
+                            </Link>
+                            <Link to="/dashboard" className="f8-nav-link">
                                 Dashboard
                             </Link>
-                            <span className="public-navbar-user">
-                                {user.name} ({user.role})
-                            </span>
                             <button
                                 onClick={handleLogout}
-                                className="public-navbar-button public-navbar-button-logout"
+                                className="f8-btn f8-btn-logout"
                             >
-                                Logout
+                                Đăng xuất
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link to="/login" className="public-navbar-link">
-                                Login
+                            <Link to="/login" className="f8-nav-link">
+                                Đăng nhập
                             </Link>
                             <Link
                                 to="/register"
-                                className="public-navbar-button public-navbar-button-primary"
+                                className="f8-btn f8-btn-primary"
                             >
-                                Sign Up
+                                Đăng ký
                             </Link>
                         </>
                     )}
