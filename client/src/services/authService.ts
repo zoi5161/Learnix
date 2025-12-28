@@ -24,6 +24,16 @@ const authService = {
         return data;
     },
 
+    forgotPassword: async (email: string): Promise<{ message: string; resetUrl?: string }> => {
+        const { data } = await api.post('/auth/forgot-password', { email });
+        return data;
+    },
+
+    resetPassword: async (token: string, password: string): Promise<{ message: string }> => {
+        const { data } = await api.post('/auth/reset-password', { token, password });
+        return data;
+    },
+
     refreshToken: async (): Promise<RefreshTokenResponse> => {
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) throw new Error('No refresh token');

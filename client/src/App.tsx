@@ -21,6 +21,8 @@ import UserManagementPage from './pages/Dashboard/UserManagementPage';
 import CourseModerationPage from './pages/Dashboard/CourseModerationPage';
 import SystemStatistics from './pages/Dashboard/SystemStatistics';
 import AIQuizDraftPage from './pages/Quizzes/AIQuizDraftPage';
+import ForgotPasswordPage from './pages/Auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 
 const App: React.FC = () => {
     return (
@@ -36,6 +38,8 @@ const App: React.FC = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/login/oauth/success" element={<OAuthSuccess />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
                     <Route path="/courses/:courseId/manage-lessons" element={<LessonManager />} />
                     <Route path="/courses/:courseId/quizzes/:quizId/take" element={<StudentQuizPage />} />
