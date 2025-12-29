@@ -61,11 +61,32 @@ exports.setUserLock = async (req, res) => {
 // ADMIN: System statistics
 exports.getSystemStats = async (req, res) => {
     try {
-        const [userCount, courseCount, enrollmentCount] = await Promise.all([
+        const [userCount, courseCount, enrollmentWithValidStudent] = await Promise.all([
             User.countDocuments(),
             Course.countDocuments(),
-            Enrollment.countDocuments()
+            // Only count active enrollments (enrolled/completed) whose student account still exists
+            Enrollment.aggregate([
+                {
+                    $match: {
+                        status: { $in: ['enrolled', 'completed'] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'student_id',
+                        foreignField: '_id',
+                        as: 'student'
+                    }
+                },
+                { $match: { student: { $ne: [] } } },
+                { $count: 'count' }
+            ])
         ]);
+
+        const enrollmentCount = (Array.isArray(enrollmentWithValidStudent) && enrollmentWithValidStudent[0])
+            ? enrollmentWithValidStudent[0].count
+            : 0;
         res.json({
             users: userCount,
             courses: courseCount,

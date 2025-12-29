@@ -195,7 +195,7 @@ const CourseListPage: React.FC = () => {
             title: formData.title, description: formData.description, summary: formData.summary,
             price: Number(formData.price), level: formData.level, category: formData.category,
             thumbnail: formData.thumbnail, is_premium: formData.is_premium,
-            status: (formData.published ? 'published' : 'draft') as 'published' | 'draft',
+            // Status không chỉnh trực tiếp từ form nữa, luôn để backend set mặc định (draft)
             tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean)
         };
         try {
@@ -213,6 +213,29 @@ const CourseListPage: React.FC = () => {
         } catch (err: any) {
             alert('Error: ' + (err.response?.data?.message || err.message));
         } finally { setCrudLoading(false); }
+    };
+
+    const handleSubmitForReview = async (course: CourseWithCounts) => {
+        if (!isCourseOwner(course)) {
+            alert('Only the course owner can submit this course for review.');
+            return;
+        }
+
+        if (!(course.status === 'draft' || course.status === 'rejected')) {
+            alert('Only draft or rejected courses can be submitted for review.');
+            return;
+        }
+
+        if (!window.confirm('Submit this course for admin review?')) return;
+
+        try {
+            await courseService.updateCourseStatus(course._id, 'pending');
+            alert('Course submitted for review.');
+            setCurrentPage(1);
+            fetchCourses(1, false);
+        } catch (err: any) {
+            alert('Failed to submit for review: ' + (err.response?.data?.message || err.message));
+        }
     };
 
     const handleDelete = async (course: CourseWithCounts) => {
@@ -315,12 +338,20 @@ const CourseListPage: React.FC = () => {
 
                                                     </div>
                                                 </Link>
-                                                {user && isCourseOwner(course) &&
+                                                {user && isCourseOwner(course) && (
                                                     <div className="card-actions">
                                                         <button className="btn-edit" onClick={() => openEditModal(course)}>Edit</button>
                                                         <button className="btn-delete" onClick={() => handleDelete(course)}>Delete</button>
+                                                        {(course.status === 'draft' || course.status === 'rejected') && (
+                                                            <button
+                                                                className="btn-submit-review"
+                                                                onClick={() => handleSubmitForReview(course)}
+                                                            >
+                                                                {course.status === 'draft' ? 'Submit' : 'Resubmit'}
+                                                            </button>
+                                                        )}
                                                     </div>
-                                                }
+                                                )}
                                                 {user && isCourseOwner(course) &&
                                                     <button className="btn-detail" onClick={() => navigate(`/courses/${course._id}/manage-lessons`)}>Manage lesson</button>
                                                 }

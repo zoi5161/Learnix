@@ -228,8 +228,15 @@ exports.searchCourses = async (req, res) => {
 exports.createCourse = async (req, res) => {
     try {
         // Nếu là Instructor tạo, tự động gán instructor_id là chính họ
+        // và ép trạng thái về "draft" theo flow: Instructor tạo course → draft
         if (req.user.role === 'instructor') {
             req.body.instructor_id = req.user._id;
+            req.body.status = 'draft';
+        } else if (req.user.role === 'admin') {
+            // Admin tạo course: nếu không truyền status thì cũng để draft
+            if (!req.body.status) {
+                req.body.status = 'draft';
+            }
         }
 
         const newCourse = await Course.create(req.body);
@@ -256,6 +263,12 @@ exports.updateCourse = async (req, res) => {
         const isOwner = course.instructor_id?.toString() === req.user._id.toString();
         if (req.user.role !== 'admin' && !isOwner) {
             return res.status(403).json({ success: false, message: 'You do not have permission to edit this course' });
+        }
+
+        // Không cho phép chỉnh sửa status trực tiếp qua updateCourse,
+        // mọi thay đổi trạng thái phải đi qua updateCourseStatus để đảm bảo đúng flow moderation.
+        if (req.body.status) {
+            delete req.body.status;
         }
 
         const updatedCourse = await Course.findByIdAndUpdate(req.params.id, req.body, {
@@ -389,9 +402,9 @@ exports.manageTags = async (req, res) => {
 exports.updateCourseStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
-        const allowedStatuses = ['draft', 'pending', 'approved', 'published', 'rejected', 'hidden'];
-        if (!allowedStatuses.includes(status)) {
+        const { status: targetStatus } = req.body;
+        const allowedStatuses = ['draft', 'pending', 'published', 'rejected', 'hidden'];
+        if (!allowedStatuses.includes(targetStatus)) {
             return res.status(400).json({ success: false, message: 'Invalid status' });
         }
 
@@ -400,17 +413,73 @@ exports.updateCourseStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Course not found' });
         }
 
-        // Only admin or course owner (instructor) can update status
-        if (req.user.role !== 'admin' && req.user.role !== 'instructor') {
+        const isAdmin = req.user.role === 'admin';
+        const isInstructor = req.user.role === 'instructor';
+        const isOwner = course.instructor_id && course.instructor_id.toString() === req.user._id.toString();
+
+        // Only admin or owning instructor can update status
+        if (!isAdmin && !(isInstructor && isOwner)) {
             return res.status(403).json({ success: false, message: 'Permission denied' });
         }
-        if (req.user.role === 'instructor' && course.instructor_id.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ success: false, message: 'Not your course' });
+
+        const currentStatus = course.status;
+
+        // Nếu không đổi gì thì trả về luôn
+        if (currentStatus === targetStatus) {
+            return res.json({ success: true, message: 'Course status unchanged', data: course });
         }
 
-        course.status = status;
+        let allowed = false;
+        let message = 'Course status updated';
+
+        switch (currentStatus) {
+            case 'draft':
+                // Chỉ cho phép submit for review: draft → pending
+                // Muốn publish lại phải qua pending và được admin duyệt (pending → published)
+                if (targetStatus === 'pending') {
+                    allowed = true;
+                    message = 'Course submitted for review';
+                }
+                break;
+            case 'pending':
+                // Chỉ admin được duyệt hoặc reject: pending → published / rejected
+                if (isAdmin && targetStatus === 'published') {
+                    allowed = true;
+                    message = 'Course approved and published';
+                } else if (isAdmin && targetStatus === 'rejected') {
+                    allowed = true;
+                    message = 'Course rejected';
+                }
+                break;
+            case 'published':
+                // Instructor hoặc admin có thể đưa về draft: published → draft
+                if (targetStatus === 'draft' && (isAdmin || isOwner)) {
+                    allowed = true;
+                    message = 'Course moved back to draft';
+                }
+                break;
+            case 'rejected':
+                // Instructor hoặc admin resubmit: rejected → pending
+                if (targetStatus === 'pending' && (isAdmin || isOwner)) {
+                    allowed = true;
+                    message = 'Course resubmitted for review';
+                }
+                break;
+            default:
+                // Các trạng thái khác (hidden, v.v.) hiện chưa dùng trong flow chính
+                break;
+        }
+
+        if (!allowed) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status transition from '${currentStatus}' to '${targetStatus}'`
+            });
+        }
+
+        course.status = targetStatus;
         await course.save();
-        res.json({ success: true, message: 'Course status updated', data: course });
+        res.json({ success: true, message, data: course });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

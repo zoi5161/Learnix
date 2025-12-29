@@ -342,6 +342,27 @@
     background-color: #059669;
 }
 
+.course-detail-unenroll-button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    background-color: #f3f4f6;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.course-detail-unenroll-button:hover:enabled {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
 .course-detail-sidebar-info {
     display: flex;
     flex-direction: column;

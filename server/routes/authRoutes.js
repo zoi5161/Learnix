@@ -5,12 +5,16 @@ const {
     authUser,
     googleLoginSuccess,
     refreshNewToken,
+    forgotPassword,
+    resetPassword,
 } = require('../controllers/authController');
 
 const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/login', authUser);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
