@@ -109,7 +109,11 @@ exports.getCourseById = async (req, res) => {
             }
         }
 
-        const enrollmentsCount = await Enrollment.countDocuments({ course_id: id });
+        // Count only active enrollments (enrolled or completed, not dropped/suspended)
+        const enrollmentsCount = await Enrollment.countDocuments({ 
+            course_id: id,
+            status: { $in: ['enrolled', 'completed'] }
+        });
         const lessonsCount = await Lesson.countDocuments({ course_id: id });
 
         const isEnrolled = req.user ? await Enrollment.findOne({

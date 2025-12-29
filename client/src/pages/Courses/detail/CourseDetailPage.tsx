@@ -198,11 +198,24 @@ const CourseDetailPage: React.FC = () => {
                             )}
 
                             <div className="course-detail-stats">
-                                <span>{course.enrollmentsCount || 0} students</span>
-                                <span>•</span>
-                                <span>{course.lessonsCount || 0} lessons</span>
+                                <div className="course-detail-stat-item course-detail-stat-highlight">
+                                    <span className="course-detail-stat-icon">👥</span>
+                                    <span className="course-detail-stat-value">{course.enrollmentsCount || 0}</span>
+                                    <span className="course-detail-stat-label">students enrolled</span>
+                                </div>
+                                <span className="course-detail-stat-divider">•</span>
+                                <div className="course-detail-stat-item">
+                                    <span className="course-detail-stat-icon">📚</span>
+                                    <span className="course-detail-stat-value">{course.lessonsCount || 0}</span>
+                                    <span className="course-detail-stat-label">lessons</span>
+                                </div>
                                 {course.price !== undefined && course.price > 0 && (
-                                    <><span>•</span><span className="course-detail-price">${course.price.toFixed(2)}</span></>
+                                    <>
+                                        <span className="course-detail-stat-divider">•</span>
+                                        <div className="course-detail-stat-item">
+                                            <span className="course-detail-stat-value course-detail-price">${course.price.toFixed(2)}</span>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         </div>
@@ -230,6 +243,32 @@ const CourseDetailPage: React.FC = () => {
                                         {course.tags.map((tag) => (
                                             <Link key={tag} to={`/courses?tag=${encodeURIComponent(tag)}`} className="course-detail-tag">{tag}</Link>
                                         ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Instructor Information Section */}
+                            {course.instructor_id && typeof course.instructor_id === 'object' && (
+                                <section className="course-detail-section">
+                                    <h2 className="course-detail-section-title">Instructor Information</h2>
+                                    <div className="course-detail-instructor-info">
+                                        <div className="course-detail-instructor-card">
+                                            <div className="course-detail-instructor-avatar">
+                                                {course.instructor_id.name 
+                                                    ? course.instructor_id.name.charAt(0).toUpperCase() 
+                                                    : 'I'}
+                                            </div>
+                                            <div className="course-detail-instructor-details">
+                                                <h3 className="course-detail-instructor-name">
+                                                    {course.instructor_id.name || 'Unknown Instructor'}
+                                                </h3>
+                                                {course.instructor_id.email && (
+                                                    <p className="course-detail-instructor-email">
+                                                        {course.instructor_id.email}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
                             )}
