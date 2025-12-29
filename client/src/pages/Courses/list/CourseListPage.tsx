@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { courseService, CourseWithCounts, CourseFilters } from '../../../services/courseService';
+import { courseService, CourseWithCounts, CourseFilters, TrendingTag } from '../../../services/courseService';
 import PublicNavbar from '../../../components/PublicNavbar';
 import './CourseListPage.css';
 import { getUserFromToken } from '../../../utils/authToken';
@@ -36,6 +36,7 @@ const CourseListPage: React.FC = () => {
     const [loadingMore, setLoadingMore] = useState(false); // Loading riêng nút Load More
 
     const [categories, setCategories] = useState<string[]>([]);
+    const [trendingTags, setTrendingTags] = useState<TrendingTag[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     // Filter states
@@ -54,13 +55,17 @@ const CourseListPage: React.FC = () => {
     const [formData, setFormData] = useState<CourseFormData>(INITIAL_FORM_DATA);
     const [crudLoading, setCrudLoading] = useState(false);
 
-    // 1. Fetch Categories (Chạy 1 lần)
+    // 1. Fetch Categories and Trending Tags (Chạy 1 lần)
     useEffect(() => {
-        const fetchCategories = async () => {
-            const res = await courseService.getCategories();
-            if (res.success) setCategories(res.data);
+        const fetchData = async () => {
+            const [categoriesRes, tagsRes] = await Promise.all([
+                courseService.getCategories(),
+                courseService.getTrendingTags(20)
+            ]);
+            if (categoriesRes.success) setCategories(categoriesRes.data);
+            if (tagsRes.success) setTrendingTags(tagsRes.data);
         };
-        fetchCategories();
+        fetchData();
     }, []);
 
     // 2. Hàm Fetch Data chính (Xử lý cả Filter và Load More)
@@ -117,6 +122,7 @@ const CourseListPage: React.FC = () => {
         // Cập nhật URL (Optional)
         const newParams = new URLSearchParams();
         if (selectedCategory) newParams.set('category', selectedCategory);
+        if (selectedTag) newParams.set('tag', selectedTag);
         if (selectedLevel) newParams.set('level', selectedLevel);
         if (searchQuery) newParams.set('search', searchQuery);
         setSearchParams(newParams);
@@ -269,6 +275,17 @@ const CourseListPage: React.FC = () => {
                                 <select title="Category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="course-list-filter-select">
                                     <option value="">All</option>
                                     {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                                </select>
+                            </div>
+                            <div className="course-list-filter-group">
+                                <label>Tag</label>
+                                <select title="Tag" value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)} className="course-list-filter-select">
+                                    <option value="">All</option>
+                                    {trendingTags.map((tagItem) => (
+                                        <option key={tagItem.tag} value={tagItem.tag}>
+                                            {tagItem.tag} ({tagItem.count})
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="course-list-filter-group">
