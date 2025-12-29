@@ -6,6 +6,7 @@ const {
     getCategories,
     getTrendingTags,
     searchCourses,
+    getSuggestedCourses,
     createCourse,
     updateCourse,
     deleteCourse,
@@ -33,6 +34,7 @@ router.get('/', getCourses);
 router.get('/categories', getCategories);
 router.get('/tags/trending', getTrendingTags);
 router.get('/search', searchCourses);
+router.get('/:courseId/suggested', getSuggestedCourses); // Get suggested courses (must be before /:id)
 router.get('/:id', optionalAuth, getCourseById); // Cho phép xem chi tiết (để check đã enroll chưa)
 
 // ==========================================

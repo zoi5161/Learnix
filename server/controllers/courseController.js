@@ -109,7 +109,11 @@ exports.getCourseById = async (req, res) => {
             }
         }
 
-        const enrollmentsCount = await Enrollment.countDocuments({ course_id: id });
+        // Count only active enrollments (enrolled or completed, not dropped/suspended)
+        const enrollmentsCount = await Enrollment.countDocuments({ 
+            course_id: id,
+            status: { $in: ['enrolled', 'completed'] }
+        });
         const lessonsCount = await Lesson.countDocuments({ course_id: id });
 
         const isEnrolled = req.user ? await Enrollment.findOne({
@@ -217,6 +221,72 @@ exports.searchCourses = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error searching courses', error: error.message });
+    }
+};
+
+// Get suggested courses based on similar tags/categories (public)
+exports.getSuggestedCourses = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const limit = parseInt(req.query.limit) || 6;
+
+        // Validate courseId
+        if (!courseId) {
+            return res.status(400).json({ success: false, message: 'Course ID is required' });
+        }
+
+        // Get the current course
+        const currentCourse = await Course.findById(courseId).lean();
+        if (!currentCourse) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        // Build query to find similar courses
+        const query = {
+            _id: { $ne: courseId }, // Exclude current course
+            status: 'published'
+        };
+
+        // Build conditions for matching tags or category
+        const matchConditions = [];
+
+        // Match by tags if available
+        if (currentCourse.tags && currentCourse.tags.length > 0) {
+            matchConditions.push({ tags: { $in: currentCourse.tags } });
+        }
+
+        // Match by category if available
+        if (currentCourse.category && currentCourse.category.trim() !== '') {
+            matchConditions.push({ category: currentCourse.category });
+        }
+
+        // Use $or if we have match conditions, otherwise just exclude the current course
+        if (matchConditions.length > 0) {
+            query.$or = matchConditions;
+        }
+
+        // Find similar courses
+        const suggestedCourses = await Course.find(query)
+            .populate('instructor_id', 'name email')
+            .sort({ createdAt: -1 }) // Sort by newest first
+            .limit(limit)
+            .lean();
+
+        // Get counts for each course
+        const coursesWithCounts = await Promise.all(
+            suggestedCourses.map(async (course) => {
+                const enrollmentsCount = await Enrollment.countDocuments({ course_id: course._id });
+                const lessonsCount = await Lesson.countDocuments({ course_id: course._id });
+                return { ...course, enrollmentsCount, lessonsCount };
+            })
+        );
+
+        res.json({
+            success: true,
+            data: { courses: coursesWithCounts }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching suggested courses', error: error.message });
     }
 };
 

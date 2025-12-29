@@ -113,6 +113,16 @@ export const courseService = {
   },
 
   // =========================================================
+  // 📌 GET SUGGESTED COURSES
+  // =========================================================
+  getSuggestedCourses: async (courseId: string, limit: number = 6): Promise<CourseListResponse> => {
+    const response = await api.get<CourseListResponse>(
+      `/courses/${courseId}/suggested?limit=${limit}`
+    );
+    return response.data;
+  },
+
+  // =========================================================
   // 📌 SEARCH COURSES
   // =========================================================
   searchCourses: async (

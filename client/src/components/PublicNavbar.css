@@ -150,6 +150,163 @@
     background-color: #d1d5db;
 }
 
+/* User Avatar & Dropdown */
+.f8-user-menu-wrapper {
+    position: relative;
+}
+
+.f8-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.f8-user-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.f8-user-avatar:active {
+    transform: scale(0.98);
+}
+
+.f8-user-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    min-width: 280px;
+    z-index: 1000;
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.f8-user-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background-color: #f9fafb;
+    border-radius: 12px 12px 0 0;
+}
+
+.f8-user-dropdown-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.f8-user-dropdown-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.f8-user-dropdown-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.f8-user-dropdown-email {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.f8-user-dropdown-role {
+    font-size: 12px;
+    color: #667eea;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.f8-user-dropdown-divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 8px 0;
+}
+
+.f8-user-dropdown-menu {
+    padding: 8px;
+}
+
+.f8-user-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: none;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.f8-user-dropdown-item:hover {
+    background-color: #f3f4f6;
+    color: #667eea;
+}
+
+.f8-user-dropdown-item-logout {
+    color: #ef4444;
+}
+
+.f8-user-dropdown-item-logout:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.f8-user-dropdown-icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
 @media (max-width: 992px) {
     .f8-navbar-center {
         display: none;
@@ -181,6 +338,11 @@
     .f8-btn {
         padding: 8px 16px;
         font-size: 13px;
+    }
+
+    .f8-user-dropdown {
+        right: -10px;
+        min-width: 260px;
     }
 }
 
