@@ -10,7 +10,7 @@ export interface Course {
   summary?: string;
   level: 'beginner' | 'intermediate' | 'advanced';
   is_premium: boolean;
-  status: 'draft' | 'published' | 'archived';
+  status: 'draft' | 'pending' | 'published' | 'rejected' | 'hidden' | 'approved';
   thumbnail?: string;
   price?: number;
   tags?: string[];

@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import BaseLayout from '../../layouts/BaseLayout';
 import { courseService, CourseWithCounts } from '../../services/courseService';
 
+// Only expose the statuses used in the main moderation flow
 const statusOptions = [
   { value: 'draft', label: 'Draft', color: 'gray' },
   { value: 'pending', label: 'Pending', color: 'yellow' },
-  { value: 'approved', label: 'Approved', color: 'blue' },
   { value: 'published', label: 'Published', color: 'green' },
   { value: 'rejected', label: 'Rejected', color: 'red' },
-  { value: 'hidden', label: 'Hidden', color: 'purple' },
 ];
 
 const CourseModerationPage: React.FC = () => {
@@ -173,7 +172,7 @@ const CourseModerationPage: React.FC = () => {
                       Current Status
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Change Status
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -234,22 +233,31 @@ const CourseModerationPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <select
-                          value={c.status}
-                          disabled={updating === c._id}
-                          onChange={(e) => handleStatusChange(c._id, e.target.value)}
-                          className={`border-2 border-gray-300 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
-                            updating === c._id 
-                              ? 'opacity-50 cursor-not-allowed' 
-                              : 'hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                          }`}
-                        >
-                          {statusOptions.map((s) => (
-                            <option key={s.value} value={s.value}>
-                              {s.label}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/courses/${c._id}`)}
+                            className="px-3 py-1 text-xs font-semibold rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
+                          >
+                            View
+                          </button>
+                          <select
+                            value={c.status}
+                            disabled={updating === c._id}
+                            onChange={(e) => handleStatusChange(c._id, e.target.value)}
+                            className={`border-2 border-gray-300 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                              updating === c._id 
+                                ? 'opacity-50 cursor-not-allowed' 
+                                : 'hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                            }`}
+                          >
+                            {statusOptions.map((s) => (
+                              <option key={s.value} value={s.value}>
+                                {s.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                         {updating === c._id && (
                           <div className="mt-2 flex items-center text-xs text-blue-600">
                             <svg className="animate-spin h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24">

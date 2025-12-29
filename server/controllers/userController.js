@@ -64,8 +64,13 @@ exports.getSystemStats = async (req, res) => {
         const [userCount, courseCount, enrollmentWithValidStudent] = await Promise.all([
             User.countDocuments(),
             Course.countDocuments(),
-            // Only count enrollments whose student account still exists
+            // Only count active enrollments (enrolled/completed) whose student account still exists
             Enrollment.aggregate([
+                {
+                    $match: {
+                        status: { $in: ['enrolled', 'completed'] }
+                    }
+                },
                 {
                     $lookup: {
                         from: 'users',

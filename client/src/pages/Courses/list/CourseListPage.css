@@ -415,7 +415,7 @@
 
 }
 
-.btn-edit, .btn-delete, .btn-detail {
+.btn-edit, .btn-delete, .btn-detail, .btn-submit-review {
     flex: 1;
     padding: 6px;
     border: none;
@@ -441,10 +441,16 @@
     color: #4f3535;
 }
 
+.btn-submit-review {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
 
 .btn-edit:hover { background-color: #e5e7eb; }
 .btn-delete:hover { background-color: #fecaca; }
 .btn-detail:hover { background-color: #9ec9f2; }
+.btn-submit-review:hover { background-color: #fde68a; }
 
 /* --- Modal Styles --- */
 .modal-overlay {
