@@ -133,6 +133,24 @@ exports.unenrollCourse = async (req, res) => {
             });
         }
 
+        // Validate courseId format
+        if (!courseId || courseId.trim() === '') {
+            return res.status(400).json({
+                success: false,
+                message: 'Course ID is required'
+            });
+        }
+
+        // Check if course exists
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        // Check if enrollment exists and is active (enrolled or completed)
         const enrollment = await Enrollment.findOne({
             student_id: studentId,
             course_id: courseId
@@ -141,14 +159,22 @@ exports.unenrollCourse = async (req, res) => {
         if (!enrollment) {
             return res.status(404).json({
                 success: false,
-                message: 'Not enrolled in this course'
+                message: 'You are not enrolled in this course'
             });
         }
 
+        // Business rule: Only allow unenroll if currently enrolled or completed (not already dropped/suspended)
         if (enrollment.status === 'dropped') {
             return res.status(400).json({
                 success: false,
-                message: 'Already unenrolled from this course'
+                message: 'You have already unenrolled from this course'
+            });
+        }
+
+        if (enrollment.status === 'suspended') {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot unenroll from a suspended course'
             });
         }
 
