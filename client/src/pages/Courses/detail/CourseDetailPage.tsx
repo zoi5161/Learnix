@@ -5,6 +5,7 @@ import { enrollmentService } from '../../../services/enrollmentService';
 import { quizService } from '../../../services/quizService';
 import { getUserFromToken } from '../../../utils/authToken';
 import PublicNavbar from '../../../components/PublicNavbar';
+import SuggestedCourses from '../../../components/SuggestedCourses/SuggestedCourses';
 import './CourseDetailPage.css';
 
 interface Lesson {
@@ -320,6 +321,9 @@ const CourseDetailPage: React.FC = () => {
                                     </div>
                                 )}
                             </section>
+
+                            {/* Suggested Courses */}
+                            {id && <SuggestedCourses courseId={id} currentCourseTitle={course.title} />}
                         </div>
 
                         {/* Sidebar */}
