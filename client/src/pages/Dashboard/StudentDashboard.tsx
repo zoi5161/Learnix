@@ -174,6 +174,17 @@ const StudentDashboard: React.FC = () => {
         passedCount: 0
     });
 
+    const refreshEnrollments = async () => {
+        try {
+            const dashboardRes = await studentService.getDashboard();
+            if (dashboardRes.success) {
+                setStudentData(dashboardRes.data);
+            }
+        } catch (err) {
+            console.error('Failed to refresh enrollments', err);
+        }
+    };
+
     useEffect(() => {
         const currentUser = getUserFromToken();
         if (!currentUser || currentUser.role !== 'student') {
@@ -239,6 +250,23 @@ const StudentDashboard: React.FC = () => {
     const handleRetake = (courseId: string, quizId: string) => {
         if (window.confirm('Retake quiz?')) {
             navigate(`/courses/${courseId}/quizzes/${quizId}/take?retake=true`);
+        }
+    };
+
+    const handleUnenroll = async (courseId: string) => {
+        const confirmed = window.confirm('Do you really want to unenroll from this course?');
+        if (!confirmed) return;
+
+        try {
+            const res = await enrollmentService.unenrollCourse(courseId);
+            if (res.success) {
+                alert('Successfully unenrolled from course');
+                await refreshEnrollments();
+            } else {
+                alert('Failed to unenroll: ' + res.message);
+            }
+        } catch (err: any) {
+            alert('Error: ' + (err.message || 'Failed to unenroll'));
         }
     };
 
@@ -389,6 +417,13 @@ const StudentDashboard: React.FC = () => {
                                             >
                                                 Continue
                                             </Link>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleUnenroll(course._id)}
+                                                className="student-dashboard-course-button student-dashboard-course-button-secondary"
+                                            >
+                                                Unenroll
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

@@ -38,6 +38,7 @@ const CourseDetailPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [enrolling, setEnrolling] = useState(false);
+    const [unenrolling, setUnenrolling] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -117,6 +118,38 @@ const CourseDetailPage: React.FC = () => {
             }
         } finally {
             setEnrolling(false);
+        }
+    };
+
+    const handleUnenrollClick = async () => {
+        if (!user) {
+            setShowLoginModal(true);
+            return;
+        }
+        if (!id) return;
+
+        const confirmed = window.confirm('Do you really want to unenroll from this course?');
+        if (!confirmed) return;
+
+        try {
+            setUnenrolling(true);
+            const res = await enrollmentService.unenrollCourse(id);
+            if (res.success) {
+                alert('Successfully unenrolled from course');
+                setIsEnrolled(false);
+
+                const courseRes = await courseService.getCourseById(id);
+                if (courseRes.success) {
+                    setCourse(courseRes.data.course);
+                    setLessons(courseRes.data.course.lessons || []);
+                }
+            } else {
+                alert('Failed to unenroll: ' + res.message);
+            }
+        } catch (err: any) {
+            alert('Error: ' + (err.message || 'Failed to unenroll'));
+        } finally {
+            setUnenrolling(false);
         }
     };
 
@@ -333,9 +366,22 @@ const CourseDetailPage: React.FC = () => {
                                         {enrolling ? 'Enrolling...' : (user ? 'Enroll Now' : 'Sign Up to Enroll')}
                                     </button>
                                 ) : (
-                                    <Link to={`/courses/${id}/learn`} className="course-detail-enroll-button course-detail-enroll-button-enrolled">
-                                        Continue Learning
-                                    </Link>
+                                    <>
+                                        <Link
+                                            to={`/courses/${id}/learn`}
+                                            className="course-detail-enroll-button course-detail-enroll-button-enrolled"
+                                        >
+                                            Continue Learning
+                                        </Link>
+                                        <button
+                                            type="button"
+                                            onClick={handleUnenrollClick}
+                                            disabled={unenrolling}
+                                            className="course-detail-unenroll-button"
+                                        >
+                                            {unenrolling ? 'Unenrolling...' : 'Unenroll from Course'}
+                                        </button>
+                                    </>
                                 )}
                                 <div className="course-detail-sidebar-info">
                                     <div className="course-detail-sidebar-info-item"><strong>Instructor:</strong> {instructorName}</div>
