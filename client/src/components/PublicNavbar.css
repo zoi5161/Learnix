@@ -331,8 +331,19 @@
         gap: 8px;
     }
 
-    .f8-nav-link {
+    /* Hide nav links on mobile, show in dropdown instead */
+    /* But keep login link visible on mobile */
+    .f8-nav-link:not(.f8-nav-link-login) {
         display: none;
+    }
+
+    /* Show mobile-only items in dropdown */
+    .f8-user-dropdown-item-mobile {
+        display: block;
+    }
+
+    .f8-user-dropdown-divider-mobile {
+        display: block;
     }
 
     .f8-btn {
@@ -343,6 +354,17 @@
     .f8-user-dropdown {
         right: -10px;
         min-width: 260px;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Hide mobile-only items on desktop */
+    .f8-user-dropdown-item-mobile {
+        display: none;
+    }
+
+    .f8-user-dropdown-divider-mobile {
+        display: none;
     }
 }
 

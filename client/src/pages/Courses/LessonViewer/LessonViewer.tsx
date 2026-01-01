@@ -105,6 +105,7 @@ const LessonViewer: React.FC = () => {
     // Quiz state
     const [quizzes, setQuizzes] = useState<any[]>([]);
     const [loadingQuizzes, setLoadingQuizzes] = useState(false);
+    const [quizSubmissions, setQuizSubmissions] = useState<Record<string, any>>({});
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -253,11 +254,53 @@ const LessonViewer: React.FC = () => {
             
             if (res.success && res.data?.quizzes) {
                 setQuizzes(res.data.quizzes);
+                // Fetch submissions for each quiz
+                fetchQuizSubmissions(res.data.quizzes);
             }
         } catch (err) {
             console.error('Error fetching quizzes:', err);
         } finally {
             setLoadingQuizzes(false);
+        }
+    };
+
+    // Fetch submissions for quizzes
+    const fetchQuizSubmissions = async (quizList: any[]) => {
+        try {
+            // Get all submissions for this course
+            const submissionsRes = await quizService.getMySubmissions(courseId);
+            if (submissionsRes.success && submissionsRes.data) {
+                const submissionsMap: Record<string, any> = {};
+                
+                // Group submissions by quiz_id
+                quizList.forEach(quiz => {
+                    const quizId = quiz._id || quiz.id;
+                    const quizSubs = submissionsRes.data.filter((sub: any) => {
+                        const subQuizId = typeof sub.quiz_id === 'object' ? sub.quiz_id._id : sub.quiz_id;
+                        return subQuizId === quizId;
+                    }).sort((a: any, b: any) => 
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    );
+                    
+                    if (quizSubs.length > 0) {
+                        const bestScore = Math.max(...quizSubs.map((s: any) => s.score || 0));
+                        const lastScore = quizSubs[0].score || 0;
+                        const lastSubmission = quizSubs[0];
+                        
+                        submissionsMap[quizId] = {
+                            attempts: quizSubs.length,
+                            bestScore,
+                            lastScore,
+                            lastSubmission,
+                            passed: lastScore >= (quiz.passing_score || 70)
+                        };
+                    }
+                });
+                
+                setQuizSubmissions(submissionsMap);
+            }
+        } catch (err) {
+            console.error('Error fetching quiz submissions:', err);
         }
     };
 
@@ -745,6 +788,9 @@ const LessonViewer: React.FC = () => {
                                     <div className="lesson-viewer-quiz-list">
                                         {quizzes.map((quiz) => {
                                             const quizId = quiz._id || quiz.id;
+                                            const submission = quizSubmissions[quizId];
+                                            const hasSubmission = !!submission;
+                                            
                                             return (
                                                 <div key={quizId} className="lesson-viewer-quiz-card">
                                                     <div className="lesson-viewer-quiz-card-header">
@@ -760,11 +806,51 @@ const LessonViewer: React.FC = () => {
                                                             </>
                                                         )}
                                                     </div>
+                                                    
+                                                    {/* Submission Info */}
+                                                    {hasSubmission && (
+                                                        <div className="lesson-viewer-quiz-submission-info" style={{
+                                                            marginTop: '12px',
+                                                            padding: '12px',
+                                                            backgroundColor: '#f0f9ff',
+                                                            border: '1px solid #bae6fd',
+                                                            borderRadius: '6px',
+                                                            fontSize: '14px'
+                                                        }}>
+                                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                                                <span style={{ color: '#0369a1', fontWeight: '500' }}>📊 Your Results:</span>
+                                                                <span style={{ 
+                                                                    color: submission.passed ? '#16a34a' : '#dc2626',
+                                                                    fontWeight: '600'
+                                                                }}>
+                                                                    {submission.passed ? '✓ Passed' : '✗ Failed'}
+                                                                </span>
+                                                            </div>
+                                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '13px' }}>
+                                                                <div>
+                                                                    <span style={{ color: '#64748b' }}>Last Score: </span>
+                                                                    <strong style={{ color: '#0369a1' }}>{submission.lastScore}%</strong>
+                                                                </div>
+                                                                <div>
+                                                                    <span style={{ color: '#64748b' }}>Best Score: </span>
+                                                                    <strong style={{ color: '#059669' }}>{submission.bestScore}%</strong>
+                                                                </div>
+                                                                <div style={{ gridColumn: 'span 2' }}>
+                                                                    <span style={{ color: '#64748b' }}>Attempts: </span>
+                                                                    <strong style={{ color: '#0369a1' }}>{submission.attempts}</strong>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    
                                                     <button
                                                         onClick={() => handleQuizClick(quizId)}
                                                         className="lesson-viewer-quiz-start-btn"
+                                                        style={{
+                                                            marginTop: hasSubmission ? '12px' : '0'
+                                                        }}
                                                     >
-                                                        Start Quiz →
+                                                        {hasSubmission ? 'Retake Quiz →' : 'Start Quiz →'}
                                                     </button>
                                                 </div>
                                             );

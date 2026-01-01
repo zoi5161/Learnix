@@ -27,7 +27,14 @@ router.put('/:id', protect, restrictTo(['instructor', 'admin']), quizController.
 
 // Xóa Quiz
 router.delete('/:id', protect, restrictTo(['instructor', 'admin']), quizController.deleteQuiz);
-module.exports = router;
+
+// Get Quiz Submissions (for instructor/admin)
+router.get('/:id/submissions', protect, restrictTo(['instructor', 'admin']), quizController.getQuizSubmissions);
+
+// Get Quiz Submission Stats (for instructor/admin)
+router.get('/:id/stats', protect, restrictTo(['instructor', 'admin']), quizController.getQuizSubmissionStats);
 
 // Generate MCQ from lesson text (AI)
 router.post('/generate-mcq', protect, restrictTo(['instructor', 'admin']), quizController.generateMCQFromText);
+
+module.exports = router;

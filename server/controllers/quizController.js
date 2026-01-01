@@ -130,3 +130,39 @@ exports.generateMCQFromText = async (req, res) => {
         res.status(statusCode).json({ success: false, message: error.message || 'Server error' });
     }
 };
+
+// ==============================================
+// Get Quiz Submissions (for instructor/admin)
+// ==============================================
+exports.getQuizSubmissions = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id || req.user.id;
+        const userRole = req.user.role;
+        const submissions = await quizService.getQuizSubmissions(id, userId, userRole);
+        res.status(200).json({ success: true, data: submissions });
+    } catch (error) {
+        console.error('Get Quiz Submissions Error:', error);
+        const statusCode = error.message === 'Quiz not found' ? 404 :
+                          error.message.includes('Unauthorized') ? 403 : 500;
+        res.status(statusCode).json({ success: false, message: error.message || 'Server error' });
+    }
+};
+
+// ==============================================
+// Get Quiz Submission Stats (for instructor/admin)
+// ==============================================
+exports.getQuizSubmissionStats = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id || req.user.id;
+        const userRole = req.user.role;
+        const stats = await quizService.getQuizSubmissionStats(id, userId, userRole);
+        res.status(200).json({ success: true, data: stats });
+    } catch (error) {
+        console.error('Get Quiz Stats Error:', error);
+        const statusCode = error.message === 'Quiz not found' ? 404 :
+                          error.message.includes('Unauthorized') ? 403 : 500;
+        res.status(statusCode).json({ success: false, message: error.message || 'Server error' });
+    }
+};

@@ -31,9 +31,9 @@ const CourseListPage: React.FC = () => {
     // === STATE QUẢN LÝ DỮ LIỆU & PHÂN TRANG ===
     const [courses, setCourses] = useState<CourseWithCounts[]>([]);
     const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-    const [hasMore, setHasMore] = useState(false);     // Còn dữ liệu để load không?
+    const [totalPages, setTotalPages] = useState(1);   // Tổng số trang
+    const [total, setTotal] = useState(0);            // Tổng số courses
     const [loading, setLoading] = useState(false);     // Loading chung
-    const [loadingMore, setLoadingMore] = useState(false); // Loading riêng nút Load More
 
     const [categories, setCategories] = useState<string[]>([]);
     const [trendingTags, setTrendingTags] = useState<TrendingTag[]>([]);
@@ -46,7 +46,7 @@ const CourseListPage: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'createdAt');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('order') as 'asc' | 'desc') || 'desc');
-    const [isCollapsed, setIsCollapsed] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // CRUD states
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,19 +74,15 @@ const CourseListPage: React.FC = () => {
         setSearchQuery(paramSearch);
     }, [searchParams]);
 
-    // 2. Hàm Fetch Data chính (Xử lý cả Filter và Load More)
-    const fetchCourses = async (page: number, isLoadMore: boolean = false) => {
+    // 2. Hàm Fetch Data chính
+    const fetchCourses = async (page: number) => {
         try {
-            if (isLoadMore) {
-                setLoadingMore(true);
-            } else {
-                setLoading(true);
-            }
+            setLoading(true);
 
             // Config filters
             const filters: CourseFilters = {
                 page,
-                limit: 8, // 👈 Tăng số lượng hiển thị mỗi lần load (bạn có thể để 12)
+                limit: 4, // Mỗi trang hiển thị 4 courses
                 sort: sortBy,
                 order: sortOrder,
                 category: selectedCategory,
@@ -99,31 +95,20 @@ const CourseListPage: React.FC = () => {
             const res = await courseService.getCourses(filters);
 
             if (res.success) {
-                const newCourses = res.data.courses;
-
-                if (isLoadMore) {
-                    // Nếu là Load More -> Nối thêm vào danh sách cũ
-                    setCourses(prev => [...prev, ...newCourses]);
-                } else {
-                    // Nếu là Filter mới -> Thay thế hoàn toàn
-                    setCourses(newCourses);
-                }
-
-                // Check xem còn trang sau không
-                setHasMore(page < res.data.pagination.pages);
+                setCourses(res.data.courses);
+                setTotalPages(res.data.pagination.pages);
+                setTotal(res.data.pagination.total);
             }
         } catch (err: any) {
             setError(err.message);
         } finally {
             setLoading(false);
-            setLoadingMore(false);
         }
     };
 
     // 3. Effect: Khi Filter thay đổi -> Reset về trang 1
     useEffect(() => {
         setCurrentPage(1); // Reset page về 1
-        fetchCourses(1, false); // Fetch trang 1, chế độ "Replace"
 
         // Cập nhật URL (Optional)
         const newParams = new URLSearchParams();
@@ -132,14 +117,20 @@ const CourseListPage: React.FC = () => {
         if (selectedLevel) newParams.set('level', selectedLevel);
         if (searchQuery) newParams.set('search', searchQuery);
         setSearchParams(newParams);
+    }, [selectedCategory, selectedTag, selectedLevel, searchQuery, sortBy, sortOrder, setSearchParams]);
 
-    }, [selectedCategory, selectedTag, selectedLevel, searchQuery, sortBy, sortOrder]);
+    // 4. Effect: Fetch data khi page hoặc filters thay đổi
+    useEffect(() => {
+        fetchCourses(currentPage);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage, selectedCategory, selectedTag, selectedLevel, searchQuery, sortBy, sortOrder]);
 
-    // 4. Handler: Bấm nút Load More
-    const handleLoadMore = () => {
-        const nextPage = currentPage + 1;
-        setCurrentPage(nextPage);
-        fetchCourses(nextPage, true); // Fetch trang tiếp, chế độ "Append"
+    // 5. Handler: Chuyển trang
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     // Filter Handlers
@@ -221,7 +212,7 @@ const CourseListPage: React.FC = () => {
             setIsModalOpen(false);
             // Sau khi Create/Update xong, refresh lại list từ đầu
             setCurrentPage(1);
-            fetchCourses(1, false);
+            fetchCourses(1);
         } catch (err: any) {
             alert('Error: ' + (err.response?.data?.message || err.message));
         } finally { setCrudLoading(false); }
@@ -244,7 +235,7 @@ const CourseListPage: React.FC = () => {
             await courseService.updateCourseStatus(course._id, 'draft');
             alert('Course has been moved back to draft.');
             setCurrentPage(1);
-            fetchCourses(1, false);
+            fetchCourses(1);
         } catch (err: any) {
             alert('Failed to move to draft: ' + (err.response?.data?.message || err.message));
         }
@@ -267,7 +258,7 @@ const CourseListPage: React.FC = () => {
             await courseService.updateCourseStatus(course._id, 'pending');
             alert('Course submitted for review.');
             setCurrentPage(1);
-            fetchCourses(1, false);
+            fetchCourses(1);
         } catch (err: any) {
             alert('Failed to submit: ' + (err.response?.data?.message || err.message));
         }
@@ -283,7 +274,7 @@ const CourseListPage: React.FC = () => {
                 await courseService.deleteCourse(course._id);
                 // Refresh lại list
                 setCurrentPage(1);
-                fetchCourses(1, false);
+                fetchCourses(1);
             } catch (err: any) { alert('Delete failed: ' + err.message); }
         }
     };
@@ -393,7 +384,15 @@ const CourseListPage: React.FC = () => {
                                         {courses.map((course) => (
                                             <div key={course._id} className="course-list-card">
                                                 <Link to={`/courses/${course._id}`} className="course-card-link">
-                                                    {course.thumbnail && <div className="course-list-thumbnail"><img src={course.thumbnail} alt={course.title || 'Learnx'} /></div>}
+                                                    <div className="course-list-thumbnail">
+                                                        <img 
+                                                            src={course.thumbnail || '/logo.png'} 
+                                                            alt={course.title || 'Learnx'}
+                                                            onError={(e) => {
+                                                                e.currentTarget.src = '/logo.png';
+                                                            }}
+                                                        />
+                                                    </div>
                                                     <div className="course-list-card-content">
                                                         <div className="course-list-card-header">
                                                             <span className="course-list-level" style={{ backgroundColor: getLevelColor(course.level) }}>{course.level}</span>
@@ -451,31 +450,65 @@ const CourseListPage: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    {/* LOAD MORE BUTTON */}
-                                    {hasMore && (
-                                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 30, marginBottom: 50 }}>
+                                    {/* PAGINATION */}
+                                    {totalPages > 1 && (
+                                        <div className="course-list-pagination">
                                             <button
-                                                onClick={handleLoadMore}
-                                                disabled={loadingMore}
-                                                style={{
-                                                    padding: '10px 30px',
-                                                    fontSize: '16px',
-                                                    backgroundColor: '#2563eb',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '50px',
-                                                    cursor: 'pointer',
-                                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                                    opacity: loadingMore ? 0.7 : 1
-                                                }}
+                                                className="course-list-pagination-button"
+                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                disabled={currentPage === 1 || loading}
                                             >
-                                                {loadingMore ? 'Loading more...' : 'Load More Courses'}
+                                                Previous
                                             </button>
-                                        </div>
-                                    )}
+                                            
+                                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                {/* Show page numbers */}
+                                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                                    let pageNum;
+                                                    if (totalPages <= 5) {
+                                                        pageNum = i + 1;
+                                                    } else if (currentPage <= 3) {
+                                                        pageNum = i + 1;
+                                                    } else if (currentPage >= totalPages - 2) {
+                                                        pageNum = totalPages - 4 + i;
+                                                    } else {
+                                                        pageNum = currentPage - 2 + i;
+                                                    }
+                                                    
+                                                    return (
+                                                        <button
+                                                            key={pageNum}
+                                                            onClick={() => handlePageChange(pageNum)}
+                                                            disabled={loading}
+                                                            style={{
+                                                                padding: '8px 16px',
+                                                                backgroundColor: currentPage === pageNum ? '#2563eb' : '#f3f4f6',
+                                                                color: currentPage === pageNum ? 'white' : '#374151',
+                                                                border: 'none',
+                                                                borderRadius: '6px',
+                                                                cursor: 'pointer',
+                                                                fontWeight: currentPage === pageNum ? '600' : '400',
+                                                                minWidth: '40px'
+                                                            }}
+                                                        >
+                                                            {pageNum}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
 
-                                    {!hasMore && courses.length > 0 && (
-                                        <p style={{ textAlign: 'center', color: '#6b7280', marginTop: 20 }}>No more courses to load.</p>
+                                            <button
+                                                className="course-list-pagination-button"
+                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                disabled={currentPage === totalPages || loading}
+                                            >
+                                                Next
+                                            </button>
+                                            
+                                            <span className="course-list-pagination-info">
+                                                Page {currentPage} of {totalPages} ({total} courses)
+                                            </span>
+                                        </div>
                                     )}
                                 </>
                             ) : <div className="course-list-empty">No courses found matching your criteria.</div>}

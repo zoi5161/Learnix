@@ -72,15 +72,15 @@ const SuggestedCourses: React.FC<SuggestedCoursesProps> = ({ courseId, currentCo
                             to={`/courses/${course._id}`}
                             className="suggested-course-card"
                         >
-                            {course.thumbnail ? (
-                                <div className="suggested-course-thumbnail">
-                                    <img src={course.thumbnail} alt={course.title || 'Learnx'} />
-                                </div>
-                            ) : (
-                                <div className="suggested-course-thumbnail suggested-course-thumbnail-placeholder">
-                                    <span>Learnx</span>
-                                </div>
-                            )}
+                            <div className="suggested-course-thumbnail">
+                                <img 
+                                    src={course.thumbnail || '/logo.png'} 
+                                    alt={course.title || 'Learnx'}
+                                    onError={(e) => {
+                                        e.currentTarget.src = '/logo.png';
+                                    }}
+                                />
+                            </div>
                             <div className="suggested-course-content">
                                 <div className="suggested-course-header">
                                     <span

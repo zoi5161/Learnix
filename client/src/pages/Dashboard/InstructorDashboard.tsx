@@ -1,16 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
+import axios from 'axios';
 
 const InstructorDashboard: React.FC = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
 
-    if (!user || user.role !== 'instructor') {
-        navigate('/login');
-        return null;
-    }
+    // Statistics state
+    const [stats, setStats] = useState<{ courses: number; enrollments: number; averageQuizScore: number } | null>(null);
+    const [statsLoading, setStatsLoading] = useState(true);
+    const [statsError, setStatsError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!user || user.role !== 'instructor') {
+            navigate('/login', { replace: true });
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            setStatsLoading(true);
+            setStatsError(null);
+            try {
+                const token = localStorage.getItem('accessToken');
+                const apiBase = import.meta.env.VITE_API_BASE_URL || '';
+                const res = await axios.get(`${apiBase}/instructor/stats`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setStats(res.data);
+            } catch {
+                setStatsError('Failed to fetch statistics');
+            } finally {
+                setStatsLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
+
+    if (!user || user.role !== 'instructor') return null;
 
     return (
         <BaseLayout>
@@ -22,11 +51,38 @@ const InstructorDashboard: React.FC = () => {
                     Hello, {user.name}! Manage your courses and students here.
                 </p>
 
+                {/* Statistics */}
+                <div className="my-8">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-6">Statistics</h3>
+                    {statsLoading ? (
+                        <div className="text-gray-500">Loading statistics...</div>
+                    ) : statsError ? (
+                        <div className="text-red-500">{statsError}</div>
+                    ) : stats ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="bg-blue-100 rounded-lg p-6 text-center">
+                                <div className="text-4xl font-bold text-blue-700">{stats.courses}</div>
+                                <div className="text-lg mt-2 text-gray-700">Created Courses</div>
+                            </div>
+                            <div className="bg-green-100 rounded-lg p-6 text-center">
+                                <div className="text-4xl font-bold text-green-700">{stats.enrollments}</div>
+                                <div className="text-lg mt-2 text-gray-700">Student Enrollments</div>
+                            </div>
+                            <div className="bg-yellow-100 rounded-lg p-6 text-center">
+                                <div className="text-4xl font-bold text-yellow-700">
+                                    {stats.averageQuizScore > 0 ? stats.averageQuizScore.toFixed(1) : '0'}%
+                                </div>
+                                <div className="text-lg mt-2 text-gray-700">Average Quiz Score</div>
+                            </div>
+                        </div>
+                    ) : null}
+                </div>
+
+                {/* Management */}
                 <div className="my-12">
                     <h3 className="text-3xl font-bold text-gray-900 mb-8">Management</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
                         {/* Course */}
                         <div className="bg-white border rounded-2xl p-8 shadow-sm hover:shadow-xl 
                         transition-all duration-300 hover:-translate-y-1 
@@ -71,7 +127,6 @@ const InstructorDashboard: React.FC = () => {
                                 AI Quiz Generator (Draft)
                             </button>
                         </div>
-
                     </div>
                 </div>
             </div>

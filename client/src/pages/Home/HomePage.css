@@ -449,12 +449,20 @@
 
 /* Responsive */
 @media (max-width: 992px) {
+    .f8-hero {
+        padding: 80px 30px;
+    }
+
     .f8-hero-title {
         font-size: 42px;
     }
 
     .f8-section-title {
         font-size: 28px;
+    }
+
+    .f8-courses-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
 
@@ -463,16 +471,37 @@
         padding: 60px 20px;
     }
 
+    .f8-hero-content {
+        text-align: center;
+    }
+
     .f8-hero-title {
-        font-size: 36px;
+        font-size: 32px;
+        line-height: 1.3;
     }
 
     .f8-hero-subtitle {
         font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    .f8-hero-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .f8-cta-btn {
+        width: 100%;
     }
 
     .f8-section {
         padding: 40px 20px;
+    }
+
+    .f8-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
     .f8-section-title {
@@ -481,22 +510,63 @@
 
     .f8-courses-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
 
     .f8-course-item {
         flex-direction: column;
         align-items: flex-start;
+        gap: 16px;
+    }
+
+    .f8-course-item-left {
+        width: 100%;
     }
 
     .f8-course-thumb,
     .f8-course-thumb-placeholder {
         width: 100%;
-        height: 160px;
+        height: 180px;
     }
 
     .f8-footer-container {
         grid-template-columns: 1fr;
         gap: 32px;
+        text-align: center;
+    }
+
+    .f8-footer-about {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .f8-hero {
+        padding: 40px 15px;
+    }
+
+    .f8-hero-title {
+        font-size: 28px;
+    }
+
+    .f8-hero-subtitle {
+        font-size: 14px;
+    }
+
+    .f8-section {
+        padding: 30px 15px;
+    }
+
+    .f8-section-title {
+        font-size: 22px;
+    }
+
+    .f8-course-item-title {
+        font-size: 18px;
+    }
+
+    .f8-course-item-meta {
+        font-size: 13px;
     }
 }
 

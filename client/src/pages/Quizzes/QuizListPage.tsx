@@ -15,6 +15,12 @@ type QuizItem = {
   createdAt?: string;
   instructorId?: string;
   courseId?: string;
+  stats?: {
+    totalSubmissions: number;
+    averageScore: number;
+    passedCount: number;
+    failedCount: number;
+  };
 };
 
 type CourseItem = {
@@ -30,6 +36,7 @@ const QuizListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [courseOwners, setCourseOwners] = useState<Record<string, string>>({});
+  const [loadingStats, setLoadingStats] = useState<Record<string, boolean>>({});
 
   const user = getUserFromToken();
 
@@ -123,10 +130,36 @@ const QuizListPage: React.FC = () => {
 
       setItems(ownedOnly);
       setFilteredItems(ownedOnly);
+
+      // Load stats for quizzes (if user is instructor/admin)
+      if (user?.role === 'instructor' || user?.role === 'admin') {
+        loadStatsForQuizzes(ownedOnly);
+      }
     } catch (err) {
       console.error('Load quizzes error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadStatsForQuizzes = async (quizzes: QuizItem[]) => {
+    for (const quiz of quizzes) {
+      setLoadingStats(prev => ({ ...prev, [quiz.id]: true }));
+      try {
+        const statsRes = await quizService.getQuizSubmissionStats(quiz.id);
+        if (statsRes.success && statsRes.data.totalSubmissions > 0) {
+          setItems(prev => prev.map(item => 
+            item.id === quiz.id ? { ...item, stats: statsRes.data } : item
+          ));
+          setFilteredItems(prev => prev.map(item => 
+            item.id === quiz.id ? { ...item, stats: statsRes.data } : item
+          ));
+        }
+      } catch (err) {
+        // Ignore errors (quiz might not have submissions yet)
+      } finally {
+        setLoadingStats(prev => ({ ...prev, [quiz.id]: false }));
+      }
     }
   };
 
@@ -255,6 +288,33 @@ const QuizListPage: React.FC = () => {
           ⏱ <strong>{item.timeLimit}</strong> min
         </div>
       </div>
+
+      {/* SUBMISSION STATS (if available) */}
+      {item.stats && item.stats.totalSubmissions > 0 && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="text-xs font-semibold text-blue-800 mb-2">📊 Submission Statistics</div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="text-gray-600">Total:</span> <strong className="text-blue-700">{item.stats.totalSubmissions}</strong>
+            </div>
+            <div>
+              <span className="text-gray-600">Avg Score:</span> <strong className="text-blue-700">{item.stats.averageScore.toFixed(1)}%</strong>
+            </div>
+            <div>
+              <span className="text-gray-600">Passed:</span> <strong className="text-green-700">{item.stats.passedCount}</strong>
+            </div>
+            <div>
+              <span className="text-gray-600">Failed:</span> <strong className="text-red-700">{item.stats.failedCount}</strong>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate(`/quizzes/${item.id}/submissions`)}
+            className="mt-2 w-full text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition"
+          >
+            View All Submissions →
+          </button>
+        </div>
+      )}
 
       {/* ACTIONS */}
       <div className="mt-6 flex justify-end gap-4 text-sm font-medium">

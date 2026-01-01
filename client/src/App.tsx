@@ -16,7 +16,8 @@ import CourseLearnPage from './pages/Courses/CourseLearn/CourseLearnPage';
 import LessonManager from './pages/Courses/LessonViewer/LessonManager';
 import QuizListPage from './pages/Quizzes/QuizListPage';
 import QuizFormPage from './pages/Quizzes/QuizFormPage';
-import StudentQuizPage from './pages/Quizzes/StudentQuizPage'
+import StudentQuizPage from './pages/Quizzes/StudentQuizPage';
+import QuizSubmissionsPage from './pages/Quizzes/QuizSubmissionsPage';
 import UserManagementPage from './pages/Dashboard/UserManagementPage';
 import CourseModerationPage from './pages/Dashboard/CourseModerationPage';
 import SystemStatistics from './pages/Dashboard/SystemStatistics';
@@ -156,6 +157,14 @@ const App: React.FC = () => {
                         element={
                             <PrivateRoute>
                                 <QuizFormPage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/quizzes/:quizId/submissions"
+                        element={
+                            <PrivateRoute>
+                                <QuizSubmissionsPage />
                             </PrivateRoute>
                         }
                     />

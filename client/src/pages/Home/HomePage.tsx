@@ -181,11 +181,14 @@ const HomePage: React.FC = () => {
                                     className="f8-course-item"
                                 >
                                     <div className="f8-course-item-left">
-                                        {course.thumbnail ? (
-                                            <img src={course.thumbnail} alt={course.title || 'Learnx'} className="f8-course-thumb" />
-                                        ) : (
-                                            <div className="f8-course-thumb-placeholder">Learnx</div>
-                                        )}
+                                        <img 
+                                            src={course.thumbnail || '/logo.png'} 
+                                            alt={course.title || 'Learnx'} 
+                                            className="f8-course-thumb"
+                                            onError={(e) => {
+                                                e.currentTarget.src = '/logo.png';
+                                            }}
+                                        />
                                     </div>
                                     <div className="f8-course-item-center">
                                         <h4 className="f8-course-item-title">{course.title}</h4>
