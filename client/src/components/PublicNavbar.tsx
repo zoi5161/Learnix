@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getUserFromToken, clearAuth } from '../utils/authToken';
 import './PublicNavbar.css';
 
 const PublicNavbar: React.FC = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
+    const location = useLocation();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const [searchText, setSearchText] = useState('');
 
     const handleLogout = (): void => {
         clearAuth();
@@ -47,6 +49,29 @@ const PublicNavbar: React.FC = () => {
         return roleMap[role] || role;
     };
 
+    // Sync search box with current /courses search query in URL
+    useEffect(() => {
+        if (location.pathname.startsWith('/courses')) {
+            const params = new URLSearchParams(location.search);
+            const currentSearch = params.get('search') || '';
+            setSearchText(currentSearch);
+        } else {
+            setSearchText('');
+        }
+    }, [location.pathname, location.search]);
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = searchText.trim();
+        if (trimmed) {
+            const params = new URLSearchParams();
+            params.set('search', trimmed);
+            navigate(`/courses?${params.toString()}`);
+        } else {
+            navigate('/courses');
+        }
+    };
+
     return (
         <header className="f8-navbar">
             <nav className="f8-navbar-container">
@@ -58,7 +83,7 @@ const PublicNavbar: React.FC = () => {
                 </div>
 
                 <div className="f8-navbar-center">
-                    <div className="f8-search-wrapper">
+                    <form className="f8-search-wrapper" onSubmit={handleSearchSubmit}>
                         <svg className="f8-search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
@@ -66,8 +91,10 @@ const PublicNavbar: React.FC = () => {
                             type="text" 
                             placeholder="Tìm kiếm khóa học, bài viết, video, ..."
                             className="f8-search-input"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
                         />
-                    </div>
+                    </form>
                 </div>
 
                 <div className="f8-navbar-right">
