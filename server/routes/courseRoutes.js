@@ -12,7 +12,8 @@ const {
     deleteCourse,
     togglePublish,
     assignInstructor,
-    manageTags
+    manageTags,
+    updateCourseStatus
 } = require('../controllers/courseController');
 
 // 1. Import Lesson Router
@@ -53,7 +54,6 @@ router
     .delete(restrictTo(['instructor', 'admin']), deleteCourse);
 
 // --- Status Management ---
-const { updateCourseStatus } = require('../controllers/courseController');
 router.patch('/:id/status', restrictTo(['instructor', 'admin']), updateCourseStatus);
 
 

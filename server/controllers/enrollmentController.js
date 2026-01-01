@@ -1,121 +1,37 @@
-const Enrollment = require('../models/Enrollment');
-const Course = require('../models/Course');
-const User = require('../models/User');
-const Progress = require('../models/Progress');
-const Lesson = require('../models/Lesson');
+const enrollmentService = require('../services/enrollmentService');
 
 // Enroll in a course
 exports.enrollCourse = async (req, res) => {
     try {
         const { courseId } = req.params;
         const studentId = req.user.id;
-
-        // Check if user is a student
-        if (req.user.role !== 'student') {
-            return res.status(403).json({
-                success: false,
-                message: 'Only students can enroll in courses'
-            });
-        }
-
-        // Check if course exists and is published
-        const course = await Course.findById(courseId);
-        if (!course) {
-            return res.status(404).json({
-                success: false,
-                message: 'Course not found'
-            });
-        }
-
-        if (course.status !== 'published') {
-            return res.status(400).json({
-                success: false,
-                message: 'Course is not available for enrollment'
-            });
-        }
-
-        // Check budget
-        const student = await User.findById(studentId);
-        const totalBudget = (student.budget || 0) + (student.bonus_credits || 0);
-        const coursePrice = course.price || 0;
-
-        if (totalBudget < coursePrice) {
-            return res.status(400).json({
-                success: false,
-                message: 'Insufficient budget',
-                data: {
-                    required: coursePrice,
-                    available: totalBudget,
-                    budget: student.budget || 0,
-                    bonus_credits: student.bonus_credits || 0
-                }
-            });
-        }
-
-        // Deduct from budget first, then bonus credits
-        let remainingCost = coursePrice;
-        if (student.budget >= remainingCost) {
-            student.budget -= remainingCost;
-            remainingCost = 0;
-        } else {
-            remainingCost -= student.budget;
-            student.budget = 0;
-            if (student.bonus_credits >= remainingCost) {
-                student.bonus_credits -= remainingCost;
-            } else {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Insufficient budget (calculation error)'
-                });
-            }
-        }
-        await student.save();
-
-        // Check if already enrolled
-        const existingEnrollment = await Enrollment.findOne({
-            student_id: studentId,
-            course_id: courseId
-        });
-
-        if (existingEnrollment) {
-            if (existingEnrollment.status === 'dropped') {
-                // Re-enroll if previously dropped
-                existingEnrollment.status = 'enrolled';
-                await existingEnrollment.save();
-                return res.json({
-                    success: true,
-                    message: 'Successfully re-enrolled in course',
-                    data: { enrollment: existingEnrollment }
-                });
-            }
-            return res.status(400).json({
-                success: false,
-                message: 'Already enrolled in this course'
-            });
-        }
-
-        // Create enrollment
-        const enrollment = await Enrollment.create({
-            student_id: studentId,
-            course_id: courseId,
-            status: 'enrolled'
-        });
-
-        res.json({
+        const result = await enrollmentService.enrollCourse(courseId, studentId);
+        const response = {
             success: true,
-            message: 'Successfully enrolled in course',
-            data: {
-                enrollment,
-                remainingBudget: student.budget,
-                remainingBonusCredits: student.bonus_credits
-            }
-        });
+            message: result.message,
+            data: result.isReEnroll 
+                ? { enrollment: result.enrollment }
+                : {
+                    enrollment: result.enrollment,
+                    remainingBudget: result.remainingBudget,
+                    remainingBonusCredits: result.remainingBonusCredits
+                }
+        };
+        res.json(response);
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Only students can enroll in courses' ? 403 :
+                          error.message === 'Course not found' ? 404 :
+                          error.message === 'Course is not available for enrollment' || 
+                          error.message === 'Insufficient budget' || 
+                          error.message === 'Already enrolled in this course' ? 400 : 500;
+        const response = {
             success: false,
-            message: 'Error enrolling in course',
-            error: error.message
-        });
+            message: error.message || 'Error enrolling in course'
+        };
+        if (error.data) {
+            response.data = error.data;
+        }
+        res.status(statusCode).json(response);
     }
 };
 
@@ -124,76 +40,22 @@ exports.unenrollCourse = async (req, res) => {
     try {
         const { courseId } = req.params;
         const studentId = req.user.id;
-
-        // Check if user is a student
-        if (req.user.role !== 'student') {
-            return res.status(403).json({
-                success: false,
-                message: 'Only students can unenroll from courses'
-            });
-        }
-
-        // Validate courseId format
-        if (!courseId || courseId.trim() === '') {
-            return res.status(400).json({
-                success: false,
-                message: 'Course ID is required'
-            });
-        }
-
-        // Check if course exists
-        const course = await Course.findById(courseId);
-        if (!course) {
-            return res.status(404).json({
-                success: false,
-                message: 'Course not found'
-            });
-        }
-
-        // Check if enrollment exists and is active (enrolled or completed)
-        const enrollment = await Enrollment.findOne({
-            student_id: studentId,
-            course_id: courseId
-        });
-
-        if (!enrollment) {
-            return res.status(404).json({
-                success: false,
-                message: 'You are not enrolled in this course'
-            });
-        }
-
-        // Business rule: Only allow unenroll if currently enrolled or completed (not already dropped/suspended)
-        if (enrollment.status === 'dropped') {
-            return res.status(400).json({
-                success: false,
-                message: 'You have already unenrolled from this course'
-            });
-        }
-
-        if (enrollment.status === 'suspended') {
-            return res.status(400).json({
-                success: false,
-                message: 'Cannot unenroll from a suspended course'
-            });
-        }
-
-        // Update status to dropped
-        enrollment.status = 'dropped';
-        await enrollment.save();
-
-        // SAU NÀY THÊM LOGIC HOÀN TIỀN CHO STUDENT NẾU CẦN
-
+        const result = await enrollmentService.unenrollCourse(courseId, studentId);
         res.json({
             success: true,
-            message: 'Successfully unenrolled from course',
-            data: { enrollment }
+            message: result.message,
+            data: { enrollment: result.enrollment }
         });
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Only students can unenroll from courses' ? 403 :
+                          error.message === 'Course ID is required' || 
+                          error.message.includes('already unenrolled') ||
+                          error.message.includes('Cannot unenroll') ? 400 :
+                          error.message === 'Course not found' || 
+                          error.message === 'You are not enrolled in this course' ? 404 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error unenrolling from course',
-            error: error.message
+            message: error.message || 'Error unenrolling from course'
         });
     }
 };
@@ -202,67 +64,16 @@ exports.unenrollCourse = async (req, res) => {
 exports.getMyEnrollments = async (req, res) => {
     try {
         const studentId = req.user.id;
-
-        if (req.user.role !== 'student') {
-            return res.status(403).json({
-                success: false,
-                message: 'Only students can view enrollments'
-            });
-        }
-
-        const enrollments = await Enrollment.find({
-            student_id: studentId,
-            status: { $in: ['enrolled', 'completed'] }
-        })
-            .populate({
-                path: 'course_id',
-                select: 'title description level thumbnail price category tags summary'
-            })
-            .sort({ createdAt: -1 })
-            .lean();
-
-        // Get progress for each course
-        const enrollmentsWithProgress = await Promise.all(
-            enrollments.map(async (enrollment) => {
-                const courseId = enrollment.course_id._id;
-
-                // Get total lessons count
-                const totalLessons = await Lesson.countDocuments({ course_id: courseId });
-
-                // Get completed lessons count
-                const completedLessons = await Progress.countDocuments({
-                    student_id: studentId,
-                    course_id: courseId,
-                    status: 'completed'
-                });
-
-                const completionPercentage = totalLessons > 0
-                    ? Math.round((completedLessons / totalLessons) * 100)
-                    : 0;
-
-                return {
-                    ...enrollment,
-                    progress: {
-                        completed: completedLessons,
-                        total: totalLessons,
-                        percentage: completionPercentage
-                    },
-                    status: enrollment.status === 'completed' ? 'completed' :
-                        (completionPercentage === 100 ? 'completed' : 'in-progress')
-                };
-            })
-        );
-
+        const enrollments = await enrollmentService.getMyEnrollments(studentId);
         res.json({
             success: true,
-            data: { enrollments: enrollmentsWithProgress }
+            data: { enrollments }
         });
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Only students can view enrollments' ? 403 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error fetching enrollments',
-            error: error.message
+            message: error.message || 'Error fetching enrollments'
         });
     }
 };
-

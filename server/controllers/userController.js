@@ -1,98 +1,65 @@
-const User = require('../models/User');
-const Course = require('../models/Course');
-const Enrollment = require('../models/Enrollment');
-
+const userService = require('../services/userService');
 
 exports.getUserProfile = async (req, res) => {
-    const user = {
-        _id: req.user._id,
-        name: req.user.name,
-        email: req.user.email,
-        role: req.user.role,
-        isLocked: req.user.isLocked,
-    };
-    res.json(user);
+    try {
+        const user = await userService.getUserProfile(req.user);
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server error' });
+    }
 };
 
 exports.updateUserProfile = async (req, res) => {
-    res.json({ message: 'Profile updated successfully (placeholder)' });
+    try {
+        const result = await userService.updateUserProfile(req.user._id, req.body);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server error' });
+    }
 };
 
 // ADMIN: Get all users
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find({}, '-password_hash');
+        const users = await userService.getAllUsers();
         res.json(users);
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server error' });
     }
 };
 
 // ADMIN: Update user role
 exports.updateUserRole = async (req, res) => {
-    const { userId, role } = req.body;
-    if (!userId || !role) return res.status(400).json({ message: 'Missing userId or role' });
     try {
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        user.role = role;
-        await user.save();
-        res.json({ message: 'Role updated', user });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+        const { userId, role } = req.body;
+        const result = await userService.updateUserRole(userId, role);
+        res.json(result);
+    } catch (error) {
+        const statusCode = error.message === 'Missing userId or role' ? 400 : 
+                          error.message === 'User not found' ? 404 : 500;
+        res.status(statusCode).json({ message: error.message || 'Server error' });
     }
 };
 
 // ADMIN: Lock/unlock user
 exports.setUserLock = async (req, res) => {
-    const { userId, isLocked } = req.body;
-    if (typeof isLocked !== 'boolean' || !userId) return res.status(400).json({ message: 'Missing userId or isLocked' });
     try {
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        user.isLocked = isLocked;
-        await user.save();
-        res.json({ message: `User ${isLocked ? 'locked' : 'unlocked'}`, user });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+        const { userId, isLocked } = req.body;
+        const result = await userService.setUserLock(userId, isLocked);
+        res.json(result);
+    } catch (error) {
+        const statusCode = error.message === 'Missing userId or isLocked' ? 400 : 
+                          error.message === 'User not found' ? 404 : 500;
+        res.status(statusCode).json({ message: error.message || 'Server error' });
     }
 };
 
 // ADMIN: System statistics
 exports.getSystemStats = async (req, res) => {
     try {
-        const [userCount, courseCount, enrollmentWithValidStudent] = await Promise.all([
-            User.countDocuments(),
-            Course.countDocuments(),
-            // Only count active enrollments (enrolled/completed) whose student account still exists
-            Enrollment.aggregate([
-                {
-                    $match: {
-                        status: { $in: ['enrolled', 'completed'] }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: 'student_id',
-                        foreignField: '_id',
-                        as: 'student'
-                    }
-                },
-                { $match: { student: { $ne: [] } } },
-                { $count: 'count' }
-            ])
-        ]);
-
-        const enrollmentCount = (Array.isArray(enrollmentWithValidStudent) && enrollmentWithValidStudent[0])
-            ? enrollmentWithValidStudent[0].count
-            : 0;
-        res.json({
-            users: userCount,
-            courses: courseCount,
-            enrollments: enrollmentCount
-        });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+        const stats = await userService.getSystemStats();
+        res.json(stats);
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server error' });
     }
 };
