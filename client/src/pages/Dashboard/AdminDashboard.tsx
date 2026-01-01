@@ -255,21 +255,6 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Student Quiz Results */}
-                <div className="mt-10 border-t pt-10">
-                    <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-                        Student Quiz Insights
-                    </h3>
-                    <div className="bg-yellow-50 border border-yellow-300 p-6 rounded-lg shadow-sm">
-                        <h4 className="text-lg font-medium text-yellow-800">Recent Quiz Attempts</h4>
-                        <ul className="mt-3 text-gray-700 space-y-2">
-                            <li>John Doe — <i>JavaScript Basics Quiz</i> — Score: 9/10</li>
-                            <li>Emily Tran — <i>React Lesson 1 Quiz</i> — Score: 7/10</li>
-                            <li>Adam Lee — <i>Design Pattern Quiz</i> — Score: 10/10</li>
-                        </ul>
-                    </div>
-                </div>
-
             </div>
         </BaseLayout>
     );
