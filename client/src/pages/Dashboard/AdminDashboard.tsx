@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
 import axios from 'axios';
 import './AdminDashboard.css';
+import { courseService, CourseWithCounts } from '../../services/courseService';
 
 // Thêm các thành phần từ Recharts
 import {
@@ -17,6 +18,30 @@ import {
     Cell
 } from 'recharts';
 
+const barColors = [
+    '#22C55E', // emerald
+    '#16A34A', // green
+    '#4ADE80', // light green
+    '#0EA5E9', // sky
+    '#2563EB', // blue
+    '#6366F1', // indigo
+    '#A855F7', // purple
+    '#EC4899', // pink
+    '#F97316', // orange
+    '#F59E0B', // amber
+    '#E11D48', // rose
+    '#14B8A6', // teal
+];
+
+const getBarColor = (key: string, index: number) => {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+        hash = (hash * 31 + key.charCodeAt(i)) | 0;
+    }
+    const colorIndex = Math.abs(hash + index) % barColors.length;
+    return barColors[colorIndex];
+};
+
 const AdminDashboard: React.FC = () => {
     const user = getUserFromToken();
     const navigate = useNavigate();
@@ -25,6 +50,11 @@ const AdminDashboard: React.FC = () => {
     const [stats, setStats] = useState<{ users: number; courses: number; enrollments: number } | null>(null);
     const [statsLoading, setStatsLoading] = useState(true);
     const [statsError, setStatsError] = useState<string | null>(null);
+
+    // Courses data for enrollment chart
+    const [courses, setCourses] = useState<CourseWithCounts[]>([]);
+    const [coursesLoading, setCoursesLoading] = useState(true);
+    const [coursesError, setCoursesError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!user || user.role !== 'admin') {
@@ -52,14 +82,35 @@ const AdminDashboard: React.FC = () => {
         fetchStats();
     }, []);
 
+    useEffect(() => {
+        const fetchCoursesForChart = async () => {
+            setCoursesLoading(true);
+            setCoursesError(null);
+            try {
+                const res = await courseService.getCourses({ status: 'published', limit: 50 });
+                setCourses(res.data.courses);
+            } catch {
+                setCoursesError('Failed to fetch courses data');
+            } finally {
+                setCoursesLoading(false);
+            }
+        };
+        fetchCoursesForChart();
+    }, []);
+
     if (!user || user.role !== 'admin') return null;
 
-    // Chuẩn bị dữ liệu cho Chart
-    const chartData = stats ? [
-        { name: 'Users', count: stats.users, color: '#3B82F6' },       // Blue
-        { name: 'Courses', count: stats.courses, color: '#10B981' },   // Green
-        { name: 'Enrollments', count: stats.enrollments, color: '#F59E0B' } // Yellow
-    ] : [];
+    const enrollmentStats = React.useMemo(() => {
+        return courses
+            .map((course) => ({
+                id: course._id,
+                title: course.title,
+                enrollments: course.enrollmentsCount || 0,
+            }))
+            .filter((c) => c.enrollments > 0)
+            .sort((a, b) => b.enrollments - a.enrollments)
+            .slice(0, 5);
+    }, [courses]);
 
     return (
         <BaseLayout>
@@ -98,31 +149,62 @@ const AdminDashboard: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Chart Visualization */}
+                            {/* Chart Visualization - Top Courses by Enrollments */}
                             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-inner h-[350px]">
-                                <h4 className="text-lg font-semibold text-gray-700 mb-6 text-center">Data Visualization</h4>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 25 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                                        <XAxis 
-                                            dataKey="name" 
-                                            axisLine={false} 
-                                            tickLine={false} 
-                                            tick={{ fill: '#6B7280', fontSize: 14 }}
-                                            dy={10}
-                                        />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280' }} />
-                                        <Tooltip 
-                                            cursor={{ fill: 'rgba(0,0,0,0.05)' }}
-                                            contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                                        />
-                                        <Bar dataKey="count" radius={[8, 8, 0, 0]} barSize={60}>
-                                            {chartData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                <h4 className="text-lg font-semibold text-gray-700 mb-6 text-center">Top Courses by Enrollments</h4>
+                                {coursesLoading ? (
+                                    <div className="text-center text-gray-500 flex items-center justify-center h-full">
+                                        Loading course chart...
+                                    </div>
+                                ) : coursesError ? (
+                                    <div className="text-center text-red-500 flex items-center justify-center h-full">
+                                        {coursesError}
+                                    </div>
+                                ) : enrollmentStats.length === 0 ? (
+                                    <div className="text-center text-gray-500 flex items-center justify-center h-full">
+                                        No enrollment data available.
+                                    </div>
+                                ) : (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart
+                                            data={enrollmentStats}
+                                            margin={{ top: 5, right: 30, left: 20, bottom: 40 }}
+                                        >
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                                            <XAxis
+                                                dataKey="title"
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{ fill: '#6B7280', fontSize: 10 }}
+                                                tickFormatter={(value: string) =>
+                                                    value.length > 14 ? `${value.slice(0, 14)}...` : value
+                                                }
+                                                dy={10}
+                                            />
+                                            <YAxis
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{ fill: '#6B7280', fontSize: 10 }}
+                                            />
+                                            <Tooltip
+                                                cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+                                                contentStyle={{
+                                                    borderRadius: '10px',
+                                                    border: 'none',
+                                                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                                                }}
+                                                formatter={(value) => [`${value ?? 0} enrollments`, 'Enrollments']}
+                                                labelFormatter={(label) => label}
+                                            />
+                                            <Bar dataKey="enrollments" radius={[8, 8, 0, 0]} barSize={50}>
+                                                {enrollmentStats.map((course, index) => {
+                                                    const color = getBarColor(course.id, index);
+                                                    return <Cell key={course.id} fill={color} />;
+                                                })}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                )}
                             </div>
                         </>
                     ) : null}
