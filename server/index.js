@@ -7,6 +7,7 @@ const courseRoutes = require('./routes/courseRoutes');
 const studentRoute = require('./routes/studentRoutes');
 const enrollmentRoute = require('./routes/enrollmentRoutes');
 const quizRoutes = require('./routes/quizRoutes');
+const instructorRoutes = require('./routes/instructorRoutes');
 const passport = require('passport');
 require('./config/passport');
 const cors = require('cors');
@@ -42,6 +43,8 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/enrollments', enrollmentRoute);
 // Student routes - protected, student only
 app.use('/api/student', studentRoute); 
+// Instructor routes - protected, instructor only
+app.use('/api/instructor', instructorRoutes);
 app.use('/api/quizzes', quizRoutes); // <-- Dòng này quan trọng
 // Example admin-only route
 app.get('/api/admin/status', protect, restrictTo(['admin']), (req, res) => {
