@@ -229,11 +229,15 @@ const CourseDetailPage: React.FC = () => {
                                 )}
                             </div>
                         </div>
-                        {course.thumbnail && (
-                            <div className="course-detail-thumbnail">
-                                <img src={course.thumbnail} alt={course.title} />
-                            </div>
-                        )}
+                        <div className="course-detail-thumbnail">
+                            <img 
+                                src={course.thumbnail || '/logo.png'} 
+                                alt={course.title}
+                                onError={(e) => {
+                                    e.currentTarget.src = '/logo.png';
+                                }}
+                            />
+                        </div>
                     </div>
 
                     {/* Content */}

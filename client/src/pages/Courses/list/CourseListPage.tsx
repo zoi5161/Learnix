@@ -384,7 +384,15 @@ const CourseListPage: React.FC = () => {
                                         {courses.map((course) => (
                                             <div key={course._id} className="course-list-card">
                                                 <Link to={`/courses/${course._id}`} className="course-card-link">
-                                                    {course.thumbnail && <div className="course-list-thumbnail"><img src={course.thumbnail} alt={course.title || 'Learnx'} /></div>}
+                                                    <div className="course-list-thumbnail">
+                                                        <img 
+                                                            src={course.thumbnail || '/logo.png'} 
+                                                            alt={course.title || 'Learnx'}
+                                                            onError={(e) => {
+                                                                e.currentTarget.src = '/logo.png';
+                                                            }}
+                                                        />
+                                                    </div>
                                                     <div className="course-list-card-content">
                                                         <div className="course-list-card-header">
                                                             <span className="course-list-level" style={{ backgroundColor: getLevelColor(course.level) }}>{course.level}</span>

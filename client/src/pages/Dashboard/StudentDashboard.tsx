@@ -389,11 +389,15 @@ const StudentDashboard: React.FC = () => {
                         <div className="student-dashboard-courses-grid">
                             {studentData.enrolledCourses.map((course: any) => (
                                 <div key={course._id} className="student-dashboard-course-card">
-                                    {course.thumbnail && (
-                                        <div className="student-dashboard-course-thumbnail">
-                                            <img src={course.thumbnail} alt={course.title} />
-                                        </div>
-                                    )}
+                                    <div className="student-dashboard-course-thumbnail">
+                                        <img 
+                                            src={course.thumbnail || '/logo.png'} 
+                                            alt={course.title}
+                                            onError={(e) => {
+                                                e.currentTarget.src = '/logo.png';
+                                            }}
+                                        />
+                                    </div>
 
                                     <div className="student-dashboard-course-content">
                                         <h3 className="student-dashboard-course-title">
