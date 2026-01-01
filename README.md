@@ -1,357 +1,658 @@
-# Learnix
+# Learnix - Nền tảng học tập trực tuyến
 
-## Deploy Link: https://learnix-rho.vercel.app/
+> Hệ thống quản lý khóa học (LMS) với tính năng quiz, bài tập lập trình, và AI hỗ trợ tạo câu hỏi.
 
-## Run Locally
+**Demo:** https://learnix-rho.vercel.app/
+
+---
+
+## 📋 Mục lục
+
+- [Tính năng chính](#-tính-năng-chính)
+- [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
+- [Cài đặt và chạy dự án](#-cài-đặt-và-chạy-dự-án)
+- [Cấu trúc dự án](#-cấu-trúc-dự-án)
+- [Database Schema](#-database-schema)
+- [API Endpoints](#-api-endpoints)
+- [Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
+- [Tài khoản demo](#-tài-khoản-demo)
+
+---
+
+## ✨ Tính năng chính
+
+### Dành cho Học viên (Student)
+- 📚 Xem và đăng ký khóa học
+- 🎥 Học bài với video, text, PDF
+- 💻 Làm bài tập lập trình (Python, JavaScript) với trình soạn thảo code tích hợp
+- 📝 Làm quiz và xem kết quả
+- 📊 Theo dõi tiến độ học tập
+- 🏆 Hệ thống điểm và ngân sách (budget/credits)
+
+### Dành cho Giảng viên (Instructor)
+- ➕ Tạo và quản lý khóa học
+- 📖 Tạo bài học với nhiều loại nội dung (video, text, PDF)
+- 🤖 Tạo quiz tự động bằng AI từ nội dung bài học
+- 📝 Tạo quiz thủ công với nhiều câu hỏi
+- 💻 Tạo bài tập lập trình với test cases
+- 📈 Xem thống kê học viên và kết quả bài làm
+- ✅ Gửi khóa học để admin duyệt
+
+### Dành cho Admin
+- 👥 Quản lý người dùng (phân quyền, khóa/mở tài khoản)
+- ✅ Duyệt khóa học (approve/reject)
+- 📊 Xem thống kê tổng quan hệ thống
+- 🔧 Quản lý toàn bộ nội dung
+
+---
+
+## 🛠 Công nghệ sử dụng
 
 ### Backend
-
-```
-npm install
-npm run dev
-```
-
-.env:
-
-```
-PORT=5000
-MONGO_URI=...
-JWT_ACCESS_SECRET=...
-JWT_REFRESH_SECRET=...
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-CLIENT_URL=....
-```
+- **Node.js** + **Express** - Framework API server
+- **MongoDB** + **Mongoose** - Database NoSQL
+- **JWT** - Authentication (Access Token + Refresh Token)
+- **Google OAuth 2.0** - Đăng nhập bằng Google
+- **Bcrypt** - Mã hóa mật khẩu
+- **Google Generative AI** - Tạo câu hỏi quiz tự động
+- **Nodemailer** - Gửi email reset password
 
 ### Frontend
+- **React 19** + **TypeScript** - UI framework
+- **Vite** - Build tool
+- **React Router v7** - Routing
+- **Axios** - HTTP client
+- **Monaco Editor** - Code editor cho bài tập lập trình
+- **Recharts** - Biểu đồ thống kê
+- **Tailwind CSS** - Styling
+- **JWT Decode** - Decode JWT tokens
 
+---
+
+## 🚀 Cài đặt và chạy dự án
+
+### Yêu cầu hệ thống
+- **Node.js** >= 16.x
+- **MongoDB** >= 5.x
+- **npm** hoặc **yarn**
+
+### 1. Clone project
+
+```bash
+git clone <repository-url>
+cd Learnix
 ```
+
+### 2. Cài đặt Backend
+
+```bash
+cd server
 npm install
+```
+
+Tạo file `.env` trong thư mục `server/`:
+
+```env
+PORT=8000
+MONGO_URI=mongodb://localhost:27017/learnix
+ACCESS_TOKEN_SECRET=your_access_secret_here
+REFRESH_TOKEN_SECRET=your_refresh_secret_here
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+CLIENT_URL=http://localhost:5173
+GEMINI_API_KEY=your_gemini_api_key (optional - cho AI quiz generator)
+```
+
+Chạy server:
+
+```bash
 npm run dev
 ```
 
-.env:
+Server sẽ chạy tại `http://localhost:8000`
 
-```
-VITE_API_BASE_URL=http://localhost:5000
-```
+### 3. Cài đặt Frontend
 
-## 👩‍💻 Developer Guide
-
-### 1. Project Structure
-
-- **Backend (API server):** thư mục `server/` – Node.js + Express, MongoDB (Mongoose), JWT Auth + Google OAuth (Passport).
-- **Frontend (SPA):** thư mục `client/` – React + Vite + TypeScript + Tailwind CSS.
-- **Root:** các file cấu hình chung như `jest.config.js`, `babel.config.js`, tài liệu và script tiện ích.
-
-### 2. Setup Guide (Local Development)
-
-1. **Chuẩn bị .env**
-     - Backend: copy `server/.env.example` → `server/.env` và điền đầy đủ các biến như phần **Backend .env** ở trên.
-     - Frontend: copy `client/.env.example` → `client/.env` và thiết lập `VITE_API_BASE_URL` (ví dụ: `http://localhost:5000`).
-
-2. **Cài đặt & chạy Backend**
-
-     ```bash
-     cd server
-     npm install
-     npm run dev
-     ```
-
-     Mặc định API chạy tại `http://localhost:5000` (hoặc theo biến `PORT` trong `.env`).
-
-3. **Cài đặt & chạy Frontend**
-
-     ```bash
-     cd client
-     npm install
-     npm run dev
-     ```
-
-     Vite sẽ hiển thị địa chỉ ứng dụng (thường là `http://localhost:5173`).
-
-4. **Kiểm thử (tùy chọn)**
-     - Backend API tests: sử dụng Jest + Supertest (xem script trong `server/package.json`).
-     - Frontend tests: chạy Jest/Testing Library từ thư mục `client/` (xem script trong `client/package.json`).
-
----
-
-## 🧱 System Architecture
-
-- **Client (Frontend):**
-    - SPA React/Vite tại `client/`.
-    - Giao tiếp với Backend qua REST API sử dụng Axios (các service: `authService.ts`, `courseService.ts`, `quizService.ts`, ...).
-- **API Server (Backend):**
-    - Express app trong `server/index.js` / `server/server.js`.
-    - Các route chính: `/api/auth`, `/api/user`, `/api/courses`, `/api/enrollments`, `/api/student`, `/api/quizzes`.
-    - Xác thực JWT + middleware phân quyền (file `middleware/authMiddleware.js`), Google OAuth cấu hình trong `config/passport.js`.
-- **Database:**
-    - MongoDB, ánh xạ qua Mongoose models trong `server/models/`.
-- **Code Execution Service:**
-    - Chạy và chấm code cho bài tập lập trình (file `utils/codeExecutor.js`, model `ProgrammingExercise`, `CodeSubmission`).
-
-Luồng chính:
-
-1. Trình duyệt tải SPA từ Frontend.
-2. Frontend gọi REST API (base: `http://localhost:5000/api`) để đăng nhập, lấy khóa học, quiz, bài tập lập trình, v.v.
-3. Backend xử lý logic, truy vấn MongoDB và trả JSON về cho client.
-
----
-
-## 🗄️ Database Design (MongoDB)
-
-Các collection chính (Mongoose models trong `server/models/`):
-
-- **User:** thông tin tài khoản, email, mật khẩu (hash), role (`student`, `instructor`, `admin`), trạng thái khóa.
-- **Course:** thông tin khóa học, mô tả, danh mục, tag, trạng thái publish, instructor phụ trách.
-- **Lesson:** thuộc về một `Course`, chứa nội dung và thứ tự bài học.
-- **Enrollment:** liên kết `User` (student) với `Course`, trạng thái đăng ký, lịch sử tham gia.
-- **Progress:** lưu tiến độ học tập của học viên theo bài học/khóa.
-- **Quiz:** thông tin một bài quiz, thuộc về khóa học/bài học (tùy cấu hình trong controller/model).
-- **Question:** câu hỏi + đáp án cho từng quiz.
-- **Submission:** kết quả làm quiz (điểm, câu trả lời của học viên).
-- **ProgrammingExercise:** mô tả bài tập lập trình, ngôn ngữ, test cases.
-- **CodeSubmission:** bài nộp code của học viên, kết quả chạy test.
-- **Review (nếu sử dụng):** đánh giá khóa học từ học viên.
-
-Các quan hệ logic (ở mức khái niệm):
-
-- 1 **User (student)** ↔ nhiều **Enrollment** ↔ nhiều **Course**.
-- 1 **Course** ↔ nhiều **Lesson**, **Quiz**, **ProgrammingExercise**.
-- 1 **Lesson** ↔ nhiều **ProgrammingExercise**.
-- 1 **Quiz** ↔ nhiều **Question** ↔ nhiều **Submission** từ các học viên khác nhau.
-
----
-
-## 🌐 API Endpoints Overview
-
-**Base URL (local):** `http://localhost:5000/api`
-
-### Auth – `/auth`
-
-- `POST /auth/register` – Đăng ký tài khoản mới.
-- `POST /auth/login` – Đăng nhập bằng email/password.
-- `POST /auth/forgot-password` – Yêu cầu đặt lại mật khẩu.
-- `POST /auth/reset-password` – Đặt mật khẩu mới.
-- `GET /auth/google` – Bắt đầu flow Google OAuth.
-- `GET /auth/google/callback` – Google callback, trả token.
-- `POST /auth/refresh` – Xin access token mới từ refresh token.
-
-### User – `/user` (đa số cần JWT, một số route chỉ dành cho admin)
-
-- `GET /user/profile` – Lấy thông tin profile người dùng hiện tại.
-- `PUT /user/profile` – Cập nhật profile.
-- `GET /user/stats` – Thống kê hệ thống (admin).
-- `GET /user/all` – Danh sách toàn bộ user (admin).
-- `PUT /user/role` – Cập nhật role user (admin).
-- `PUT /user/lock` – Khóa/mở khóa tài khoản (admin).
-
-### Courses – `/courses`
-
-- `GET /courses` – Lấy danh sách khóa học (public).
-- `GET /courses/categories` – Lấy danh mục.
-- `GET /courses/tags/trending` – Lấy tag trending.
-- `GET /courses/search` – Tìm kiếm khóa học.
-- `GET /courses/:courseId/suggested` – Khóa học gợi ý liên quan.
-- `GET /courses/:id` – Chi tiết khóa học (có thể kiểm tra đã enroll hay chưa).
-- `POST /courses` – Tạo khóa học mới (instructor/admin).
-- `PUT /courses/:id` – Cập nhật khóa học (instructor/admin).
-- `DELETE /courses/:id` – Xóa khóa học (instructor/admin).
-- `PATCH /courses/:id/status` – Cập nhật trạng thái khóa học.
-- `PATCH /courses/:id/publish` / `/unpublish` – Publish/Unpublish khóa học.
-- `PATCH /courses/:id/tags/add` / `/remove` – Quản lý tags.
-- `PATCH /courses/:id/assign-instructor` – Gán instructor (admin).
-
-### Lessons – `/courses/:courseId/lessons`
-
-- `GET /courses/:courseId/lessons` – Danh sách bài học cho học viên.
-- `GET /courses/:courseId/lessons/manage/all` – Danh sách quản lý cho instructor/admin.
-- `PUT /courses/:courseId/lessons/reorder` – Sắp xếp lại thứ tự bài học.
-- `POST /courses/:courseId/lessons` – Tạo bài học mới (instructor/admin).
-- `GET /courses/:courseId/lessons/:lessonId` – Lấy chi tiết bài học.
-- `PUT /courses/:courseId/lessons/:lessonId` – Cập nhật bài học.
-- `DELETE /courses/:courseId/lessons/:lessonId` – Xóa bài học.
-- `PUT /courses/:courseId/lessons/:lessonId/progress` – Cập nhật tiến độ học (student).
-
-### Programming Exercises – `/courses/:courseId/lessons/:lessonId/exercises`
-
-- `POST /.../exercises` – Tạo bài tập lập trình (instructor/admin).
-- `GET /.../exercises` – Lấy tất cả bài tập của bài học.
-- `GET /.../exercises/:exerciseId` – Lấy chi tiết bài tập.
-- `PUT /.../exercises/:exerciseId` – Cập nhật bài tập.
-- `DELETE /.../exercises/:exerciseId` – Xóa bài tập.
-- `POST /.../exercises/:exerciseId/run` – Chạy code với test cases hiển thị.
-- `POST /.../exercises/:exerciseId/submit` – Nộp bài, chấm full test.
-- `GET /.../exercises/:exerciseId/submissions` – Lịch sử bài nộp.
-
-### Quizzes – `/quizzes`
-
-- `GET /quizzes?course_id=...` – Danh sách quiz (lọc theo khóa học).
-- `GET /quizzes/my-submissions` – Bài làm quiz của user hiện tại.
-- `GET /quizzes/:id` – Chi tiết quiz để làm bài.
-- `POST /quizzes/:quizId/submit` – Nộp bài quiz.
-- `POST /quizzes` – Tạo quiz (instructor/admin).
-- `PUT /quizzes/:id` – Cập nhật quiz.
-- `DELETE /quizzes/:id` – Xóa quiz.
-- `POST /quizzes/generate-mcq` – Sinh câu hỏi trắc nghiệm từ nội dung (AI, instructor/admin).
-
-### Enrollments – `/enrollments`
-
-- `GET /enrollments/my-courses` – Danh sách khóa học đã đăng ký (student).
-- `POST /enrollments/courses/:courseId/enroll` – Đăng ký học.
-- `DELETE /enrollments/courses/:courseId/enroll` – Hủy đăng ký.
-
-### Student – `/student`
-
-- `GET /student/dashboard` – Thông tin tổng quan dashboard học viên.
-- `GET /student/budget` – Thông tin ngân sách/credit học tập (nếu áp dụng).
-
-> Lưu ý: nhiều endpoint yêu cầu header `Authorization: Bearer <access_token>` và role phù hợp (`student`, `instructor`, `admin`).
-
----
-
-## 📖 User Guide
-
-### 1. Đăng ký & Đăng nhập
-
-- Người dùng có thể đăng ký tài khoản mới bằng email/password hoặc đăng nhập nhanh qua Google.
-- Sau khi đăng nhập thành công, hệ thống cấp **access token** và **refresh token** (được frontend quản lý tự động).
-
-### 2. Khám phá & Đăng ký khóa học
-
-- Vào trang **Courses** để xem danh sách khóa học, lọc theo danh mục hoặc tìm kiếm.
-- Vào trang chi tiết khóa học để xem mô tả, nội dung chính, instructor.
-- Nhấn **Enroll** để đăng ký tham gia khóa học (nếu được cấu hình cho phép).
-
-### 3. Học bài & Làm bài tập
-
-- Trong trang **Learn** của mỗi khóa học, học viên xem nội dung từng **Lesson**, hệ thống tự lưu **Progress**.
-- Với khóa học có **Programming Exercises**, học viên có thể viết code, **Run** để thử, sau đó **Submit** để chấm điểm.
-- Với khóa học có **Quiz**, học viên vào trang quiz, làm bài và nộp để nhận điểm.
-
-### 4. Dashboard & Quản lý tài khoản
-
-- **Student Dashboard:** xem tiến độ học tập, khóa học đã đăng ký, kết quả quiz/bài tập.
-- **Instructor Dashboard:** quản lý khóa học, bài học, quiz, bài tập lập trình, xem thống kê học viên.
-- **Admin Dashboard:** quản lý user, phân quyền, khóa/mở khóa tài khoản, xem thống kê hệ thống.
-- Người dùng có thể chỉnh sửa thông tin cá nhân trong **Profile Page**.
-
----
-
-Dưới đây là phiên bản **đầy đủ – rõ ràng – ngắn gọn** cho phần **Auth Overview**, có bổ sung giải thích chi tiết nhưng vẫn gọn:
-
----
-
-## 🛠️ Tooling & Quality Overview
-
-Dự án được xây dựng với các tiêu chuẩn chất lượng cao:
-
-- **Linter & Formatter:** Sử dụng **Prettier** để định dạng mã nguồn tự động. **ESLint** cho kiểm tra code style FE (cài đặt tại `client/`, chạy: `npm run lint`).
-- **Unit & API Testing:** Sử dụng **Jest** và **Supertest** để kiểm thử tích hợp các endpoint API Backend và các hàm tiện ích của Client.
-- **Commit Quality:** Sử dụng **lint-staged** để tự động chạy Prettier trước khi commit.
-
-### Hướng dẫn kiểm tra code style
-1. `cd client`
-2. Cài ESLint:
-   ```
-   npm install eslint --save-dev
-   npx eslint --init # chọn React, JS, browser, style (ấn Enter theo hướng dẫn)
-   ```
-3. Kiểm tra code:
-   ```
-   npm run lint
-   ```
-
----
-
-## 🖥️ Dashboard & Layout Architecture
-
-Hệ thống thiết kế và Dashboard được xây dựng với khả năng tái sử dụng và phân quyền[cite: 7].
-
-- **Layout Components:** Sử dụng Tailwind CSS để tạo các thành phần layout tái sử dụng như **AppShell** (Header, Sidebar, Footer), **Card**, và **Button**.
-- **Role-Based UI:** Dashboard được thiết kế để thích ứng với vai trò của người dùng (Student, Instructor, Admin), chỉ hiển thị các widget và chức năng có liên quan (ví dụ: Student thấy tiến độ, Instructor thấy phân tích học viên).
-
----
-
-## 🔐 Auth Overview
-
-- **Access Token**
-    - JWT sống ngắn (1 giờ).
-    - Lưu trong `localStogare` hoặc memory (tùy cấu hình).
-    - Gửi kèm mỗi request qua header `Authorization: Bearer <token>`.
-
-- **Refresh Token**
-    - JWT sống dài hơn (7 ngày).
-    - Lưu trong `httpOnly cookie` hoặc `localStogare` tùy thiết kế security.
-    - Dùng để xin **access token mới** khi access token hết hạn mà không cần đăng nhập lại.
-
-- **Roles**
-    - Mỗi user có một role cố định:
-        - `student` — người học
-        - `instructor` — giảng viên
-        - `admin` — quản trị hệ thống
-
-    - Backend sẽ ghi role trong payload của JWT để client biết quyền.
-
-- **Middleware Backend**
-    - **`protect`**
-        - Kiểm tra access token hợp lệ.
-        - Nếu token hết hạn → client sẽ dùng refresh token để lấy token mới.
-        - Chặn luôn request nếu không có token.
-
-    - **`restrictTo(role)`**
-        - Chỉ cho phép truy cập route nếu user có đúng vai trò.
-        - Ví dụ:
-            - `restrictTo("admin")` → chỉ admin truy cập.
-            - `restrictTo("instructor", "admin")` → cho 2 role này.
-
-- **Flow tổng quát**
-    1. Người dùng login (password hoặc Google OAuth).
-    2. Backend trả về _access token_ và _refresh token_.
-    3. Axios interceptor tự gắn access token vào request.
-    4. Khi access token hết hạn → axios tự gửi request refresh → lấy token mới → retry request.
-    5. Logout sẽ xoá cả hai token.
-
----
-
-## Google OAuth Setup
-
-1. Tạo OAuth Client ở Google Cloud.
-2. Thêm redirect URI:
-
-```
-BASE_URL/api/auth/google/callback
+```bash
+cd client
+npm install
 ```
 
-3. Đưa `GOOGLE_CLIENT_ID` và `GOOGLE_CLIENT_SECRET` vào `.env`.
-4. Passport config:
+Tạo file `.env` trong thư mục `client/`:
 
+```env
+VITE_API_BASE_URL=http://localhost:8000
 ```
-callbackURL = /api/auth/google/callback
+
+Chạy frontend:
+
+```bash
+npm run dev
+```
+
+Frontend sẽ chạy tại `http://localhost:5173`
+
+### 4. Seed dữ liệu mẫu (Tùy chọn)
+
+```bash
+cd server
+node config/seed_db.js
 ```
 
 ---
 
-## Decisions & Trade-offs
+## 📁 Cấu trúc dự án
 
-- **JWT (Access + Refresh):**
-    - ✔️ Phù hợp SPA, dễ scale, không cần session.
-    - ⚠️ Cần tự xử lý refresh, dễ lỗi nếu quản lý token sai.
-
-- **Axios + Interceptor:**
-    - ✔️ Tự attach token, tự refresh khi 401 → tiện lợi.
-    - ⚠️ Interceptor phức tạp hơn, dễ loop nếu refresh lỗi.
-
-- **Google OAuth:**
-    - ✔️ Đăng nhập nhanh, user không cần nhớ mật khẩu.
-    - ⚠️ Phụ thuộc Google, cần cấu hình redirect chuẩn.
+```
+Learnix/
+├── server/                    # Backend API
+│   ├── config/               # Cấu hình DB, Passport, Seed data
+│   ├── controllers/          # Xử lý logic nghiệp vụ
+│   ├── models/              # Mongoose schemas
+│   ├── routes/              # API routes
+│   ├── services/            # Business logic layer
+│   ├── middleware/          # Auth middleware
+│   ├── utils/               # Utilities (JWT, Code executor)
+│   ├── __tests__/           # API tests
+│   └── server.js            # Entry point
+│
+├── client/                   # Frontend React
+│   ├── src/
+│   │   ├── components/      # Reusable components
+│   │   ├── pages/          # Page components
+│   │   │   ├── Auth/       # Login, Register, ForgotPassword
+│   │   │   ├── Courses/    # Course List, Detail, Learn
+│   │   │   ├── Dashboard/  # Student/Instructor/Admin dashboards
+│   │   │   ├── Quizzes/    # Quiz management & taking
+│   │   │   └── Profile/    # User profile
+│   │   ├── services/       # API service calls
+│   │   ├── utils/          # Utilities (Auth token)
+│   │   ├── types/          # TypeScript types
+│   │   ├── routes/         # Route configuration
+│   │   └── styles/         # Global styles
+│   └── public/             # Static assets
+│
+└── README.md               # This file
+```
 
 ---
 
-## Example Accounts
+## 🗄 Database Schema
 
-| Email                | Password      | Role       |
-| -------------------- | ------------- | ---------- |
-| user@gmail.com       | User@123456789| student    |
-| admin@gmail.com      | Admin@123     | admin      |
-| instructor@gmail.com | Instructor@123| instructor |
+### User
+```javascript
+{
+  name: String,
+  email: String (unique),
+  password_hash: String,
+  role: enum ['student', 'instructor', 'admin'],
+  googleId: String (optional),
+  isLocked: Boolean,
+  budget: Number,           // Ngân sách học tập
+  bonus_credits: Number,    // Điểm thưởng
+  timestamps: true
+}
+```
+
+### Course
+```javascript
+{
+  instructor_id: ObjectId -> User,
+  title: String,
+  description: String,
+  summary: String,
+  level: enum ['beginner', 'intermediate', 'advanced'],
+  status: enum ['draft', 'pending', 'published', 'rejected'],
+  category: String,
+  tags: [String],
+  thumbnail: String,
+  price: Number,
+  is_premium: Boolean,
+  timestamps: true
+}
+```
+
+### Lesson
+```javascript
+{
+  course_id: ObjectId -> Course,
+  title: String,
+  content_type: enum ['video', 'text', 'pdf', 'quiz', 'assignment'],
+  content: String,          // URL hoặc text content
+  description: String,
+  duration: Number,         // Phút
+  is_free: Boolean,
+  order: Number,           // Thứ tự bài học
+  timestamps: true
+}
+```
+
+### Enrollment
+```javascript
+{
+  student_id: ObjectId -> User,
+  course_id: ObjectId -> Course,
+  status: enum ['enrolled', 'completed', 'dropped', 'suspended'],
+  timestamps: true
+}
+```
+
+### Progress
+```javascript
+{
+  student_id: ObjectId -> User,
+  course_id: ObjectId -> Course,
+  lesson_id: ObjectId -> Lesson,
+  status: enum ['not_started', 'in_progress', 'completed'],
+  completion_percentage: Number (0-100),
+  time_spent: Number,      // Giây
+  last_accessed_at: Date,
+  completed_at: Date,
+  notes: String,
+  timestamps: true
+}
+```
+
+### Quiz
+```javascript
+{
+  course_id: ObjectId -> Course,
+  lesson_id: ObjectId -> Lesson,
+  title: String,
+  description: String,
+  time_limit: Number,      // Phút (0 = không giới hạn)
+  attempts_allowed: Number,
+  passing_score: Number,   // Điểm đậu (0-100)
+  is_active: Boolean,
+  timestamps: true
+}
+```
+
+### Question
+```javascript
+{
+  quiz_id: ObjectId -> Quiz,
+  question_text: String,
+  question_type: enum ['multiple_choice', 'true_false'],
+  options: [String],       // Các đáp án
+  correct_answer: Number,  // Index của đáp án đúng
+  points: Number,
+  explanation: String,     // Giải thích đáp án
+  timestamps: true
+}
+```
+
+### Submission
+```javascript
+{
+  student_id: ObjectId -> User,
+  quiz_id: ObjectId -> Quiz,
+  answers: [Number],       // Mảng index các đáp án đã chọn
+  score: Number,
+  max_score: Number,
+  passed: Boolean,
+  time_taken: Number,      // Giây
+  submitted_at: Date,
+  timestamps: true
+}
+```
+
+### ProgrammingExercise
+```javascript
+{
+  lesson_id: ObjectId -> Lesson,
+  title: String,
+  description: String,
+  starter_code: {
+    python: String,
+    javascript: String
+  },
+  test_cases: [{
+    input: String,
+    expected_output: String,
+    is_hidden: Boolean,
+    points: Number,
+    description: String
+  }],
+  languages: ['python', 'javascript'],
+  difficulty: enum ['easy', 'medium', 'hard'],
+  time_limit: Number,      // Giây
+  memory_limit: Number,    // MB
+  function_name: String,
+  input_format: enum ['json', 'space_separated', 'line_separated'],
+  timestamps: true
+}
+```
+
+### CodeSubmission
+```javascript
+{
+  student_id: ObjectId -> User,
+  exercise_id: ObjectId -> ProgrammingExercise,
+  code: String,
+  language: enum ['python', 'javascript'],
+  status: enum ['pending', 'running', 'passed', 'failed', 'error'],
+  test_results: [{
+    passed: Boolean,
+    input: String,
+    expected: String,
+    actual: String,
+    error: String,
+    points: Number
+  }],
+  score: Number,
+  max_score: Number,
+  submitted_at: Date,
+  timestamps: true
+}
+```
+
+---
+
+## 🔌 API Endpoints
+
+**Base URL:** `http://localhost:8000/api`
+
+### 🔐 Authentication (`/auth`)
+
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| POST | `/auth/register` | Đăng ký tài khoản mới | ❌ |
+| POST | `/auth/login` | Đăng nhập | ❌ |
+| POST | `/auth/forgot-password` | Quên mật khẩu | ❌ |
+| POST | `/auth/reset-password` | Đặt lại mật khẩu | ❌ |
+| GET | `/auth/google` | Đăng nhập Google (redirect) | ❌ |
+| GET | `/auth/google/callback` | Google OAuth callback | ❌ |
+| POST | `/auth/refresh` | Làm mới access token | ❌ |
+
+### 👤 User (`/user`)
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/user/profile` | Xem profile | ✅ | All |
+| PUT | `/user/profile` | Cập nhật profile | ✅ | All |
+| GET | `/user/stats` | Thống kê hệ thống | ✅ | Admin |
+| GET | `/user/all` | Danh sách user | ✅ | Admin |
+| PUT | `/user/role` | Đổi role user | ✅ | Admin |
+| PUT | `/user/lock` | Khóa/mở khóa user | ✅ | Admin |
+
+### 📚 Courses (`/courses`)
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/courses` | Danh sách khóa học | ❌ | Public |
+| GET | `/courses/:id` | Chi tiết khóa học | ❌ | Public |
+| GET | `/courses/categories` | Danh mục khóa học | ❌ | Public |
+| GET | `/courses/tags/trending` | Tags phổ biến | ❌ | Public |
+| GET | `/courses/search` | Tìm kiếm khóa học | ❌ | Public |
+| GET | `/courses/:id/suggested` | Khóa học gợi ý | ❌ | Public |
+| POST | `/courses` | Tạo khóa học | ✅ | Instructor, Admin |
+| PUT | `/courses/:id` | Sửa khóa học | ✅ | Instructor, Admin |
+| DELETE | `/courses/:id` | Xóa khóa học | ✅ | Instructor, Admin |
+| PATCH | `/courses/:id/status` | Đổi status (approve/reject) | ✅ | Instructor, Admin |
+| PATCH | `/courses/:id/publish` | Publish khóa học | ✅ | Instructor, Admin |
+| PATCH | `/courses/:id/unpublish` | Unpublish khóa học | ✅ | Instructor, Admin |
+
+### 📖 Lessons (`/courses/:courseId/lessons`)
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/courses/:courseId/lessons` | Danh sách bài học (student view) | ✅ | Student |
+| GET | `/courses/:courseId/lessons/manage/all` | Danh sách bài học (manage view) | ✅ | Instructor, Admin |
+| GET | `/courses/:courseId/lessons/:lessonId` | Chi tiết bài học | ✅ | All |
+| POST | `/courses/:courseId/lessons` | Tạo bài học | ✅ | Instructor, Admin |
+| PUT | `/courses/:courseId/lessons/:lessonId` | Sửa bài học | ✅ | Instructor, Admin |
+| DELETE | `/courses/:courseId/lessons/:lessonId` | Xóa bài học | ✅ | Instructor, Admin |
+| PUT | `/courses/:courseId/lessons/reorder` | Sắp xếp bài học | ✅ | Instructor, Admin |
+| PUT | `/courses/:courseId/lessons/:lessonId/progress` | Cập nhật tiến độ | ✅ | Student |
+
+### 💻 Programming Exercises
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/courses/:courseId/lessons/:lessonId/exercises` | Danh sách bài tập | ✅ | All |
+| GET | `/courses/:courseId/lessons/:lessonId/exercises/:exerciseId` | Chi tiết bài tập | ✅ | All |
+| POST | `/courses/:courseId/lessons/:lessonId/exercises` | Tạo bài tập | ✅ | Instructor, Admin |
+| PUT | `/courses/:courseId/lessons/:lessonId/exercises/:exerciseId` | Sửa bài tập | ✅ | Instructor, Admin |
+| DELETE | `/courses/:courseId/lessons/:lessonId/exercises/:exerciseId` | Xóa bài tập | ✅ | Instructor, Admin |
+| POST | `/courses/:courseId/lessons/:lessonId/exercises/:exerciseId/run` | Chạy thử code | ✅ | Student |
+| POST | `/courses/:courseId/lessons/:lessonId/exercises/:exerciseId/submit` | Nộp bài | ✅ | Student |
+| GET | `/courses/:courseId/lessons/:lessonId/exercises/:exerciseId/submissions` | Lịch sử nộp bài | ✅ | Student |
+
+### 📝 Quizzes (`/quizzes`)
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/quizzes?course_id=...&lesson_id=...` | Danh sách quiz | ✅ | All |
+| GET | `/quizzes/:id` | Chi tiết quiz (để làm bài) | ✅ | Student |
+| GET | `/quizzes/my-submissions` | Lịch sử làm quiz | ✅ | Student |
+| POST | `/quizzes/:quizId/submit` | Nộp bài quiz | ✅ | Student |
+| POST | `/quizzes` | Tạo quiz | ✅ | Instructor, Admin |
+| PUT | `/quizzes/:id` | Sửa quiz | ✅ | Instructor, Admin |
+| DELETE | `/quizzes/:id` | Xóa quiz | ✅ | Instructor, Admin |
+| GET | `/quizzes/:id/submissions` | Xem bài làm của học viên | ✅ | Instructor, Admin |
+| GET | `/quizzes/:id/stats` | Thống kê quiz | ✅ | Instructor, Admin |
+| POST | `/quizzes/generate-mcq` | Tạo quiz bằng AI | ✅ | Instructor, Admin |
+
+### 🎓 Enrollments (`/enrollments`)
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/enrollments/my-courses` | Khóa học đã đăng ký | ✅ | Student |
+| POST | `/enrollments/courses/:courseId/enroll` | Đăng ký khóa học | ✅ | Student |
+| DELETE | `/enrollments/courses/:courseId/enroll` | Hủy đăng ký | ✅ | Student |
+
+### 📊 Student (`/student`)
+
+| Method | Endpoint | Mô tả | Auth | Role |
+|--------|----------|-------|------|------|
+| GET | `/student/dashboard` | Dashboard học viên | ✅ | Student |
+| GET | `/student/budget` | Ngân sách học tập | ✅ | Student |
+
+---
+
+## 📖 Hướng dẫn sử dụng
+
+### Đăng ký và Đăng nhập
+
+1. **Đăng ký tài khoản:**
+   - Vào trang chủ → Nhấn "Đăng ký"
+   - Điền thông tin (tên, email, mật khẩu)
+   - Hoặc đăng nhập nhanh bằng Google
+
+2. **Đăng nhập:**
+   - Nhập email/password
+   - Hoặc dùng nút "Sign in with Google"
+   - Hệ thống tự động lưu JWT token
+
+### Dành cho Học viên (Student)
+
+1. **Khám phá khóa học:**
+   - Xem danh sách khóa học tại trang "Courses"
+   - Lọc theo category, level, tags
+   - Tìm kiếm theo tên khóa học
+
+2. **Đăng ký khóa học:**
+   - Vào trang chi tiết khóa học
+   - Nhấn nút "Enroll" để đăng ký
+   - Sau khi đăng ký, vào "Dashboard" để xem khóa học của mình
+
+3. **Học bài:**
+   - Vào "My Courses" → Chọn khóa học → "Start Learning"
+   - Xem nội dung bài học (video/text/PDF)
+   - Nhấn "Mark as Complete" khi hoàn thành
+
+4. **Làm Quiz:**
+   - Quiz xuất hiện sau khi hoàn thành bài học
+   - Đọc câu hỏi và chọn đáp án
+   - Nhấn "Submit" để nộp bài
+   - Xem điểm và đáp án đúng
+
+5. **Làm bài tập lập trình:**
+   - Vào bài học có bài tập code
+   - Viết code trong Monaco Editor
+   - Nhấn "Run" để test với các test case hiển thị
+   - Nhấn "Submit" để chấm điểm với tất cả test cases
+
+### Dành cho Giảng viên (Instructor)
+
+1. **Tạo khóa học:**
+   - Dashboard → "Course Management" → "Create Course"
+   - Điền thông tin (tiêu đề, mô tả, category, level, tags)
+   - Khóa học mới tạo sẽ ở trạng thái "Draft"
+
+2. **Thêm bài học:**
+   - Vào khóa học → "Manage Lessons"
+   - Nhấn "Add Lesson"
+   - Chọn loại nội dung (Video/Text/PDF)
+   - Điền link video YouTube hoặc nội dung text
+   - Sắp xếp thứ tự bài học
+
+3. **Tạo Quiz:**
+   - Có 2 cách:
+     - **Thủ công:** Dashboard → "Quiz Management" → "Create Quiz" → Thêm từng câu hỏi
+     - **AI:** Dashboard → "AI Quiz Generator" → Paste nội dung bài học → AI tự tạo câu hỏi
+
+4. **Tạo bài tập lập trình:**
+   - Vào bài học → "Add Programming Exercise"
+   - Viết đề bài, starter code
+   - Thêm test cases (input → expected output)
+   - Chọn ngôn ngữ (Python/JavaScript)
+
+5. **Gửi khóa học để duyệt:**
+   - Vào "My Courses" → Chọn khóa học (status = Draft)
+   - Nhấn "Submit for Review"
+   - Đợi admin approve
+   - Sau khi approve, khóa học sẽ hiển thị public
+
+6. **Xem thống kê:**
+   - Vào Dashboard → "Course Statistics"
+   - Xem số học viên, kết quả quiz, bài tập code
+
+### Dành cho Admin
+
+1. **Quản lý người dùng:**
+   - Dashboard → "User Management"
+   - Xem danh sách tất cả user
+   - Đổi role (Student ↔ Instructor ↔ Admin)
+   - Khóa/Mở khóa tài khoản
+
+2. **Duyệt khóa học:**
+   - Dashboard → "Course Moderation"
+   - Xem các khóa học ở trạng thái "Pending"
+   - Chọn "Published" để approve
+   - Chọn "Rejected" để từ chối
+
+3. **Xem thống kê:**
+   - Dashboard → Xem biểu đồ:
+     - Tổng số users, courses, enrollments
+     - Top khóa học theo số học viên
+     - Phân bố khóa học theo category
+
+---
+
+## 🔐 Luồng Authentication
+
+```
+1. User login (email/password hoặc Google OAuth)
+   ↓
+2. Backend verify credentials
+   ↓
+3. Tạo Access Token (expire 1h) + Refresh Token (expire 7 days)
+   ↓
+4. Frontend lưu cả 2 tokens vào localStorage
+   ↓
+5. Mỗi request → Axios tự gắn Access Token vào header
+   ↓
+6. Khi Access Token hết hạn:
+   - Axios interceptor bắt lỗi 401
+   - Tự động gọi /auth/refresh với Refresh Token
+   - Lấy Access Token mới
+   - Retry request ban đầu
+   ↓
+7. Khi Refresh Token hết hạn → User phải login lại
+```
+
+**Middleware Backend:**
+- `protect`: Kiểm tra JWT token hợp lệ
+- `restrictTo([role])`: Chỉ cho phép các role nhất định truy cập
+
+---
+
+## 🧪 Testing
+
+### Backend API Tests
+
+```bash
+cd server
+npm test
+```
+
+Tests bao gồm:
+- Auth endpoints (register, login, refresh token)
+- CRUD operations cho courses, lessons, quizzes
+- Enrollment flow
+- Programming exercise submission
+
+---
+
+## 🎨 UI/UX Features
+
+- **Responsive Design:** Hoạt động tốt trên desktop, tablet, mobile
+- **Dark Mode Ready:** Chuẩn bị cho chế độ tối
+- **Loading States:** Skeleton loading và spinners
+- **Error Handling:** Toast notifications cho lỗi và thành công
+- **Form Validation:** Validate input trước khi submit
+- **Code Editor:** Monaco Editor với syntax highlighting
+- **Charts:** Recharts cho dashboard analytics
+
+---
+
+## 🚢 Deploy
+
+### Backend (Railway/Render)
+
+1. Push code lên GitHub
+2. Connect với Railway/Render
+3. Set environment variables
+4. Auto deploy
+
+### Frontend (Vercel)
+
+1. Push code lên GitHub
+2. Import project vào Vercel
+3. Set `VITE_API_BASE_URL` environment variable
+4. Auto deploy
+
+---
+
+## 📝 Tài khoản demo
+
+| Email | Password | Role |
+|-------|----------|------|
+| `user@gmail.com` | `User@123456789` | Student |
+| `instructor@gmail.com` | `Instructor@123` | Instructor |
+| `admin@gmail.com` | `Admin@123` | Admin |
+
+---
+
+## 🤝 Contributing
+
+1. Fork project
+2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📞 Liên hệ
+
+- **Email:** pvtai22@clc.fitus.edu.vn
+- **GitHub:** [your-github](https://github.com/vtai2834)
+
+---
+
+## 📄 License
+
+MIT License - xem file LICENSE để biết thêm chi tiết.
