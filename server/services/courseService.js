@@ -58,7 +58,10 @@ const getCourses = async (queryParams) => {
 
     const coursesWithCounts = await Promise.all(
         courses.map(async (course) => {
-            const enrollmentsCount = await Enrollment.countDocuments({ course_id: course._id });
+            const enrollmentsCount = await Enrollment.countDocuments({ 
+                course_id: course._id,
+                status: { $in: ['enrolled', 'completed'] } 
+            });
             const lessonsCount = await Lesson.countDocuments({ course_id: course._id });
             return { ...course, enrollmentsCount, lessonsCount };
         })
@@ -182,7 +185,10 @@ const searchCourses = async (searchQuery, page = 1, limit = 12) => {
 
     const coursesWithCounts = await Promise.all(
         courses.map(async (course) => {
-            const enrollmentsCount = await Enrollment.countDocuments({ course_id: course._id });
+            const enrollmentsCount = await Enrollment.countDocuments({ 
+                course_id: course._id,
+                status: { $in: ['enrolled', 'completed'] } 
+            });
             const lessonsCount = await Lesson.countDocuments({ course_id: course._id });
             return { ...course, enrollmentsCount, lessonsCount };
         })
@@ -241,7 +247,10 @@ const getSuggestedCourses = async (courseId, limit = 6) => {
 
     const coursesWithCounts = await Promise.all(
         suggestedCourses.map(async (course) => {
-            const enrollmentsCount = await Enrollment.countDocuments({ course_id: course._id });
+            const enrollmentsCount = await Enrollment.countDocuments({ 
+                course_id: course._id,
+                status: { $in: ['enrolled', 'completed'] } 
+            });
             const lessonsCount = await Lesson.countDocuments({ course_id: course._id });
             return { ...course, enrollmentsCount, lessonsCount };
         })
