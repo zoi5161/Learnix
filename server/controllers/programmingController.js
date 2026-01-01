@@ -1,9 +1,4 @@
-const ProgrammingExercise = require('../models/ProgrammingExercise');
-const CodeSubmission = require('../models/CodeSubmission');
-const Lesson = require('../models/Lesson');
-const Course = require('../models/Course');
-const Enrollment = require('../models/Enrollment');
-const { runTestCases } = require('../utils/codeExecutor');
+const programmingService = require('../services/programmingService');
 
 // ============================================================
 // INSTRUCTOR / ADMIN OPERATIONS
@@ -15,82 +10,24 @@ const { runTestCases } = require('../utils/codeExecutor');
 exports.createExercise = async (req, res) => {
     try {
         const { lessonId } = req.params;
-        const {
-            title,
-            description,
-            starter_code,
-            test_cases,
-            languages,
-            difficulty,
-            time_limit,
-            memory_limit
-        } = req.body;
-
-        // Verify lesson exists
-        const lesson = await Lesson.findById(lessonId);
-        if (!lesson) {
-            return res.status(404).json({
-                success: false,
-                message: 'Lesson not found'
-            });
-        }
-
-        // Check permission (Admin or course owner)
-        const course = await Course.findById(lesson.course_id);
-        if (!course) {
-            return res.status(404).json({
-                success: false,
-                message: 'Course not found'
-            });
-        }
-
-        const isOwner = course.instructor_id?.toString() === req.user._id.toString();
-        if (req.user.role !== 'admin' && !isOwner) {
-            return res.status(403).json({
-                success: false,
-                message: 'Permission denied'
-            });
-        }
-
-        // Validate test cases
-        if (!test_cases || test_cases.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'At least one test case is required'
-            });
-        }
-
-        // Validate languages
-        if (!languages || languages.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'At least one language is required'
-            });
-        }
-
-        // Create exercise
-        const exercise = await ProgrammingExercise.create({
-            lesson_id: lessonId,
-            title,
-            description,
-            starter_code: starter_code || { python: '', javascript: '' },
-            test_cases,
-            languages,
-            difficulty: difficulty || 'easy',
-            time_limit: time_limit || 5,
-            memory_limit: memory_limit || 128
-        });
-
+        const exercise = await programmingService.createExercise(
+            lessonId,
+            req.body,
+            req.user._id,
+            req.user.role
+        );
         res.status(201).json({
             success: true,
             data: exercise
         });
-
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Lesson not found' || error.message === 'Course not found' ? 404 :
+                          error.message === 'Permission denied' ? 403 :
+                          error.message === 'At least one test case is required' || 
+                          error.message === 'At least one language is required' ? 400 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error creating exercise',
-            error: error.message
+            message: error.message || 'Error creating exercise'
         });
     }
 };
@@ -101,54 +38,18 @@ exports.createExercise = async (req, res) => {
 exports.getExercise = async (req, res) => {
     try {
         const { exerciseId } = req.params;
-        const userId = req.user?.id;
-
-        const exercise = await ProgrammingExercise.findById(exerciseId);
-        if (!exercise) {
-            return res.status(404).json({
-                success: false,
-                message: 'Exercise not found'
-            });
-        }
-
-        // Check if user is instructor/admin (can see all test cases)
-        const lesson = await Lesson.findById(exercise.lesson_id);
-        const course = await Course.findById(lesson.course_id);
-        const isInstructor = req.user && (
-            req.user.role === 'admin' ||
-            req.user.role === 'instructor' ||
-            course.instructor_id?.toString() === req.user._id.toString()
-        );
-
-        // Filter test cases for students (hide hidden test cases)
-        let testCases = exercise.test_cases;
-        if (!isInstructor && userId) {
-            testCases = exercise.test_cases.filter(tc => !tc.is_hidden);
-        }
-
-        // Get latest submission if student
-        let latestSubmission = null;
-        if (userId && !isInstructor) {
-            latestSubmission = await CodeSubmission.findOne({
-                exercise_id: exerciseId,
-                student_id: userId
-            }).sort({ attempt_number: -1 });
-        }
-
+        const userId = req.user?.id || null;
+        const userRole = req.user?.role || null;
+        const exercise = await programmingService.getExercise(exerciseId, userId, userRole);
         res.json({
             success: true,
-            data: {
-                ...exercise.toObject(),
-                test_cases: testCases,
-                latest_submission: latestSubmission
-            }
+            data: exercise
         });
-
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Exercise not found' ? 404 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error fetching exercise',
-            error: error.message
+            message: error.message || 'Error fetching exercise'
         });
     }
 };
@@ -159,22 +60,15 @@ exports.getExercise = async (req, res) => {
 exports.getExercisesByLesson = async (req, res) => {
     try {
         const { lessonId } = req.params;
-
-        const exercises = await ProgrammingExercise.find({
-            lesson_id: lessonId,
-            is_active: true
-        }).sort({ createdAt: -1 });
-
+        const exercises = await programmingService.getExercisesByLesson(lessonId);
         res.json({
             success: true,
             data: exercises
         });
-
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Error fetching exercises',
-            error: error.message
+            message: error.message || 'Error fetching exercises'
         });
     }
 };
@@ -185,43 +79,22 @@ exports.getExercisesByLesson = async (req, res) => {
 exports.updateExercise = async (req, res) => {
     try {
         const { exerciseId } = req.params;
-
-        const exercise = await ProgrammingExercise.findById(exerciseId);
-        if (!exercise) {
-            return res.status(404).json({
-                success: false,
-                message: 'Exercise not found'
-            });
-        }
-
-        // Check permission
-        const lesson = await Lesson.findById(exercise.lesson_id);
-        const course = await Course.findById(lesson.course_id);
-        const isOwner = course.instructor_id?.toString() === req.user._id.toString();
-        
-        if (req.user.role !== 'admin' && !isOwner) {
-            return res.status(403).json({
-                success: false,
-                message: 'Permission denied'
-            });
-        }
-
-        const updatedExercise = await ProgrammingExercise.findByIdAndUpdate(
+        const updatedExercise = await programmingService.updateExercise(
             exerciseId,
             req.body,
-            { new: true, runValidators: true }
+            req.user._id,
+            req.user.role
         );
-
         res.json({
             success: true,
             data: updatedExercise
         });
-
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Exercise not found' ? 404 :
+                          error.message === 'Permission denied' ? 403 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error updating exercise',
-            error: error.message
+            message: error.message || 'Error updating exercise'
         });
     }
 };
@@ -232,40 +105,21 @@ exports.updateExercise = async (req, res) => {
 exports.deleteExercise = async (req, res) => {
     try {
         const { exerciseId } = req.params;
-
-        const exercise = await ProgrammingExercise.findById(exerciseId);
-        if (!exercise) {
-            return res.status(404).json({
-                success: false,
-                message: 'Exercise not found'
-            });
-        }
-
-        // Check permission
-        const lesson = await Lesson.findById(exercise.lesson_id);
-        const course = await Course.findById(lesson.course_id);
-        const isOwner = course.instructor_id?.toString() === req.user._id.toString();
-        
-        if (req.user.role !== 'admin' && !isOwner) {
-            return res.status(403).json({
-                success: false,
-                message: 'Permission denied'
-            });
-        }
-
-        // Soft delete (set is_active to false)
-        await ProgrammingExercise.findByIdAndUpdate(exerciseId, { is_active: false });
-
+        const result = await programmingService.deleteExercise(
+            exerciseId,
+            req.user._id,
+            req.user.role
+        );
         res.json({
             success: true,
-            message: 'Exercise deleted successfully'
+            message: result.message
         });
-
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Exercise not found' ? 404 :
+                          error.message === 'Permission denied' ? 403 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error deleting exercise',
-            error: error.message
+            message: error.message || 'Error deleting exercise'
         });
     }
 };
@@ -275,215 +129,64 @@ exports.deleteExercise = async (req, res) => {
 // ============================================================
 
 /**
- * Run code (test with visible test cases only)
+ * Run code (test with visible test cases)
  */
 exports.runCode = async (req, res) => {
     try {
         const { exerciseId } = req.params;
         const { code, language } = req.body;
-        const userId = req.user.id;
-
-        if (!code || !language) {
-            return res.status(400).json({
-                success: false,
-                message: 'Code and language are required'
-            });
-        }
-
-        // Get exercise
-        const exercise = await ProgrammingExercise.findById(exerciseId);
-        if (!exercise) {
-            return res.status(404).json({
-                success: false,
-                message: 'Exercise not found'
-            });
-        }
-
-        // Check if language is supported
-        if (!exercise.languages.includes(language)) {
-            return res.status(400).json({
-                success: false,
-                message: `Language ${language} is not supported for this exercise`
-            });
-        }
-
-        // Check enrollment for students
-        if (req.user.role === 'student') {
-            const lesson = await Lesson.findById(exercise.lesson_id);
-            const enrollment = await Enrollment.findOne({
-                student_id: userId,
-                course_id: lesson.course_id,
-                status: { $in: ['enrolled', 'completed'] }
-            });
-
-            if (!enrollment) {
-                return res.status(403).json({
-                    success: false,
-                    message: 'You must be enrolled in this course to attempt exercises'
-                });
-            }
-        }
-
-        // Get visible test cases only (non-hidden)
-        const visibleTestCases = exercise.test_cases.filter(tc => !tc.is_hidden);
-
-        if (visibleTestCases.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'No visible test cases available'
-            });
-        }
-
-        // Run test cases
-        const testResults = await runTestCases(
+        const result = await programmingService.runCode(
+            exerciseId,
             code,
-            visibleTestCases,
             language,
-            exercise.time_limit,
-            exercise.function_name || 'solution',
-            exercise.input_format || 'json'
+            req.user.id,
+            req.user.role
         );
-
-        // Calculate score for visible test cases
-        const totalPoints = visibleTestCases.reduce((sum, tc) => sum + (tc.points || 1), 0);
-        const earnedPoints = testResults.reduce((sum, r) => sum + r.points_earned, 0);
-        const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
-
         res.json({
             success: true,
-            data: {
-                test_results: testResults,
-                score,
-                passed: testResults.every(r => r.passed),
-                total_test_cases: visibleTestCases.length,
-                passed_test_cases: testResults.filter(r => r.passed).length
-            }
+            data: result
         });
-
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Code and language are required' ||
+                          error.message.includes('Language') ||
+                          error.message === 'No visible test cases available' ||
+                          error.message.includes('enrolled') ? 400 :
+                          error.message === 'Exercise not found' ? 404 :
+                          error.message.includes('enrolled') ? 403 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error running code',
-            error: error.message
+            message: error.message || 'Error running code'
         });
     }
 };
 
 /**
- * Submit code (run all test cases including hidden ones)
+ * Submit code (run all test cases)
  */
 exports.submitCode = async (req, res) => {
     try {
         const { exerciseId } = req.params;
         const { code, language } = req.body;
-        const userId = req.user.id;
-
-        if (!code || !language) {
-            return res.status(400).json({
-                success: false,
-                message: 'Code and language are required'
-            });
-        }
-
-        // Get exercise
-        const exercise = await ProgrammingExercise.findById(exerciseId);
-        if (!exercise) {
-            return res.status(404).json({
-                success: false,
-                message: 'Exercise not found'
-            });
-        }
-
-        // Check if language is supported
-        if (!exercise.languages.includes(language)) {
-            return res.status(400).json({
-                success: false,
-                message: `Language ${language} is not supported for this exercise`
-            });
-        }
-
-        // Check enrollment for students
-        if (req.user.role === 'student') {
-            const lesson = await Lesson.findById(exercise.lesson_id);
-            const enrollment = await Enrollment.findOne({
-                student_id: userId,
-                course_id: lesson.course_id,
-                status: { $in: ['enrolled', 'completed'] }
-            });
-
-            if (!enrollment) {
-                return res.status(403).json({
-                    success: false,
-                    message: 'You must be enrolled in this course to submit exercises'
-                });
-            }
-        }
-
-        // Run ALL test cases (including hidden ones)
-        const startTime = Date.now();
-        const testResults = await runTestCases(
+        const result = await programmingService.submitCode(
+            exerciseId,
             code,
-            exercise.test_cases,
             language,
-            exercise.time_limit,
-            exercise.function_name || 'solution',
-            exercise.input_format || 'json'
+            req.user.id,
+            req.user.role
         );
-        const totalExecutionTime = Date.now() - startTime;
-
-        // Calculate score
-        const totalPoints = exercise.test_cases.reduce((sum, tc) => sum + (tc.points || 1), 0);
-        const earnedPoints = testResults.reduce((sum, r) => sum + r.points_earned, 0);
-        const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
-        const passed = testResults.every(r => r.passed);
-
-        // Get attempt number
-        const lastSubmission = await CodeSubmission.findOne({
-            exercise_id: exerciseId,
-            student_id: userId
-        }).sort({ attempt_number: -1 });
-
-        const attemptNumber = lastSubmission ? lastSubmission.attempt_number + 1 : 1;
-
-        // Save submission
-        const submission = await CodeSubmission.create({
-            exercise_id: exerciseId,
-            student_id: userId,
-            lesson_id: exercise.lesson_id,
-            language,
-            code,
-            test_results: testResults.map((result, index) => ({
-                test_case_id: exercise.test_cases[index]._id,
-                passed: result.passed,
-                output: result.output,
-                expected_output: result.expected_output,
-                error: result.error,
-                execution_time: result.execution_time,
-                points_earned: result.points_earned
-            })),
-            score,
-            passed,
-            attempt_number: attemptNumber,
-            execution_time: totalExecutionTime
-        });
-
         res.json({
             success: true,
-            data: {
-                submission,
-                test_results: testResults,
-                score,
-                passed,
-                total_test_cases: exercise.test_cases.length,
-                passed_test_cases: testResults.filter(r => r.passed).length
-            }
+            data: result
         });
-
     } catch (error) {
-        res.status(500).json({
+        const statusCode = error.message === 'Code and language are required' ||
+                          error.message.includes('Language') ||
+                          error.message.includes('enrolled') ? 400 :
+                          error.message === 'Exercise not found' ? 404 :
+                          error.message.includes('enrolled') ? 403 : 500;
+        res.status(statusCode).json({
             success: false,
-            message: 'Error submitting code',
-            error: error.message
+            message: error.message || 'Error submitting code'
         });
     }
 };
@@ -494,26 +197,15 @@ exports.submitCode = async (req, res) => {
 exports.getSubmissions = async (req, res) => {
     try {
         const { exerciseId } = req.params;
-        const userId = req.user.id;
-
-        const submissions = await CodeSubmission.find({
-            exercise_id: exerciseId,
-            student_id: userId
-        })
-            .sort({ attempt_number: -1 })
-            .limit(10);
-
+        const submissions = await programmingService.getSubmissions(exerciseId, req.user.id);
         res.json({
             success: true,
             data: submissions
         });
-
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Error fetching submissions',
-            error: error.message
+            message: error.message || 'Error fetching submissions'
         });
     }
 };
-
