@@ -46,7 +46,7 @@ const CourseListPage: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'createdAt');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('order') as 'asc' | 'desc') || 'desc');
-    const [isCollapsed, setIsCollapsed] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // CRUD states
     const [isModalOpen, setIsModalOpen] = useState(false);

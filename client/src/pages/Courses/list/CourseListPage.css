@@ -166,7 +166,8 @@
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: space-between;
+    height: fit-content;
 }
 
 .course-list-card:hover {
