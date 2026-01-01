@@ -74,6 +74,11 @@ const authUser = async (email, password) => {
         throw new Error('Invalid email or password');
     }
 
+    // Check if user account is locked
+    if (user.isLocked) {
+        throw new Error('Your account has been locked. Please contact the administrator.');
+    }
+
     const data = {
         id: user._id,
         role: user.role,
@@ -91,6 +96,12 @@ const authUser = async (email, password) => {
  * Handle Google OAuth login success
  */
 const googleLoginSuccess = async (user) => {
+    // Check if user account is locked
+    if (user.isLocked) {
+        const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=locked`;
+        return { redirectUrl };
+    }
+
     const data = {
         id: user._id,
         role: user.role,

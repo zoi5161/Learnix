@@ -152,6 +152,6 @@ callbackURL = /api/auth/google/callback
 
 | Email                | Password      | Role       |
 | -------------------- | ------------- | ---------- |
-| user@gmail.com       | User123456789 | student    |
-| admin@gmail.com      | Admin123      | admin      |
-| instructor@gmail.com | Instructor123 | instructor |
+| user@gmail.com       | User@123456789| student    |
+| admin@gmail.com      | Admin@123     | admin      |
+| instructor@gmail.com | Instructor@123| instructor |

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import authService from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import BaseLayout from '../../layouts/BaseLayout';
 import { getUserFromToken, getAccessToken } from '../../utils/authToken';
 import { Link } from 'react-router-dom';
@@ -10,13 +10,20 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         const token = getAccessToken();
         if (token && getUserFromToken()) {
             navigate('/dashboard', { replace: true });
         }
-    }, [navigate]);
+
+        // Check for error parameter from OAuth redirect
+        const errorParam = searchParams.get('error');
+        if (errorParam === 'locked') {
+            setError('Your account has been locked. Please contact the administrator.');
+        }
+    }, [navigate, searchParams]);
 
     const submitHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -42,15 +49,32 @@ const LoginPage: React.FC = () => {
                 <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Đăng Nhập</h2>
 
                 {error && (
-                    <p className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-                        {error}
-                    </p>
+                    <div className={`border px-4 py-3 rounded mb-4 flex items-start ${
+                        error.toLowerCase().includes('locked') || error.toLowerCase().includes('block')
+                            ? 'bg-red-50 border-red-500'
+                            : 'bg-red-100 border-red-400'
+                    }`}>
+                        {(error.toLowerCase().includes('locked') || error.toLowerCase().includes('block')) && (
+                            <svg className="w-5 h-5 text-red-700 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                            </svg>
+                        )}
+                        <div className="flex-1">
+                            <p className="text-red-700 font-semibold">{error}</p>
+                            {(error.toLowerCase().includes('locked') || error.toLowerCase().includes('block')) && (
+                                <p className="text-red-600 text-sm mt-1">
+                                    If you believe this is an error, please contact support.
+                                </p>
+                            )}
+                        </div>
+                    </div>
                 )}
 
                 <form onSubmit={submitHandler} className="space-y-4">
                     <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
                         <input
+                            title="Email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -63,6 +87,7 @@ const LoginPage: React.FC = () => {
                             Password
                         </label>
                         <input
+                            title="Password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

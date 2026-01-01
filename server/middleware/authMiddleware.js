@@ -26,6 +26,11 @@ const protect = async (req, res, next) => {
             return res.status(401).json({ message: 'Not authorized, user not found' });
         }
 
+        // Check if user account is locked
+        if (user.isLocked) {
+            return res.status(403).json({ message: 'Your account has been locked. Please contact the administrator.' });
+        }
+
         req.user = user; // Gắn thông tin user vào req
         req.role = decoded.role; // Gắn role từ token vào req
         next();
@@ -64,7 +69,8 @@ const optionalAuth = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         const user = await User.findById(decoded.id).select('-password_hash');
-        if (user) {
+        // Only set user if account exists and is not locked
+        if (user && !user.isLocked) {
             req.user = user;
             req.user.id = user._id.toString();
             req.role = decoded.role;
