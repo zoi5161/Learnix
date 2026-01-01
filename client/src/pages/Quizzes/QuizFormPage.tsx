@@ -64,7 +64,7 @@ const QuizFormPage: React.FC = () => {
             } catch (err) { console.error(err); }
         };
         fetchCourses();
-    }, [user]);
+    }, [user?.userId, user?.role]);
 
     // 2. Load Data Quiz để Edit (Logic quan trọng)
     useEffect(() => {
@@ -181,7 +181,7 @@ const QuizFormPage: React.FC = () => {
             setLoading(false);
         }
     };
-    console.log()
+    // console.log()
     return (
         <BaseLayout>
             <div className="max-w-5xl mx-auto p-6 bg-gray-50 min-h-screen">
@@ -201,7 +201,7 @@ const QuizFormPage: React.FC = () => {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Course</label>
-                                <select required className="w-full border rounded px-3 py-2" value={form.course_id} onChange={handleCourseChange}>
+                                <select required title="Course" className="w-full border rounded px-3 py-2" value={form.course_id} onChange={handleCourseChange}>
                                     <option value="">-- Select Course --</option>
                                     {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
                                 </select>
@@ -210,6 +210,7 @@ const QuizFormPage: React.FC = () => {
                             <div>
                                 <label className="block text-sm font-medium mb-1">Lesson (Optional)</label>
                                 <select
+                                    title="Lesson"
                                     className="w-full border rounded px-3 py-2"
                                     value={form.lesson_id}
                                     onChange={e => setForm({ ...form, lesson_id: e.target.value })}
@@ -222,7 +223,7 @@ const QuizFormPage: React.FC = () => {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Time Limit (mins)</label>
-                                <input type="number" className="w-full border rounded px-3 py-2" value={form.time_limit} onChange={e => setForm({ ...form, time_limit: parseInt(e.target.value) })} />
+                                <input title="Time Limit" type="number" className="w-full border rounded px-3 py-2" value={form.time_limit} onChange={e => setForm({ ...form, time_limit: parseInt(e.target.value) })} />
                             </div>
 
                             <div className="flex items-center pt-6">
@@ -253,6 +254,7 @@ const QuizFormPage: React.FC = () => {
                                     {q.options.map((opt, optIdx) => (
                                         <div key={optIdx} className={`flex items-center gap-2 p-3 rounded border ${Number(q.correctAnswer) === optIdx ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
                                             <input
+                                                title="Correct Answer"
                                                 type="radio"
                                                 name={`correct-${idx}`}
                                                 checked={Number(q.correctAnswer) === optIdx}

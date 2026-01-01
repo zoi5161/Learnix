@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { lessonService } from '../../../services/lessonService';
 import { programmingService, ProgrammingExercise } from '../../../services/programmingService';
+import { quizService } from '../../../services/quizService';
 import BaseLayout from '../../../layouts/BaseLayout';
 import ProgrammingIDE from '../../../components/ProgrammingIDE/ProgrammingIDE';
 import './LessonViewer.css';
@@ -77,6 +78,7 @@ const isYouTubeUrl = (url: string): boolean => {
 
 const LessonViewer: React.FC = () => {
     const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -99,6 +101,10 @@ const LessonViewer: React.FC = () => {
     const [exercises, setExercises] = useState<ProgrammingExercise[]>([]);
     const [selectedExercise, setSelectedExercise] = useState<ProgrammingExercise | null>(null);
     const [loadingExercises, setLoadingExercises] = useState(false);
+
+    // Quiz state
+    const [quizzes, setQuizzes] = useState<any[]>([]);
+    const [loadingQuizzes, setLoadingQuizzes] = useState(false);
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -226,10 +232,45 @@ const LessonViewer: React.FC = () => {
             const res = await lessonService.getLesson(courseId, lessonId);
             if (res.success) {
                 setLessonData(res.data);
+                // Fetch quizzes for this lesson after completion
+                fetchQuizzesForLesson();
             }
         } catch (err: any) {
             alert('Error: ' + err.message);
         }
+    };
+
+    // Fetch quizzes for current lesson
+    const fetchQuizzesForLesson = async () => {
+        if (!courseId || !lessonId) return;
+        
+        try {
+            setLoadingQuizzes(true);
+            const res = await quizService.getQuizzes({ 
+                course_id: courseId,
+                lesson_id: lessonId 
+            });
+            
+            if (res.success && res.data?.quizzes) {
+                setQuizzes(res.data.quizzes);
+            }
+        } catch (err) {
+            console.error('Error fetching quizzes:', err);
+        } finally {
+            setLoadingQuizzes(false);
+        }
+    };
+
+    // Fetch quizzes when lesson is completed
+    useEffect(() => {
+        if (lessonData?.lesson.progress?.status === 'completed') {
+            fetchQuizzesForLesson();
+        }
+    }, [lessonData?.lesson.progress?.status, courseId, lessonId]);
+
+    const handleQuizClick = (quizId: string) => {
+        if (!courseId) return;
+        navigate(`/courses/${courseId}/quizzes/${quizId}/take`);
     };
 
     const handleSaveNotes = async () => {
@@ -308,7 +349,7 @@ const LessonViewer: React.FC = () => {
     }, [youtubeApiReady, isYouTubeVideo, youtubeVideoIdRef.current]);
 
     // YouTube progress tracking interval
-    const youtubeProgressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const youtubeProgressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const startYouTubeProgressTracking = () => {
         // Clear existing interval
@@ -691,6 +732,51 @@ const LessonViewer: React.FC = () => {
                                 <span className="lesson-viewer-completed-badge">✓ Completed</span>
                             )}
                         </div>
+
+                        {/* Quiz Section - Only show when lesson is completed */}
+                        {isCompleted && (
+                            <div className="lesson-viewer-quiz-section">
+                                <h3 className="lesson-viewer-quiz-section-title">📝 Quiz</h3>
+                                {loadingQuizzes ? (
+                                    <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
+                                        Loading quizzes...
+                                    </div>
+                                ) : quizzes.length > 0 ? (
+                                    <div className="lesson-viewer-quiz-list">
+                                        {quizzes.map((quiz) => {
+                                            const quizId = quiz._id || quiz.id;
+                                            return (
+                                                <div key={quizId} className="lesson-viewer-quiz-card">
+                                                    <div className="lesson-viewer-quiz-card-header">
+                                                        <h4 className="lesson-viewer-quiz-card-title">{quiz.title}</h4>
+                                                        <span className="lesson-viewer-quiz-badge">Quiz</span>
+                                                    </div>
+                                                    <div className="lesson-viewer-quiz-card-meta">
+                                                        <span>❓ {quiz.questionsCount || quiz.questions?.length || 0} Questions</span>
+                                                        {quiz.time_limit > 0 && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span>⏱ {quiz.time_limit} mins</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleQuizClick(quizId)}
+                                                        className="lesson-viewer-quiz-start-btn"
+                                                    >
+                                                        Start Quiz →
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p style={{ padding: '20px', color: '#6b7280', textAlign: 'center' }}>
+                                        No quiz available for this lesson.
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         {/* Notes Section */}
                         <div className="lesson-viewer-notes">

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { courseService, CourseWithCounts } from '../../../services/courseService';
 import { enrollmentService } from '../../../services/enrollmentService';
-import { quizService } from '../../../services/quizService';
 import { getUserFromToken } from '../../../utils/authToken';
 import PublicNavbar from '../../../components/PublicNavbar';
 import SuggestedCourses from '../../../components/SuggestedCourses/SuggestedCourses';
@@ -18,13 +17,6 @@ interface Lesson {
     order: number;
 }
 
-interface QuizItem {
-    id: string;
-    _id: string;
-    title: string;
-    questionsCount: number;
-    time_limit: number;
-}
 
 const CourseDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -33,7 +25,6 @@ const CourseDetailPage: React.FC = () => {
 
     const [course, setCourse] = useState<CourseWithCounts | null>(null);
     const [lessons, setLessons] = useState<Lesson[]>([]);
-    const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
     const [isEnrolled, setIsEnrolled] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -46,10 +37,7 @@ const CourseDetailPage: React.FC = () => {
             if (!id) return;
             try {
                 setLoading(true);
-                const [courseRes, quizRes] = await Promise.all([
-                    courseService.getCourseById(id),
-                    quizService.getQuizzes({ course_id: id })
-                ]);
+                const courseRes = await courseService.getCourseById(id);
 
                 if (courseRes.success) {
                     setCourse(courseRes.data.course);
@@ -57,10 +45,6 @@ const CourseDetailPage: React.FC = () => {
                     setLessons(courseRes.data.course.lessons || []);
                 } else {
                     setError('Course not found');
-                }
-
-                if (quizRes.success) {
-                    setQuizzes(quizRes.data.quizzes || []);
                 }
 
             } catch (err: any) {
@@ -81,13 +65,6 @@ const CourseDetailPage: React.FC = () => {
         navigate(`/courses/${id}/lessons/${lesson._id}`);
     };
 
-    const handleQuizClick = (quizId: string) => {
-        if (!isEnrolled) {
-            setShowLoginModal(true);
-            return;
-        }
-        navigate(`/courses/${id}/quizzes/${quizId}/take`);
-    };
 
     const handleEnrollClick = async () => {
         if (!user) {
@@ -309,7 +286,7 @@ const CourseDetailPage: React.FC = () => {
                             <section className="course-detail-section">
                                 <h2 className="course-detail-section-title">Course Content</h2>
                                 
-                                {lessons.length === 0 && quizzes.length === 0 ? (
+                                {lessons.length === 0 ? (
                                     <p className="course-detail-empty">No content available yet.</p>
                                 ) : (
                                     <div className="course-detail-lessons">
@@ -344,51 +321,6 @@ const CourseDetailPage: React.FC = () => {
                                             );
                                         })}
 
-                                        {/* 🔥 UPDATE: Render Quizzes với nút Start */}
-                                        {quizzes.map((quiz) => {
-                                            const isLocked = !isEnrolled;
-                                            const quizId = quiz._id || quiz.id;
-                                            return (
-                                                <div
-                                                    key={quizId}
-                                                    className={`course-detail-lesson-item ${isLocked ? 'course-detail-lesson-locked' : 'quiz-item-row'}`}
-                                                    onClick={() => !isLocked && handleQuizClick(quizId)}
-                                                >
-                                                    <div className={`course-detail-lesson-number ${isLocked ? 'course-detail-lesson-number-locked' : 'quiz-icon'}`}>
-                                                        {isLocked ? '🔒' : 'Q'}
-                                                    </div>
-                                                    <div className="course-detail-lesson-content">
-                                                        <div className="course-detail-lesson-header">
-                                                            <h3 className={`course-detail-lesson-title ${isLocked ? 'course-detail-lesson-title-locked' : ''}`} style={{ color: isLocked ? undefined : '#be185d' }}>
-                                                                {quiz.title}
-                                                            </h3>
-                                                            {!isLocked && <span className="quiz-badge">Quiz</span>}
-                                                            {isLocked && <span className="course-detail-lesson-lock-badge">Locked</span>}
-                                                        </div>
-                                                        
-                                                        <div className="course-detail-lesson-meta" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                                            <span>❓ {quiz.questionsCount} Questions</span>
-                                                            {quiz.time_limit > 0 && <><span>•</span><span>⏱ {quiz.time_limit} mins</span></>}
-                                                            
-                                                            {/* 🔥 UPDATE: Nút Start Quiz cho Student */}
-                                                            {!isLocked && (
-                                                                <button 
-                                                                    className="btn-start-quiz"
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation(); // Tránh kích hoạt onclick của parent
-                                                                        handleQuizClick(quizId);
-                                                                    }}
-                                                                >
-                                                                    Start Quiz →
-                                                                </button>
-                                                            )}
-                                                            
-                                                            {isLocked && <span className="course-detail-lesson-locked-text" style={{ marginLeft: 10 }}>Enroll to unlock</span>}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
 
                                     </div>
                                 )}
@@ -430,7 +362,6 @@ const CourseDetailPage: React.FC = () => {
                                     <div className="course-detail-sidebar-info-item"><strong>Instructor:</strong> {instructorName}</div>
                                     <div className="course-detail-sidebar-info-item"><strong>Level:</strong> {course.level}</div>
                                     <div className="course-detail-sidebar-info-item"><strong>Lessons:</strong> {course.lessonsCount || 0}</div>
-                                    <div className="course-detail-sidebar-info-item"><strong>Quizzes:</strong> {quizzes.length}</div>
                                     <div className="course-detail-sidebar-info-item"><strong>Students:</strong> {course.enrollmentsCount || 0}</div>
                                 </div>
                             </div>
