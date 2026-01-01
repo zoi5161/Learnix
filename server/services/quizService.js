@@ -312,6 +312,73 @@ const generateMCQFromText = async (text) => {
     return mcqs;
 };
 
+/**
+ * Get quiz submissions (for instructor/admin)
+ */
+const getQuizSubmissions = async (quizId, userId, userRole) => {
+    const quiz = await Quiz.findById(quizId).populate('course_id', 'instructor_id');
+    if (!quiz) {
+        throw new Error('Quiz not found');
+    }
+
+    // Check permission: admin or course instructor
+    if (userRole !== 'admin') {
+        const instructorId = quiz.course_id?.instructor_id;
+        if (!instructorId || instructorId.toString() !== userId.toString()) {
+            throw new Error('Unauthorized: Only course instructor or admin can view submissions');
+        }
+    }
+
+    const submissions = await Submission.find({ quiz_id: quizId })
+        .populate('student_id', 'name email')
+        .sort({ createdAt: -1 })
+        .lean();
+
+    return submissions;
+};
+
+/**
+ * Get quiz submission statistics
+ */
+const getQuizSubmissionStats = async (quizId, userId, userRole) => {
+    const quiz = await Quiz.findById(quizId).populate('course_id', 'instructor_id');
+    if (!quiz) {
+        throw new Error('Quiz not found');
+    }
+
+    // Check permission: admin or course instructor
+    if (userRole !== 'admin') {
+        const instructorId = quiz.course_id?.instructor_id;
+        if (!instructorId || instructorId.toString() !== userId.toString()) {
+            throw new Error('Unauthorized: Only course instructor or admin can view stats');
+        }
+    }
+
+    const submissions = await Submission.find({ quiz_id: quizId }).lean();
+    
+    if (submissions.length === 0) {
+        return {
+            totalSubmissions: 0,
+            averageScore: 0,
+            passedCount: 0,
+            failedCount: 0
+        };
+    }
+
+    const totalScore = submissions.reduce((sum, s) => sum + (s.score || 0), 0);
+    const averageScore = Math.round((totalScore / submissions.length) * 100) / 100;
+    const passingScore = quiz.passing_score || 70;
+    const passedCount = submissions.filter(s => (s.score || 0) >= passingScore).length;
+    const failedCount = submissions.length - passedCount;
+
+    return {
+        totalSubmissions: submissions.length,
+        averageScore,
+        passedCount,
+        failedCount
+    };
+};
+
 module.exports = {
     getQuizzes,
     getQuizById,
@@ -321,5 +388,7 @@ module.exports = {
     deleteQuiz,
     getMySubmissions,
     generateMCQFromText,
+    getQuizSubmissions,
+    getQuizSubmissionStats
 };
 

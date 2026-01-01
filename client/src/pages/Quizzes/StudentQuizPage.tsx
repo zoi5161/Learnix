@@ -131,6 +131,38 @@ const StudentQuizPage: React.FC = () => {
                         <p className="quiz-result-text">
                             You answered {result.correctCount} out of {result.totalQuestions} correctly.
                         </p>
+                        {/* Back to Course Button */}
+                        {courseId && (
+                            <button
+                                onClick={() => navigate(`/courses/${courseId}`)}
+                                className="quiz-back-to-course-btn"
+                                style={{
+                                    marginTop: '20px',
+                                    padding: '12px 24px',
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                    backgroundColor: '#2563eb',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#1d4ed8';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.15)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#2563eb';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                                }}
+                            >
+                                ← Back to Course
+                            </button>
+                        )}
                     </div>
                 )}
 

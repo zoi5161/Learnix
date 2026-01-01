@@ -126,6 +126,18 @@ export const quizService = {
             return { success: true, data: mySub || null };
         }
         return { success: false, message: "Failed to fetch submission" };
+    },
+
+    // Get quiz submissions (for instructor/admin)
+    getQuizSubmissions: async (quizId: string) => {
+        const response = await api.get(`/quizzes/${quizId}/submissions`);
+        return response.data;
+    },
+
+    // Get quiz submission stats (for instructor/admin)
+    getQuizSubmissionStats: async (quizId: string) => {
+        const response = await api.get(`/quizzes/${quizId}/stats`);
+        return response.data;
     }
 };
 
