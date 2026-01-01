@@ -150,13 +150,43 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .suggested-course-card {
         flex: 0 0 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .suggested-courses-section {
+        margin-top: 40px;
+        padding-top: 30px;
     }
 
     .suggested-courses-title {
         font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .suggested-course-card {
+        flex: 0 0 260px;
+    }
+
+    .suggested-course-content {
+        padding: 16px;
+    }
+
+    .suggested-course-title {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .suggested-course-card {
+        flex: 0 0 240px;
+    }
+
+    .suggested-course-thumbnail {
+        height: 150px;
     }
 }
 

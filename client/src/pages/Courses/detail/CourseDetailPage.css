@@ -625,24 +625,113 @@
 @media (max-width: 1024px) {
     .course-detail-header {
         grid-template-columns: 1fr;
+        gap: 24px;
     }
 
     .course-detail-content {
         grid-template-columns: 1fr;
+        gap: 32px;
     }
 
     .course-detail-sidebar {
         position: static;
     }
+
+    .course-detail-main {
+        padding: 30px 15px;
+    }
 }
 
 @media (max-width: 768px) {
+    .course-detail-main {
+        padding: 20px 15px;
+    }
+
+    .course-detail-header {
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+    }
+
     .course-detail-title {
-        font-size: 32px;
+        font-size: 28px;
+    }
+
+    .course-detail-instructor {
+        font-size: 16px;
     }
 
     .course-detail-section-title {
+        font-size: 22px;
+    }
+
+    .course-detail-stats {
+        gap: 12px;
+    }
+
+    .course-detail-stat-value {
+        font-size: 16px;
+    }
+
+    .course-detail-thumbnail {
+        height: 200px;
+    }
+
+    .course-detail-lesson-item {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .course-detail-sidebar-card {
+        padding: 20px;
+    }
+
+    .course-detail-sidebar-price {
+        font-size: 28px;
+    }
+
+    .course-detail-instructor-card {
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .instructor-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-manage {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .course-detail-title {
         font-size: 24px;
+    }
+
+    .course-detail-section-title {
+        font-size: 20px;
+    }
+
+    .course-detail-stats {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .course-detail-stat-divider {
+        display: none;
+    }
+
+    .course-detail-lesson-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .course-detail-modal {
+        padding: 24px;
     }
 }
 

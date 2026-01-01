@@ -130,6 +130,23 @@ const PublicNavbar: React.FC = () => {
                                         <div className="f8-user-dropdown-divider"></div>
                                         <div className="f8-user-dropdown-menu">
                                             <Link 
+                                                to="/courses" 
+                                                className="f8-user-dropdown-item f8-user-dropdown-item-mobile"
+                                                onClick={() => setShowUserMenu(false)}
+                                            >
+                                                <span className="f8-user-dropdown-icon">📚</span>
+                                                <span>Khóa học của tôi</span>
+                                            </Link>
+                                            <Link 
+                                                to="/dashboard" 
+                                                className="f8-user-dropdown-item f8-user-dropdown-item-mobile"
+                                                onClick={() => setShowUserMenu(false)}
+                                            >
+                                                <span className="f8-user-dropdown-icon">📊</span>
+                                                <span>Dashboard</span>
+                                            </Link>
+                                            <div className="f8-user-dropdown-divider f8-user-dropdown-divider-mobile"></div>
+                                            <Link 
                                                 to="/profile" 
                                                 className="f8-user-dropdown-item"
                                                 onClick={() => setShowUserMenu(false)}

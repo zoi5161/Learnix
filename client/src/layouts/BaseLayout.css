@@ -32,8 +32,20 @@
     margin: 0;
 }
 
+@media (max-width: 1024px) {
+    .base-layout-content {
+        padding: 30px 18px;
+    }
+}
+
 @media (max-width: 768px) {
     .base-layout-content {
         padding: 24px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .base-layout-content {
+        padding: 20px 12px;
     }
 }

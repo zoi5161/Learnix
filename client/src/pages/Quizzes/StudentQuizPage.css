@@ -277,3 +277,79 @@
     cursor: not-allowed;
     opacity: 0.9;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .student-quiz-container {
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    .quiz-header {
+        padding: 20px;
+    }
+
+    .quiz-title {
+        font-size: 20px;
+    }
+
+    .quiz-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .quiz-result-board {
+        padding: 20px;
+    }
+
+    .quiz-result-title {
+        font-size: 24px;
+    }
+
+    .quiz-result-score {
+        font-size: 40px;
+    }
+
+    .quiz-question-card {
+        padding: 16px;
+    }
+
+    .quiz-question-text {
+        font-size: 16px;
+    }
+
+    .quiz-options-grid {
+        gap: 10px;
+    }
+
+    .quiz-submit-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .student-quiz-container {
+        padding: 0 12px;
+    }
+
+    .quiz-header {
+        padding: 16px;
+    }
+
+    .quiz-title {
+        font-size: 18px;
+    }
+
+    .quiz-result-score {
+        font-size: 36px;
+    }
+
+    .quiz-question-card {
+        padding: 12px;
+    }
+
+    .quiz-option {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
