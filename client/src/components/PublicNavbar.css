@@ -309,18 +309,35 @@
 
 @media (max-width: 992px) {
     .f8-navbar-center {
-        display: none;
+        flex: 2;
+        max-width: 400px;
+    }
+
+    .f8-search-input {
+        font-size: 13px;
+        padding: 8px 14px 8px 42px;
+    }
+
+    .f8-search-icon {
+        left: 14px;
+        width: 18px;
+        height: 18px;
     }
 }
 
 @media (max-width: 768px) {
     .f8-navbar-container {
         gap: 12px;
-        padding: 0 12px;
+        padding: 12px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
     }
 
     .f8-navbar-left {
         min-width: auto;
+        flex: 1;
+        order: 1;
     }
 
     .f8-slogan {
@@ -329,6 +346,28 @@
 
     .f8-navbar-right {
         gap: 8px;
+        order: 2;
+        flex: 0 0 auto;
+    }
+
+    .f8-navbar-center {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 0;
+        padding-bottom: 8px;
+    }
+
+    .f8-search-input {
+        font-size: 13px;
+        padding: 8px 14px 8px 42px;
+        border-radius: 16px;
+    }
+
+    .f8-search-icon {
+        left: 14px;
+        width: 16px;
+        height: 16px;
     }
 
     /* Hide nav links on mobile, show in dropdown instead */
@@ -354,6 +393,40 @@
     .f8-user-dropdown {
         right: -10px;
         min-width: 260px;
+    }
+
+    .f8-logo-img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .f8-user-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .f8-navbar-container {
+        padding: 0 8px;
+    }
+
+    .f8-slogan {
+        font-size: 14px;
+    }
+
+    .f8-search-input::placeholder {
+        font-size: 12px;
+    }
+
+    .f8-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .f8-nav-link-login {
+        font-size: 13px;
     }
 }
 

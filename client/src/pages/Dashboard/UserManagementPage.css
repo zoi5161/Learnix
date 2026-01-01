@@ -1,0 +1,480 @@
+/* User Management Page Styles */
+
+.user-management-container {
+  max-width: 100%;
+}
+
+.user-management-header {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.user-management-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.user-management-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.user-management-back-btn {
+  display: flex;
+  align-items: center;
+  padding: 10px 18px;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-management-back-btn:hover {
+  background: #e5e7eb;
+  transform: translateX(-2px);
+}
+
+.user-management-back-btn svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.user-management-header-text h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.user-management-header-text p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.user-management-stats {
+  text-align: right;
+}
+
+.user-management-stats p:first-child {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.user-management-stats p:last-child {
+  font-size: 28px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.user-management-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.user-management-loading,
+.user-management-error,
+.user-management-empty {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.user-management-error-box {
+  background: #fee2e2;
+  border-left: 4px solid #dc2626;
+  padding: 16px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-management-error-box svg {
+  width: 24px;
+  height: 24px;
+  color: #dc2626;
+  flex-shrink: 0;
+}
+
+.user-management-error-box p {
+  color: #991b1b;
+  font-weight: 500;
+}
+
+.user-management-table-wrapper {
+  overflow-x: auto;
+}
+
+.user-management-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-management-table thead {
+  background: #f9fafb;
+}
+
+.user-management-table th {
+  padding: 16px 24px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.user-management-table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s ease;
+}
+
+.user-management-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.user-management-table tbody tr.user-locked {
+  background: #fef2f2;
+}
+
+.user-management-table td {
+  padding: 16px 24px;
+  font-size: 14px;
+}
+
+.user-avatar-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-info-text h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+.user-info-text p {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.user-role-select {
+  padding: 8px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-role-select:hover:not(:disabled) {
+  border-color: #667eea;
+}
+
+.user-role-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.user-role-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.user-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.user-status-badge.locked {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.user-status-badge.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.user-status-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.user-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.user-action-btn.unlock {
+  background: #10b981;
+}
+
+.user-action-btn.unlock:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.user-action-btn.lock {
+  background: #ef4444;
+}
+
+.user-action-btn.lock:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.user-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.user-footer-stats {
+  margin-top: 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+}
+
+.user-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  text-align: center;
+}
+
+.user-stat-card {
+  padding: 20px;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.user-stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.user-stat-card.students {
+  background: #dbeafe;
+}
+
+.user-stat-card.instructors {
+  background: #e9d5ff;
+}
+
+.user-stat-card.admins {
+  background: #fed7aa;
+}
+
+.user-stat-card p:first-child {
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.user-stat-card p:last-child {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.user-stat-card.students p:last-child {
+  color: #1e40af;
+}
+
+.user-stat-card.instructors p:last-child {
+  color: #7c3aed;
+}
+
+.user-stat-card.admins p:last-child {
+  color: #ea580c;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .user-management-header {
+    padding: 20px;
+  }
+
+  .user-management-table th,
+  .user-management-table td {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management-header {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .user-management-header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .user-management-back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-management-header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-management-stats {
+    text-align: center;
+    width: 100%;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+  }
+
+  .user-management-header-text h1 {
+    font-size: 24px;
+  }
+
+  .user-management-content {
+    border-radius: 12px;
+  }
+
+  .user-management-table {
+    font-size: 13px;
+  }
+
+  .user-management-table th,
+  .user-management-table td {
+    padding: 10px 12px;
+  }
+
+  .user-management-table th {
+    font-size: 11px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .user-info-text h3 {
+    font-size: 13px;
+  }
+
+  .user-info-text p {
+    font-size: 11px;
+  }
+
+  .user-role-select {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .user-action-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .user-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .user-stat-card p:last-child {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Make table scroll horizontally on small screens */
+  .user-management-table-wrapper {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .user-management-table {
+    min-width: 800px;
+  }
+
+  .user-footer-stats {
+    margin: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-management-header-text h1 {
+    font-size: 20px;
+  }
+
+  .user-management-stats p:last-child {
+    font-size: 24px;
+  }
+
+  .user-stat-card {
+    padding: 16px;
+  }
+
+  .user-stat-card p:last-child {
+    font-size: 24px;
+  }
+}
+

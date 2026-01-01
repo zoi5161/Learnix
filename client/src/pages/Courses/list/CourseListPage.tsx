@@ -434,6 +434,7 @@ const CourseListPage: React.FC = () => {
                                                         </span>
                                                         <label className={`toggle-switch ${course.status === 'published' || course.status === 'pending' ? 'checked' : ''} ${course.status === 'pending' ? 'disabled' : ''}`}>
                                                             <input
+                                                                title="Publish Toggle"
                                                                 type="checkbox"
                                                                 checked={course.status === 'published' || course.status === 'pending'}
                                                                 disabled={course.status === 'pending'}

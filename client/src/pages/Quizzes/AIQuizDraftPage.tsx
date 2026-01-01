@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout';
 import { useNavigate } from 'react-router-dom';
 import { getUserFromToken } from '../../utils/authToken';
 import api from '../../services/axiosInstance';
+import './AIQuizDraftPage.css';
 
 interface MCQItem {
   question: string;
@@ -169,75 +170,145 @@ const AIQuizDraftPage: React.FC = () => {
 
   return (
     <BaseLayout>
-      <div className="p-6 bg-white rounded-lg shadow">
-        <h1 className="text-2xl font-bold mb-4">AI Quiz Generator (Draft)</h1>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Lesson text / Course summary</label>
-          <textarea className="mt-1 w-full border rounded p-2" rows={6}
-            value={inputText} onChange={(e) => setInputText(e.target.value)} />
-          <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded" onClick={generateMcq} disabled={loading}>
-            {loading ? 'Generating...' : 'Generate MCQs'}
-          </button>
+      <div className="ai-quiz-container">
+        {/* Header */}
+        <div className="ai-quiz-header">
+          <h1>🤖 AI Quiz Generator</h1>
+          <p>Generate quiz questions automatically using AI from your lesson content</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium">Quiz Title</label>
-            <input className="mt-1 w-full border rounded p-2" value={title} onChange={(e)=>setTitle(e.target.value)} />
+        {/* Input Section */}
+        <div className="ai-quiz-section">
+          <div className="ai-quiz-section-title">
+            <span>📝</span>
+            <span>Step 1: Enter your content</span>
           </div>
-          <div>
-            <label className="block text-sm font-medium">Course *</label>
-            <select className="mt-1 w-full border rounded p-2" value={courseId} onChange={(e)=>setCourseId(e.target.value)} disabled={loadingCourses}>
-              <option value="">-- Select Course --</option>
-              {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Lesson *</label>
-            <select className="mt-1 w-full border rounded p-2" value={lessonId} onChange={(e)=>setLessonId(e.target.value)} disabled={!courseId || lessons.length === 0}>
-              <option value="">-- Select Lesson --</option>
-              {lessons.map(l => <option key={l._id} value={l._id}>{l.title}</option>)}
-            </select>
+          <label className="ai-quiz-label">Lesson text / Course summary</label>
+          <textarea 
+            className="ai-quiz-textarea" 
+            rows={6}
+            value={inputText} 
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Paste your lesson content or course summary here..."
+          />
+          <div style={{ marginTop: '16px' }}>
+            <button className="ai-quiz-btn ai-quiz-btn-primary" onClick={generateMcq} disabled={loading}>
+              {loading ? '⏳ Generating...' : '✨ Generate MCQs'}
+            </button>
           </div>
         </div>
 
-        {error && <div className="text-red-600 mb-3">{error}</div>}
-
-        <div className="mb-4 flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Preview & Edit MCQs</h2>
-          <button className="px-3 py-2 bg-green-600 text-white rounded" onClick={addQuestion}>Add Question</button>
-        </div>
-
-        <div className="space-y-6">
-          {mcqs.map((q, idx) => (
-            <div key={idx} className="border rounded p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">Question #{idx+1}</span>
-                <button className="text-red-600" onClick={() => removeQuestion(idx)}>Remove</button>
-              </div>
-              <input className="w-full border rounded p-2 mb-3" value={q.question}
-                     onChange={(e)=>updateQuestion(idx,'question', e.target.value)} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {q.options.map((opt, oIdx) => (
-                  <input key={oIdx} className="border rounded p-2" value={opt}
-                         onChange={(e)=>updateOption(idx, oIdx, e.target.value)} placeholder={`Option ${oIdx+1}`} />
-                ))}
-              </div>
-              <div className="mt-3">
-                <label className="block text-sm font-medium">Correct Answer (index 0-3)</label>
-                <input type="number" min={0} max={3} className="border rounded p-2"
-                       value={q.answer} onChange={(e)=>updateQuestion(idx,'answer', Number(e.target.value))} />
-              </div>
+        {/* Quiz Metadata Section */}
+        <div className="ai-quiz-section">
+          <div className="ai-quiz-section-title">
+            <span>⚙️</span>
+            <span>Step 2: Configure quiz details</span>
+          </div>
+          <div className="ai-quiz-grid-3">
+            <div>
+              <label htmlFor="quiz-title" className="ai-quiz-label">Quiz Title</label>
+              <input 
+                id="quiz-title"
+                className="ai-quiz-input" 
+                value={title} 
+                onChange={(e)=>setTitle(e.target.value)}
+                placeholder="Enter quiz title"
+              />
             </div>
-          ))}
+            <div>
+              <label htmlFor="quiz-course" className="ai-quiz-label">Course *</label>
+              <select 
+                id="quiz-course"
+                className="ai-quiz-select" 
+                value={courseId} 
+                onChange={(e)=>setCourseId(e.target.value)} 
+                disabled={loadingCourses}
+              >
+                <option value="">-- Select Course --</option>
+                {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="quiz-lesson" className="ai-quiz-label">Lesson *</label>
+              <select 
+                id="quiz-lesson"
+                className="ai-quiz-select" 
+                value={lessonId} 
+                onChange={(e)=>setLessonId(e.target.value)} 
+                disabled={!courseId || lessons.length === 0}
+              >
+                <option value="">-- Select Lesson --</option>
+                {lessons.map(l => <option key={l._id} value={l._id}>{l.title}</option>)}
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-6">
-          <button className="px-5 py-2 bg-purple-600 text-white rounded" onClick={approveAndSave}>
-            Approve & Save Quiz
-          </button>
-        </div>
+        {error && <div className="ai-quiz-error">⚠️ {error}</div>}
+
+        {/* Questions Section */}
+        {mcqs.length > 0 && (
+          <div className="ai-quiz-section">
+            <div className="ai-quiz-header-actions">
+              <h2>📋 Preview & Edit MCQs ({mcqs.length})</h2>
+              <button className="ai-quiz-btn ai-quiz-btn-success" onClick={addQuestion}>
+                + Add Question
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {mcqs.map((q, idx) => (
+                <div key={idx} className="ai-quiz-question-card">
+                  <div className="ai-quiz-question-header">
+                    <span className="ai-quiz-question-number">Question #{idx+1}</span>
+                    <button className="ai-quiz-btn-remove" onClick={() => removeQuestion(idx)}>
+                      🗑️ Remove
+                    </button>
+                  </div>
+                  <input 
+                    className="ai-quiz-input" 
+                    style={{ marginBottom: '12px' }}
+                    value={q.question}
+                    onChange={(e)=>updateQuestion(idx,'question', e.target.value)}
+                    placeholder="Enter your question"
+                    aria-label={`Question ${idx+1} text`}
+                  />
+                  <div className="ai-quiz-grid-2">
+                    {q.options.map((opt, oIdx) => (
+                      <input 
+                        key={oIdx} 
+                        className="ai-quiz-input" 
+                        value={opt}
+                        onChange={(e)=>updateOption(idx, oIdx, e.target.value)} 
+                        placeholder={`Option ${oIdx+1}`}
+                        aria-label={`Question ${idx+1} option ${oIdx+1}`}
+                      />
+                    ))}
+                  </div>
+                  <div style={{ marginTop: '12px' }}>
+                    <label htmlFor={`question-${idx}-answer`} className="ai-quiz-label">Correct Answer (index 0-3)</label>
+                    <input 
+                      id={`question-${idx}-answer`}
+                      type="number" 
+                      min={0} 
+                      max={3} 
+                      className="ai-quiz-input"
+                      style={{ width: '120px' }}
+                      value={q.answer} 
+                      onChange={(e)=>updateQuestion(idx,'answer', Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="ai-quiz-footer">
+              <button className="ai-quiz-btn ai-quiz-btn-purple" onClick={approveAndSave}>
+                💾 Approve & Save Quiz
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </BaseLayout>
   );
