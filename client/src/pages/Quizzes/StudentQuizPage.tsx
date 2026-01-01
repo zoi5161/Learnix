@@ -134,7 +134,7 @@ const StudentQuizPage: React.FC = () => {
                         {/* Back to Course Button */}
                         {courseId && (
                             <button
-                                onClick={() => navigate(`/courses/${courseId}`)}
+                                onClick={() => navigate(`/dashboard`)}
                                 className="quiz-back-to-course-btn"
                                 style={{
                                     marginTop: '20px',
@@ -160,7 +160,7 @@ const StudentQuizPage: React.FC = () => {
                                     e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
                                 }}
                             >
-                                ← Back to Course
+                                ← Back to Dashboard
                             </button>
                         )}
                     </div>

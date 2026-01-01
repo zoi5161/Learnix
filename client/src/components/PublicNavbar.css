@@ -332,7 +332,8 @@
     }
 
     /* Hide nav links on mobile, show in dropdown instead */
-    .f8-nav-link {
+    /* But keep login link visible on mobile */
+    .f8-nav-link:not(.f8-nav-link-login) {
         display: none;
     }
 

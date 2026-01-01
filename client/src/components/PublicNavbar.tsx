@@ -134,16 +134,16 @@ const PublicNavbar: React.FC = () => {
                                                 className="f8-user-dropdown-item f8-user-dropdown-item-mobile"
                                                 onClick={() => setShowUserMenu(false)}
                                             >
-                                                <span className="f8-user-dropdown-icon">📚</span>
-                                                <span>Khóa học của tôi</span>
+                                                <span className="f8-user-dropdown-icon">📚 </span>
+                                                <span> Khóa học của tôi</span>
                                             </Link>
                                             <Link 
                                                 to="/dashboard" 
                                                 className="f8-user-dropdown-item f8-user-dropdown-item-mobile"
                                                 onClick={() => setShowUserMenu(false)}
                                             >
-                                                <span className="f8-user-dropdown-icon">📊</span>
-                                                <span>Dashboard</span>
+                                                <span className="f8-user-dropdown-icon">📊 </span>
+                                                <span> Dashboard</span>
                                             </Link>
                                             <div className="f8-user-dropdown-divider f8-user-dropdown-divider-mobile"></div>
                                             <Link 
@@ -178,7 +178,7 @@ const PublicNavbar: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <Link to="/login" className="f8-nav-link">
+                            <Link to="/login" className="f8-nav-link f8-nav-link-login">
                                 Đăng nhập
                             </Link>
                             <Link

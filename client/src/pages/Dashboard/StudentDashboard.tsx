@@ -39,10 +39,44 @@ const QuizReviewModal: React.FC<{
     onClose: () => void;
     onRetake: (courseId: string, quizId: string) => void;
 }> = ({ submission, onClose, onRetake }) => {
+    const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+    const [loadingQuestions, setLoadingQuestions] = useState(false);
+
+    useEffect(() => {
+        if (submission?.quiz_id?._id) {
+            loadQuizQuestions(submission.quiz_id._id);
+        }
+    }, [submission]);
+
+    const loadQuizQuestions = async (quizId: string) => {
+        setLoadingQuestions(true);
+        try {
+            const res = await quizService.getQuizById(quizId);
+            if (res.success && res.data?.questions) {
+                setQuizQuestions(res.data.questions);
+            }
+        } catch (err) {
+            console.error('Failed to load quiz questions:', err);
+        } finally {
+            setLoadingQuestions(false);
+        }
+    };
+
     if (!submission) return null;
 
     // Tính toán tổng điểm đạt được từ answers
     const totalPointsEarned = submission.answers.reduce((acc, curr) => acc + curr.points_earned, 0);
+
+    // Map submission answers với questions để hiển thị đầy đủ
+    const getQuestionByIndex = (index: number) => {
+        return quizQuestions[index] || null;
+    };
+
+    const getSelectedOptionIndex = (answerText: string, questionIndex: number) => {
+        const question = getQuestionByIndex(questionIndex);
+        if (!question) return -1;
+        return question.options.findIndex((opt: string) => opt === answerText);
+    };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -82,59 +116,127 @@ const QuizReviewModal: React.FC<{
                     {/* DANH SÁCH CHI TIẾT CÂU TRẢ LỜI */}
                     <h4 className="text-xl font-semibold mb-4 text-gray-800">Detailed Answers</h4>
 
-                    <div className="space-y-4">
+                    {loadingQuestions ? (
+                        <div className="text-center py-8">
+                            <div className="student-dashboard-spinner" style={{ margin: '0 auto 16px' }}></div>
+                            <p className="text-gray-500">Loading questions...</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {submission.answers.map((ans, index) => {
+                                const question = getQuestionByIndex(index);
+                                const selectedOptionIndex = question 
+                                    ? question.options.findIndex((opt: string) => opt === ans.answer)
+                                    : -1;
+                                const correctOptionIndex = question ? question.correctAnswer : -1;
 
-                        {submission.answers.map((ans, index) => (
-                            <div
-                                key={ans._id || index}
-                                className={`rounded-lg border p-4 shadow-sm transition-all 
-                ${ans.is_correct
-                                        ? 'border-green-300 bg-green-50 hover:shadow-md'
-                                        : 'border-red-300 bg-red-50 hover:shadow-md'
-                                    }`}
-                            >
-                                {/* Header */}
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Question {index + 1}
-                                    </span>
-
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-sm font-semibold 
-                        ${ans.is_correct
-                                                ? 'bg-green-500 text-white'
-                                                : 'bg-red-500 text-white'
+                                return (
+                                    <div
+                                        key={ans._id || index}
+                                        className={`quiz-review-question-card rounded-lg border p-4 shadow-sm transition-all 
+                                            ${ans.is_correct
+                                                ? 'border-green-300 bg-green-50 hover:shadow-md'
+                                                : 'border-red-300 bg-red-50 hover:shadow-md'
                                             }`}
                                     >
-                                        {ans.is_correct
-                                            ? `Correct (+${ans.points_earned})`
-                                            : 'Incorrect (0)'}
-                                    </span>
-                                </div>
-
-                                {/* Body */}
-                                <div className="space-y-2">
-                                    <div className="flex gap-2">
-                                        <span className="text-gray-600 min-w-28">Your Answer:</span>
-                                        <span className="font-bold text-gray-900">{ans.answer}</span>
-                                    </div>
-
-                                    {!ans.is_correct && (
-                                        <div className="flex gap-2">
-                                            <span className="text-gray-600 min-w-28">Result:</span>
-                                            <span className="font-semibold text-red-600">0 points</span>
+                                        {/* Header */}
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-sm font-medium text-gray-700">
+                                                Question {index + 1}
+                                            </span>
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-sm font-semibold 
+                                                    ${ans.is_correct
+                                                        ? 'bg-green-500 text-white'
+                                                        : 'bg-red-500 text-white'
+                                                    }`}
+                                            >
+                                                {ans.is_correct
+                                                    ? `Correct (+${ans.points_earned})`
+                                                    : 'Incorrect (0)'}
+                                            </span>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
 
-                        {submission.answers.length === 0 && (
-                            <p className="text-gray-500 text-center py-6">
-                                No detailed answers available for this submission.
-                            </p>
-                        )}
-                    </div>
+                                        {/* Question Text */}
+                                        {question && (
+                                            <div className="mb-4">
+                                                <p className="text-base font-semibold text-gray-900 mb-3">
+                                                    {question.question}
+                                                </p>
+                                                
+                                                {/* Options */}
+                                                <div className="space-y-2">
+                                                    {question.options.map((option: string, optIndex: number) => {
+                                                        const isSelected = optIndex === selectedOptionIndex;
+                                                        const isCorrect = optIndex === correctOptionIndex;
+                                                        
+                                                        return (
+                                                            <div
+                                                                key={optIndex}
+                                                                className={`quiz-review-option p-3 rounded-lg border-2 transition-all
+                                                                    ${isCorrect 
+                                                                        ? 'border-green-500 bg-green-100' 
+                                                                        : isSelected && !isCorrect
+                                                                        ? 'border-red-500 bg-red-100'
+                                                                        : 'border-gray-200 bg-white'
+                                                                    }`}
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold
+                                                                        ${isCorrect 
+                                                                            ? 'bg-green-500 text-white' 
+                                                                            : isSelected && !isCorrect
+                                                                            ? 'bg-red-500 text-white'
+                                                                            : 'bg-gray-200 text-gray-700'
+                                                                        }`}>
+                                                                        {String.fromCharCode(65 + optIndex)}
+                                                                    </span>
+                                                                    <span className={`flex-1
+                                                                        ${isCorrect ? 'font-semibold text-green-800' : ''}
+                                                                        ${isSelected && !isCorrect ? 'font-semibold text-red-800' : ''}
+                                                                    `}>
+                                                                        {option}
+                                                                    </span>
+                                                                    {isCorrect && (
+                                                                        <span className="text-green-600 font-bold text-sm">✓ Correct</span>
+                                                                    )}
+                                                                    {isSelected && !isCorrect && (
+                                                                        <span className="text-red-600 font-bold text-sm">✗ Your Answer</span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Fallback nếu không có question data */}
+                                        {!question && (
+                                            <div className="space-y-2">
+                                                <div className="flex gap-2">
+                                                    <span className="text-gray-600 min-w-28">Your Answer:</span>
+                                                    <span className="font-bold text-gray-900">{ans.answer}</span>
+                                                </div>
+                                                {!ans.is_correct && (
+                                                    <div className="flex gap-2">
+                                                        <span className="text-gray-600 min-w-28">Result:</span>
+                                                        <span className="font-semibold text-red-600">0 points</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+
+                            {submission.answers.length === 0 && (
+                                <p className="text-gray-500 text-center py-6">
+                                    No detailed answers available for this submission.
+                                </p>
+                            )}
+                        </div>
+                    )}
 
                 </div>
 
@@ -329,7 +431,9 @@ const StudentDashboard: React.FC = () => {
                 {quizHistory.length > 0 && (
                     <section className="student-dashboard-section">
                         <h2 className="student-dashboard-section-title">Recent Quiz Activity</h2>
-                        <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
+                        
+                        {/* Desktop Table View */}
+                        <div className="quiz-activity-table-wrapper hidden md:block bg-white rounded-lg shadow overflow-hidden border border-gray-200">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -378,6 +482,41 @@ const StudentDashboard: React.FC = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="quiz-activity-cards md:hidden space-y-4">
+                            {quizHistory.slice(0, 5).map((sub) => (
+                                <div key={sub._id} className="quiz-activity-card bg-white rounded-lg shadow border border-gray-200 p-4">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className="text-base font-semibold text-gray-900 flex-1 pr-2">
+                                            {sub.quiz_id?.title || 'Unknown Quiz'}
+                                        </h3>
+                                        <span className={`px-2 py-1 text-xs font-bold rounded-full flex-shrink-0 ${sub.passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                            {sub.score}%
+                                        </span>
+                                    </div>
+                                    <div className="text-sm text-gray-500 mb-4">
+                                        {new Date(sub.createdAt).toLocaleDateString()}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setSelectedSubmission(sub)}
+                                            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold text-sm transition-colors"
+                                        >
+                                            Review
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                if (sub.quiz_id.course_id) handleRetake(sub.quiz_id.course_id, sub.quiz_id._id)
+                                            }}
+                                            className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-semibold text-sm transition-colors"
+                                        >
+                                            Retake
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </section>
                 )}
