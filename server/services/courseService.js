@@ -32,7 +32,14 @@ const getCourses = async (queryParams) => {
     if (category) query.category = category;
     if (tag) query.tags = { $in: [tag] };
     if (level) query.level = level;
-    if (search) query.$text = { $search: search };
+    if (search) {
+        const regex = new RegExp(search, 'i');
+        query.$or = [
+            { title: regex },
+            { description: regex },
+            { summary: regex }
+        ];
+    }
 
     const sortOptions = {};
     sortOptions[sort] = order === 'desc' ? -1 : 1;
@@ -43,16 +50,8 @@ const getCourses = async (queryParams) => {
     let coursesQuery = Course.find(query)
         .populate('instructor_id', 'name email')
         .skip(skip)
-        .limit(parseInt(limit));
-
-    if (search) {
-        coursesQuery = coursesQuery.sort({
-            score: { $meta: 'textScore' },
-            _id: 1
-        });
-    } else {
-        coursesQuery = coursesQuery.sort(sortOptions);
-    }
+        .limit(parseInt(limit))
+        .sort(sortOptions);
 
     const courses = await coursesQuery.lean();
 
@@ -172,13 +171,21 @@ const searchCourses = async (searchQuery, page = 1, limit = 12) => {
         throw new Error('Search query is required');
     }
 
-    const query = { status: 'published', $text: { $search: searchQuery } };
+    const regex = new RegExp(searchQuery, 'i');
+    const query = {
+        status: 'published',
+        $or: [
+            { title: regex },
+            { description: regex },
+            { summary: regex }
+        ]
+    };
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const courses = await Course.find(query)
         .populate('instructor_id', 'name email')
         .select('-description')
-        .sort({ score: { $meta: 'textScore' } })
+        .sort({ createdAt: -1, _id: 1 })
         .skip(skip)
         .limit(parseInt(limit))
         .lean();

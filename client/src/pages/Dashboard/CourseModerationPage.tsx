@@ -2,6 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BaseLayout from '../../layouts/BaseLayout';
 import { courseService, CourseWithCounts } from '../../services/courseService';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 
 // Only expose the statuses used in the main moderation flow
 const statusOptions = [
@@ -67,6 +77,97 @@ const CourseModerationPage: React.FC = () => {
   const filteredCourses = filterStatus === 'all' 
     ? courses 
     : courses.filter(c => c.status === filterStatus);
+
+  const statusCounts = statusOptions.map((status) => ({
+    ...status,
+    count: courses.filter(c => c.status === status.value).length,
+  }));
+
+  const totalCoursesForChart = statusCounts.reduce((sum, status) => sum + status.count, 0);
+
+  const pieColors: Record<string, string> = {
+    draft: '#9ca3af', // gray-400
+    pending: '#facc15', // yellow-400
+    published: '#4ade80', // green-400
+    rejected: '#f87171', // red-400
+  };
+
+  const pieBackground = (() => {
+    if (!totalCoursesForChart) return '#e5e7eb'; // gray-200 fallback
+
+    let current = 0;
+    const segments: string[] = [];
+
+    statusCounts.forEach((status) => {
+      if (!status.count) return;
+      const start = (current / totalCoursesForChart) * 100;
+      const end = ((current + status.count) / totalCoursesForChart) * 100;
+      const color = pieColors[status.value] || '#9ca3af';
+      segments.push(`${color} ${start}% ${end}%`);
+      current += status.count;
+    });
+
+    return `conic-gradient(${segments.join(', ')})`;
+  })();
+
+  const instructorStats = React.useMemo(() => {
+    const byInstructor = new Map<string, { name: string; email: string; courseCount: number }>();
+
+    courses.forEach((course) => {
+      const id = course.instructor_id?._id || course.instructor_id?.email || course.instructor_id?.name || 'unknown';
+      const name = course.instructor_id?.name || 'Unknown Instructor';
+      const email = course.instructor_id?.email || '';
+
+      const existing = byInstructor.get(id) || { name, email, courseCount: 0 };
+      existing.courseCount += 1;
+      byInstructor.set(id, existing);
+    });
+
+    return Array.from(byInstructor.values())
+      .sort((a, b) => b.courseCount - a.courseCount)
+      .slice(0, 5);
+  }, [courses]);
+
+  const totalInstructorCourses = instructorStats.reduce(
+    (sum, inst) => sum + inst.courseCount,
+    0
+  );
+
+  const enrollmentStats = React.useMemo(() => {
+    return courses
+      .map((course) => ({
+        id: course._id,
+        title: course.title,
+        enrollments: course.enrollmentsCount || 0,
+      }))
+      .filter((c) => c.enrollments > 0)
+      .sort((a, b) => b.enrollments - a.enrollments)
+      .slice(0, 5);
+  }, [courses]);
+
+  const barColors = [
+    '#22C55E', // emerald
+    '#16A34A', // green
+    '#4ADE80', // light green
+    '#0EA5E9', // sky
+    '#2563EB', // blue
+    '#6366F1', // indigo
+    '#A855F7', // purple
+    '#EC4899', // pink
+    '#F97316', // orange
+    '#F59E0B', // amber
+    '#E11D48', // rose
+    '#14B8A6', // teal
+  ];
+
+  const getBarColor = (key: string, index: number) => {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash * 31 + key.charCodeAt(i)) | 0;
+    }
+    const colorIndex = Math.abs(hash + index) % barColors.length;
+    return barColors[colorIndex];
+  };
 
   return (
     <BaseLayout>
@@ -277,17 +378,195 @@ const CourseModerationPage: React.FC = () => {
         </div>
 
         {/* Statistics Cards */}
-        {!loading && !error && (
+        {/* {!loading && !error && (
           <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {statusOptions.map((status) => {
-              const count = courses.filter(c => c.status === status.value).length;
-              return (
-                <div key={status.value} className="bg-white rounded-lg shadow-md p-4 text-center">
-                  <p className="text-xs text-gray-600 mb-1">{status.label}</p>
-                  <p className={`text-2xl font-bold text-${status.color}-600`}>{count}</p>
+            {statusCounts.map((status) => (
+              <div key={status.value} className="bg-white rounded-lg shadow-md p-4 text-center">
+                <p className="text-xs text-gray-600 mb-1">{status.label}</p>
+                <p className={`text-2xl font-bold text-${status.color}-600`}>{status.count}</p>
+              </div>
+            ))}
+          </div>
+        )} */}
+
+        {/* Status Distribution Chart */}
+        {!loading && !error && courses.length > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              Biểu đồ trạng thái khóa học
+            </h2>
+            <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex justify-center md:w-1/2">
+                <div
+                  className="relative w-48 h-48 md:w-56 md:h-56 rounded-full shadow-inner"
+                  style={{ backgroundImage: pieBackground }}
+                >
+                  <div className="absolute inset-6 bg-white rounded-full flex flex-col items-center justify-center text-center">
+                    <span className="text-xs text-gray-500">Tổng</span>
+                    <span className="text-2xl font-bold text-gray-800">{totalCoursesForChart}</span>
+                    <span className="text-xs text-gray-400">khóa học</span>
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+
+              <div className="flex-1 space-y-3">
+                {statusCounts.map((status) => {
+                  const percent = totalCoursesForChart
+                    ? Math.round((status.count / totalCoursesForChart) * 100)
+                    : 0;
+
+                  return (
+                    <div key={status.value} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className="inline-block w-3 h-3 rounded-full"
+                          style={{ backgroundColor: pieColors[status.value] || '#9ca3af' }}
+                        />
+                        <span className="font-medium text-gray-700">{status.label}</span>
+                      </div>
+                      <div className="text-gray-600">
+                        <span className="font-semibold">{percent}%</span>
+                        <span className="text-xs text-gray-400 ml-2">({status.count})</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Top Instructors by Courses (Pie Chart) */}
+        {!loading && !error && instructorStats.length > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              Biểu đồ số khoá học của từng giảng viên
+            </h2>
+            <p className="text-xs text-gray-500 mb-4">
+              Phân bố số khóa học giữa các giảng viên trong danh sách này.
+            </p>
+            <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex justify-center md:w-1/2">
+                <div className="relative w-40 h-40 md:w-48 md:h-48">
+                  <div
+                    className="absolute inset-0 rounded-full shadow-inner"
+                    style={{
+                      backgroundImage: (() => {
+                        if (!totalInstructorCourses) return '#e5e7eb';
+                        let current = 0;
+                        const segments: string[] = [];
+                        const colors = ['#3B82F6', '#10B981', '#F97316', '#8B5CF6', '#EC4899'];
+                        instructorStats.forEach((inst, index) => {
+                          if (!inst.courseCount) return;
+                          const start = (current / totalInstructorCourses) * 100;
+                          const end = ((current + inst.courseCount) / totalInstructorCourses) * 100;
+                          const color = colors[index % colors.length];
+                          segments.push(`${color} ${start}% ${end}%`);
+                          current += inst.courseCount;
+                        });
+                        return `conic-gradient(${segments.join(', ')})`;
+                      })(),
+                    }}
+                  />
+                  <div className="absolute inset-6 bg-white rounded-full flex flex-col items-center justify-center text-center">
+                    <span className="text-[10px] text-gray-500">Tổng khóa học</span>
+                    <span className="text-lg font-bold text-gray-800">
+                      {totalInstructorCourses}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 space-y-2 text-xs">
+                {instructorStats.map((inst, index) => {
+                  const percent = totalInstructorCourses
+                    ? Math.round((inst.courseCount / totalInstructorCourses) * 100)
+                    : 0;
+                  const colors = ['#3B82F6', '#10B981', '#F97316', '#8B5CF6', '#EC4899'];
+                  const color = colors[index % colors.length];
+
+                  return (
+                    <div key={inst.name + inst.email} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className="inline-block w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: color }}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-800 truncate max-w-[150px]">
+                            {inst.name}
+                          </span>
+                          {inst.email && (
+                            <span className="text-[10px] text-gray-500 truncate max-w-[150px]">
+                              {inst.email}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right text-gray-600">
+                        <span className="font-semibold mr-1">{percent}%</span>
+                        <span className="text-[10px] text-gray-400">
+                          ({inst.courseCount})
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Top Courses by Enrollments (Bar Chart - Recharts) */}
+        {!loading && !error && enrollmentStats.length > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              Biểu đồ tham gia các khoá học
+            </h2>
+            <p className="text-xs text-gray-500 mb-4">
+              So sánh lượt ghi danh giữa các khóa học phổ biến.
+            </p>
+            <div className="mt-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-inner h-[320px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={enrollmentStats}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 40 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis
+                    dataKey="title"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6B7280', fontSize: 10 }}
+                    tickFormatter={(value: string) =>
+                      value.length > 14 ? `${value.slice(0, 14)}...` : value
+                    }
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6B7280', fontSize: 10 }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+                    contentStyle={{
+                      borderRadius: '10px',
+                      border: 'none',
+                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                    }}
+                    formatter={(value) => [`${value ?? 0} lượt ghi danh`, 'Lượt ghi danh']}
+                    labelFormatter={(label) => label}
+                  />
+                  <Bar dataKey="enrollments" radius={[8, 8, 0, 0]} barSize={40}>
+                    {enrollmentStats.map((course, index) => {
+                      const color = getBarColor(course.id, index);
+                      return <Cell key={course.id} fill={color} />;
+                    })}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         )}
       </div>

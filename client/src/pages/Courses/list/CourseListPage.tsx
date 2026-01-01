@@ -68,6 +68,12 @@ const CourseListPage: React.FC = () => {
         fetchData();
     }, []);
 
+    // Đồng bộ searchQuery state với query param trên URL (phục vụ search từ navbar)
+    useEffect(() => {
+        const paramSearch = searchParams.get('search') || '';
+        setSearchQuery(paramSearch);
+    }, [searchParams]);
+
     // 2. Hàm Fetch Data chính (Xử lý cả Filter và Load More)
     const fetchCourses = async (page: number, isLoadMore: boolean = false) => {
         try {
@@ -221,14 +227,37 @@ const CourseListPage: React.FC = () => {
         } finally { setCrudLoading(false); }
     };
 
+    const handleMoveToDraft = async (course: CourseWithCounts) => {
+        if (!isCourseOwner(course)) {
+            alert('Only the course owner can change this course status.');
+            return;
+        }
+
+        if (course.status !== 'published') {
+            alert('Only published courses can be moved back to draft.');
+            return;
+        }
+
+        if (!window.confirm('Move this published course back to draft?')) return;
+
+        try {
+            await courseService.updateCourseStatus(course._id, 'draft');
+            alert('Course has been moved back to draft.');
+            setCurrentPage(1);
+            fetchCourses(1, false);
+        } catch (err: any) {
+            alert('Failed to move to draft: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
     const handleSubmitForReview = async (course: CourseWithCounts) => {
         if (!isCourseOwner(course)) {
-            alert('Only the course owner can submit this course for review.');
+            alert('Only the course owner can submit this course.');
             return;
         }
 
         if (!(course.status === 'draft' || course.status === 'rejected')) {
-            alert('Only draft or rejected courses can be submitted for review.');
+            alert('Only draft or rejected courses can be submitted.');
             return;
         }
 
@@ -240,7 +269,7 @@ const CourseListPage: React.FC = () => {
             setCurrentPage(1);
             fetchCourses(1, false);
         } catch (err: any) {
-            alert('Failed to submit for review: ' + (err.response?.data?.message || err.message));
+            alert('Failed to submit: ' + (err.response?.data?.message || err.message));
         }
     };
 
@@ -256,6 +285,34 @@ const CourseListPage: React.FC = () => {
                 setCurrentPage(1);
                 fetchCourses(1, false);
             } catch (err: any) { alert('Delete failed: ' + err.message); }
+        }
+    };
+
+    // Toggle publish/draft handler
+    const handlePublishToggle = async (course: CourseWithCounts, nextChecked: boolean) => {
+        if (!isCourseOwner(course)) {
+            alert('Only the course owner can change this course status.');
+            return;
+        }
+
+        // Khi đang pending thì không cho thao tác
+        if (course.status === 'pending') {
+            return;
+        }
+
+        // Tắt toggle: từ published -> draft
+        if (!nextChecked) {
+            if (course.status === 'published') {
+                await handleMoveToDraft(course);
+            }
+            return;
+        }
+
+        // Bật toggle: từ draft / rejected -> gửi duyệt (pending)
+        if (nextChecked) {
+            if (course.status === 'draft' || course.status === 'rejected') {
+                await handleSubmitForReview(course);
+            }
         }
     };
 
@@ -278,11 +335,6 @@ const CourseListPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Search */}
-                <form onSubmit={(e) => { e.preventDefault(); /* Search handled by effect */ }} className="course-list-search">
-                    <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="course-list-search-input" />
-                </form>
 
                 <div className="course-list-content">
                     {/* Filters Sidebar */}
@@ -346,7 +398,19 @@ const CourseListPage: React.FC = () => {
                                                         <div className="course-list-card-header">
                                                             <span className="course-list-level" style={{ backgroundColor: getLevelColor(course.level) }}>{course.level}</span>
                                                             {course.is_premium && <span className="course-list-premium">Premium</span>}
-                                                            {course.status === 'draft' && <span style={{ background: '#9ca3af', color: 'white', padding: '4px', borderRadius: 4, fontSize: 11, height: 'fit-content' }}>Draft</span>}
+                                                            {course.status && (
+                                                                <span className={`course-status-badge status-${course.status}`}>
+                                                                    {course.status === 'draft'
+                                                                        ? 'Draft'
+                                                                        : course.status === 'published'
+                                                                            ? 'Published'
+                                                                            : course.status === 'pending'
+                                                                                ? 'Pending'
+                                                                                : course.status === 'rejected'
+                                                                                    ? 'Rejected'
+                                                                                    : course.status}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <h3 className="course-list-card-title">{course.title}</h3>
                                                         {/* <p className="course-list-card-instructor">By {typeof course.instructor_id === 'object' && course.instructor_id ? course.instructor_id.name : 'Unknown'}</p> */}
@@ -359,14 +423,25 @@ const CourseListPage: React.FC = () => {
                                                     <div className="card-actions">
                                                         <button className="btn-edit" onClick={() => openEditModal(course)}>Edit</button>
                                                         <button className="btn-delete" onClick={() => handleDelete(course)}>Delete</button>
-                                                        {(course.status === 'draft' || course.status === 'rejected') && (
-                                                            <button
-                                                                className="btn-submit-review"
-                                                                onClick={() => handleSubmitForReview(course)}
-                                                            >
-                                                                {course.status === 'draft' ? 'Submit' : 'Resubmit'}
-                                                            </button>
-                                                        )}
+                                                    </div>
+                                                )}
+                                                {user && isCourseOwner(course) && (
+                                                    <div className="publish-toggle-wrapper">
+                                                        <span className="publish-toggle-status">
+                                                            {course.status === 'published' && 'Published'}
+                                                            {course.status === 'draft' && 'Draft'}
+                                                            {course.status === 'pending' && 'Pending review'}
+                                                            {course.status === 'rejected' && 'Rejected'}
+                                                        </span>
+                                                        <label className={`toggle-switch ${course.status === 'published' || course.status === 'pending' ? 'checked' : ''} ${course.status === 'pending' ? 'disabled' : ''}`}>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={course.status === 'published' || course.status === 'pending'}
+                                                                disabled={course.status === 'pending'}
+                                                                onChange={(e) => handlePublishToggle(course, e.target.checked)}
+                                                            />
+                                                            <span className="toggle-slider" />
+                                                        </label>
                                                     </div>
                                                 )}
                                                 {user && isCourseOwner(course) &&

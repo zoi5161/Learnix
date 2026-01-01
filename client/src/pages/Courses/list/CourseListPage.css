@@ -254,6 +254,35 @@
     overflow: hidden;
 }
 
+/* Status badge on card header */
+.course-status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    height: fit-content;
+    font-weight: 500;
+}
+
+.course-status-badge.status-draft {
+    background: #9ca3af;
+    color: #ffffff;
+}
+
+.course-status-badge.status-published {
+    background: #10b981; /* xanh lá */
+    color: #ffffff;
+}
+
+.course-status-badge.status-pending {
+    background: #fef3c7; /* vàng nhạt */
+    color: #92400e;
+}
+
+.course-status-badge.status-rejected {
+    background: #fee2e2; /* đỏ nhạt */
+    color: #b91c1c;
+}
+
 .course-list-card-stats {
     color: #6b7280;
     font-size: 14px;
@@ -451,6 +480,75 @@
 .btn-delete:hover { background-color: #fecaca; }
 .btn-detail:hover { background-color: #9ec9f2; }
 .btn-submit-review:hover { background-color: #fde68a; }
+
+/* --- Publish Toggle --- */
+.publish-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 10px 10px 10px;
+}
+
+.publish-toggle-status {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 46px;
+    height: 24px;
+    display: inline-block;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d1d5db;
+    transition: 0.3s;
+    border-radius: 999px;
+}
+
+.toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background-color: #ffffff;
+    transition: 0.3s;
+    border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.checked .toggle-slider {
+    background-color: #10b981;
+}
+
+.toggle-switch.checked .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-switch.disabled .toggle-slider {
+    background-color: #e5e7eb;
+    cursor: not-allowed;
+}
+
+.toggle-switch.disabled .toggle-slider::before {
+    box-shadow: none;
+}
 
 /* --- Modal Styles --- */
 .modal-overlay {

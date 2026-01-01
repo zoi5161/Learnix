@@ -146,21 +146,21 @@ const AIQuizDraftPage: React.FC = () => {
       setError('Please keep at least 5 questions');
       return;
     }
-    // const payload = {
-    //   title,
-    //   course_id: courseId,
-    //   lesson_id: lessonId,
-    //   description: 'AI generated quiz',
-    //   time_limit: 0,
-    //   questions: mcqs.map(q => ({
-    //     question: q.question,
-    //     options: q.options,
-    //     correctAnswer: q.answer,
-    //   })),
-    // };
+    const payload = {
+      title,
+      course_id: courseId,
+      lesson_id: lessonId,
+      description: 'AI generated quiz',
+      time_limit: 0,
+      questions: mcqs.map(q => ({
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.answer,
+      })),
+    };
     try {
-      // const res = await api.post('/quizzes', payload);
-      // const quizId = res.data?.data?._id || res.data?.data?.id;
+      const res = await api.post('/quizzes', payload);
+      const quizId = res.data?.data?._id || res.data?.data?.id;
       navigate(`/quizzes`);
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Failed to save quiz');
