@@ -74,11 +74,11 @@ const SuggestedCourses: React.FC<SuggestedCoursesProps> = ({ courseId, currentCo
                         >
                             {course.thumbnail ? (
                                 <div className="suggested-course-thumbnail">
-                                    <img src={course.thumbnail} alt={course.title} />
+                                    <img src={course.thumbnail} alt={course.title || 'Learnx'} />
                                 </div>
                             ) : (
                                 <div className="suggested-course-thumbnail suggested-course-thumbnail-placeholder">
-                                    <span>No Image</span>
+                                    <span>Learnx</span>
                                 </div>
                             )}
                             <div className="suggested-course-content">

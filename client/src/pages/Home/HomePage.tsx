@@ -182,9 +182,9 @@ const HomePage: React.FC = () => {
                                 >
                                     <div className="f8-course-item-left">
                                         {course.thumbnail ? (
-                                            <img src={course.thumbnail} alt={course.title} className="f8-course-thumb" />
+                                            <img src={course.thumbnail} alt={course.title || 'Learnx'} className="f8-course-thumb" />
                                         ) : (
-                                            <div className="f8-course-thumb-placeholder"></div>
+                                            <div className="f8-course-thumb-placeholder">Learnx</div>
                                         )}
                                     </div>
                                     <div className="f8-course-item-center">
