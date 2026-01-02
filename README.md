@@ -71,19 +71,53 @@
 
 ## 🚀 Cài đặt và chạy dự án
 
-### Yêu cầu hệ thống
+### 🐳 Cách 1: Sử dụng Docker (Khuyến nghị - Nhanh nhất!)
+
+**Yêu cầu:** Docker Desktop
+
+```bash
+# 1. Clone project
+git clone <repository-url>
+cd Learnix
+
+# 2. Tạo file .env
+cp .env.example .env
+# Chỉnh sửa JWT_SECRET và JWT_REFRESH_SECRET trong .env
+
+# 3. Chạy script khởi động (Windows)
+docker-start.bat
+
+# Hoặc (Linux/Mac)
+chmod +x docker-start.sh
+./docker-start.sh
+
+# 4. Seed database (lần đầu tiên)
+docker-compose exec server node config/seed_db.js
+
+# 5. Mở trình duyệt
+# Frontend: http://localhost:3000
+# Backend: http://localhost:8000/api
+```
+
+**Xem hướng dẫn chi tiết:** [`DOCKER.md`](./DOCKER.md)
+
+---
+
+### 💻 Cách 2: Cài đặt thủ công (Development)
+
+#### Yêu cầu hệ thống
 - **Node.js** >= 16.x
-- **MongoDB** >= 5.x
+- **MongoDB** >= 5.x (hoặc MongoDB Atlas)
 - **npm** hoặc **yarn**
 
-### 1. Clone project
+#### 1. Clone project
 
 ```bash
 git clone <repository-url>
 cd Learnix
 ```
 
-### 2. Cài đặt Backend
+#### 2. Cài đặt Backend
 
 ```bash
 cd server
