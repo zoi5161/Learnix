@@ -9,6 +9,8 @@ const {
     resetPassword,
 } = require('../controllers/authController');
 
+const router = express.Router();
+
 // Health check endpoint for Docker
 router.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
