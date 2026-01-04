@@ -82,7 +82,7 @@ const CourseListPage: React.FC = () => {
             // Config filters
             const filters: CourseFilters = {
                 page,
-                limit: 4, // Mỗi trang hiển thị 4 courses
+                limit: 6, // Mỗi trang hiển thị 6 courses
                 sort: sortBy,
                 order: sortOrder,
                 category: selectedCategory,

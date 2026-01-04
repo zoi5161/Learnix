@@ -420,8 +420,15 @@
     margin-bottom: 24px;
 }
 
-.course-detail-enroll-button:hover {
+.course-detail-enroll-button:hover:not(:disabled) {
     background-color: #764ba2;
+}
+
+.course-detail-enroll-button:disabled {
+    background-color: #9ca3af;
+    color: #ffffff;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .course-detail-enroll-button-enrolled {

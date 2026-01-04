@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { programmingService, ProgrammingExercise, TestResult } from '../../services/programmingService';
+import { programmingService, ProgrammingExercise, TestResult, CodeSubmission } from '../../services/programmingService';
 import './ProgrammingIDE.css';
 import Editor from '@monaco-editor/react';
 
@@ -28,6 +28,9 @@ const ProgrammingIDE: React.FC<ProgrammingIDEProps> = ({
     const [submitResults, setSubmitResults] = useState<any | null>(null);
     const [output, setOutput] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [submissions, setSubmissions] = useState<CodeSubmission[]>([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
+    const [showHistory, setShowHistory] = useState(false);
 
     // Update code when language changes
     useEffect(() => {
@@ -48,6 +51,29 @@ const ProgrammingIDE: React.FC<ProgrammingIDEProps> = ({
             }
         }
     }, [exercise.latest_submission, selectedLanguage]);
+
+    // Fetch submission history
+    useEffect(() => {
+        const fetchSubmissions = async () => {
+            try {
+                setLoadingHistory(true);
+                const res = await programmingService.getSubmissions(
+                    courseId,
+                    lessonId,
+                    exercise._id
+                );
+                if (res.success) {
+                    setSubmissions(res.data);
+                }
+            } catch (err) {
+                console.error('Error loading submission history:', err);
+            } finally {
+                setLoadingHistory(false);
+            }
+        };
+
+        fetchSubmissions();
+    }, [courseId, lessonId, exercise._id]);
 
     const handleRun = async () => {
         if (!code.trim()) {
@@ -120,19 +146,26 @@ const ProgrammingIDE: React.FC<ProgrammingIDEProps> = ({
                 if (onSubmissionComplete) {
                     onSubmissionComplete(response.data.submission);
                 }
+
+                // Refresh submission history
+                try {
+                    const historyRes = await programmingService.getSubmissions(
+                        courseId,
+                        lessonId,
+                        exercise._id
+                    );
+                    if (historyRes.success) {
+                        setSubmissions(historyRes.data);
+                    }
+                } catch (e) {
+                    console.error('Error refreshing history:', e);
+                }
             }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Error submitting code');
         } finally {
             setSubmitting(false);
         }
-    };
-
-    const getTestCaseStatus = (index: number) => {
-        if (!runResults) return null;
-        const result = runResults[index];
-        if (!result) return null;
-        return result.passed ? 'passed' : 'failed';
     };
 
     return (
@@ -260,6 +293,12 @@ const ProgrammingIDE: React.FC<ProgrammingIDEProps> = ({
                                         </div>
                                         {!result.passed && (
                                             <div className="programming-ide-test-details">
+                                                {testCase?.input && (
+                                                    <div className="programming-ide-test-detail-row input">
+                                                        <span className="label">Input:</span>
+                                                        <code>{testCase.input}</code>
+                                                    </div>
+                                                )}
                                                 <div className="programming-ide-test-detail-row">
                                                     <span className="label">Expected:</span>
                                                     <code>{result.expected_output || '(empty)'}</code>
@@ -302,6 +341,96 @@ const ProgrammingIDE: React.FC<ProgrammingIDEProps> = ({
                             <p className="programming-ide-submission-success-msg">
                                 Great job! All test cases passed! 🎊
                             </p>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Submission History */}
+            <div className="programming-ide-history-section">
+                <div className="programming-ide-history-header">
+                    <h3 className="programming-ide-history-title">
+                        📊 Submission History ({submissions.length})
+                    </h3>
+                    <button
+                        onClick={() => setShowHistory(!showHistory)}
+                        className="programming-ide-history-toggle"
+                    >
+                        {showHistory ? '▼ Hide' : '▶ Show'}
+                    </button>
+                </div>
+
+                {showHistory && (
+                    <div className="programming-ide-history-content">
+                        {loadingHistory ? (
+                            <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
+                                Loading history...
+                            </div>
+                        ) : submissions.length === 0 ? (
+                            <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>
+                                No submissions yet. Submit your code to see your history here.
+                            </div>
+                        ) : (
+                            <div className="programming-ide-history-list">
+                                {submissions.map((sub, index) => (
+                                    <div
+                                        key={sub._id}
+                                        className={`programming-ide-history-item ${sub.passed ? 'passed' : 'failed'}`}
+                                    >
+                                        <div className="programming-ide-history-item-header">
+                                            <div className="programming-ide-history-item-info">
+                                                <span className="programming-ide-history-attempt">
+                                                    Attempt #{sub.attempt_number}
+                                                </span>
+                                                <span className="programming-ide-history-lang">
+                                                    {sub.language === 'python' ? '🐍 Python' : '🟨 JavaScript'}
+                                                </span>
+                                            </div>
+                                            <div className="programming-ide-history-item-result">
+                                                <span className={`programming-ide-history-score ${sub.passed ? 'success' : 'failed'}`}>
+                                                    {sub.score}%
+                                                </span>
+                                                <span className="programming-ide-history-status">
+                                                    {sub.passed ? '✅ Passed' : '❌ Failed'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="programming-ide-history-item-meta">
+                                            <span>
+                                                {new Date(sub.createdAt).toLocaleString('en-US', {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </span>
+                                            <span>•</span>
+                                            <span>
+                                                {sub.test_results?.filter((r: any) => r.passed).length || 0}/
+                                                {sub.test_results?.length || 0} tests passed
+                                            </span>
+                                            <span>•</span>
+                                            <span>{sub.execution_time}ms</span>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                if (sub.language === selectedLanguage) {
+                                                    setCode(sub.code);
+                                                } else {
+                                                    if (window.confirm(`This submission was in ${sub.language}. Switch to ${sub.language}?`)) {
+                                                        setSelectedLanguage(sub.language);
+                                                        setCode(sub.code);
+                                                    }
+                                                }
+                                            }}
+                                            className="programming-ide-history-load-btn"
+                                        >
+                                            Load Code
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
                 )}

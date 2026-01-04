@@ -290,13 +290,40 @@ try {
  */
 const runTestCases = async (code, testCases, language, timeLimit = 5, functionName = 'solution', inputFormat = 'json') => {
     const results = [];
+    
+    // Overall timeout: max 60 seconds for all test cases combined
+    const OVERALL_TIMEOUT = 60000;
+    const overallStartTime = Date.now();
 
     for (let i = 0; i < testCases.length; i++) {
+        // Check overall timeout
+        const elapsedTime = Date.now() - overallStartTime;
+        if (elapsedTime > OVERALL_TIMEOUT) {
+            console.warn(`Overall timeout reached after ${elapsedTime}ms. Stopping test execution.`);
+            // Mark remaining test cases as failed due to timeout
+            for (let j = i; j < testCases.length; j++) {
+                results.push({
+                    testCaseIndex: j,
+                    passed: false,
+                    output: '',
+                    expected_output: normalizeOutput(testCases[j].expected_output || ''),
+                    error: 'Overall execution timeout exceeded',
+                    execution_time: 0,
+                    points_earned: 0
+                });
+            }
+            break;
+        }
+
         const testCase = testCases[i];
         const startTime = Date.now();
 
         let result;
         try {
+            if (!testCase || !testCase.input) {
+                throw new Error('Invalid test case: missing input');
+            }
+
             if (language === 'python') {
                 result = await runPython(code, testCase.input, timeLimit, functionName, inputFormat);
             } else if (language === 'javascript') {
@@ -305,8 +332,13 @@ const runTestCases = async (code, testCases, language, timeLimit = 5, functionNa
                 throw new Error(`Unsupported language: ${language}`);
             }
 
-            const expectedOutput = normalizeOutput(testCase.expected_output);
-            const actualOutput = result.output;
+            // Ensure result is valid
+            if (!result) {
+                throw new Error('Execution returned no result');
+            }
+
+            const expectedOutput = normalizeOutput(testCase.expected_output || '');
+            const actualOutput = result.output || '';
             const passed = expectedOutput === actualOutput && !result.error;
 
             results.push({
@@ -314,17 +346,18 @@ const runTestCases = async (code, testCases, language, timeLimit = 5, functionNa
                 passed,
                 output: actualOutput,
                 expected_output: expectedOutput,
-                error: result.error,
-                execution_time: result.executionTime,
+                error: result.error || '',
+                execution_time: result.executionTime || 0,
                 points_earned: passed ? (testCase.points || 1) : 0
             });
 
         } catch (error) {
+            console.error(`Error executing test case ${i}:`, error);
             results.push({
                 testCaseIndex: i,
                 passed: false,
                 output: '',
-                expected_output: normalizeOutput(testCase.expected_output),
+                expected_output: normalizeOutput(testCase?.expected_output || ''),
                 error: error.message || 'Execution failed',
                 execution_time: Date.now() - startTime,
                 points_earned: 0

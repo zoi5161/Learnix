@@ -167,6 +167,15 @@ exports.submitCode = async (req, res) => {
     try {
         const { exerciseId } = req.params;
         const { code, language } = req.body;
+        
+        // Validate input
+        if (!code || !language) {
+            return res.status(400).json({
+                success: false,
+                message: 'Code and language are required'
+            });
+        }
+
         const result = await programmingService.submitCode(
             exerciseId,
             code,
@@ -174,11 +183,22 @@ exports.submitCode = async (req, res) => {
             req.user.id,
             req.user.role
         );
+
+        // If submission failed to save but results were processed
+        if (result.error) {
+            return res.status(200).json({
+                success: true,
+                data: result,
+                warning: result.error
+            });
+        }
+
         res.json({
             success: true,
             data: result
         });
     } catch (error) {
+        console.error('Submit code error:', error);
         const statusCode = error.message === 'Code and language are required' ||
                           error.message.includes('Language') ||
                           error.message.includes('enrolled') ? 400 :

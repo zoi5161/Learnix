@@ -28,7 +28,8 @@ const CodeSubmissionSchema = new mongoose.Schema({
     test_results: [{
         test_case_id: {
             type: mongoose.Schema.Types.ObjectId,
-            required: true
+            required: false, // Allow null if test case doesn't have _id
+            default: null
         },
         passed: {
             type: Boolean,

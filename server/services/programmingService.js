@@ -273,14 +273,20 @@ const submitCode = async (exerciseId, code, language, userId, userRole) => {
 
     // Run ALL test cases (including hidden ones)
     const startTime = Date.now();
-    const testResults = await runTestCases(
-        code,
-        exercise.test_cases,
-        language,
-        exercise.time_limit,
-        exercise.function_name || 'solution',
-        exercise.input_format || 'json'
-    );
+    let testResults;
+    try {
+        testResults = await runTestCases(
+            code,
+            exercise.test_cases,
+            language,
+            exercise.time_limit,
+            exercise.function_name || 'solution',
+            exercise.input_format || 'json'
+        );
+    } catch (execError) {
+        console.error('Error running test cases:', execError);
+        throw new Error(`Failed to execute code: ${execError.message || 'Unknown execution error'}`);
+    }
     const totalExecutionTime = Date.now() - startTime;
 
     // Calculate score
@@ -297,36 +303,73 @@ const submitCode = async (exerciseId, code, language, userId, userRole) => {
 
     const attemptNumber = lastSubmission ? lastSubmission.attempt_number + 1 : 1;
 
-    // Save submission
-    const submission = await CodeSubmission.create({
-        exercise_id: exerciseId,
-        student_id: userId,
-        lesson_id: exercise.lesson_id,
-        language,
-        code,
-        test_results: testResults.map((result, index) => ({
-            test_case_id: exercise.test_cases[index]._id,
-            passed: result.passed,
-            output: result.output,
-            expected_output: result.expected_output,
-            error: result.error,
-            execution_time: result.execution_time,
-            points_earned: result.points_earned
-        })),
-        score,
-        passed,
-        attempt_number: attemptNumber,
-        execution_time: totalExecutionTime
-    });
+    // Save submission with error handling
+    try {
+        // Map test results safely - handle case where test_case might not have _id
+        const testResultsMapped = testResults.map((result, index) => {
+            const testCase = exercise.test_cases[index];
+            // Try to get _id from test case, but allow null if it doesn't exist
+            let testCaseId = null;
 
-    return {
-        submission,
-        test_results: testResults,
-        score,
-        passed,
-        total_test_cases: exercise.test_cases.length,
-        passed_test_cases: testResults.filter(r => r.passed).length
-    };
+            if (testCase) {
+                if (testCase._id) {
+                    testCaseId = testCase._id;
+                } else if (testCase.id) {
+                    testCaseId = testCase.id;
+                }
+            }
+            
+            return {
+                test_case_id: testCaseId,
+                passed: result.passed || false,
+                output: (result.output || '').toString().substring(0, 10000), // Limit output length
+                expected_output: (result.expected_output || '').toString().substring(0, 10000),
+                error: (result.error || '').toString().substring(0, 5000), // Limit error length
+                execution_time: result.execution_time || 0,
+                points_earned: result.points_earned || 0
+            };
+        });
+
+        const submission = await CodeSubmission.create({
+            exercise_id: exerciseId,
+            student_id: userId,
+            lesson_id: exercise.lesson_id,
+            language,
+            code,
+            test_results: testResultsMapped,
+            score,
+            passed,
+            attempt_number: attemptNumber,
+            execution_time: totalExecutionTime
+        });
+
+        return {
+            submission,
+            test_results: testResults,
+            score,
+            passed,
+            total_test_cases: exercise.test_cases.length,
+            passed_test_cases: testResults.filter(r => r.passed).length
+        };
+    } catch (dbError) {
+        console.error('Error saving submission to database:', dbError);
+        console.error('Error stack:', dbError.stack);
+        console.error('Error details:', {
+            message: dbError.message,
+            name: dbError.name,
+            errors: dbError.errors
+        });
+        // Still return the results even if saving fails
+        return {
+            submission: null,
+            test_results: testResults,
+            score,
+            passed,
+            total_test_cases: exercise.test_cases.length,
+            passed_test_cases: testResults.filter(r => r.passed).length,
+            error: 'Results processed but failed to save submission. Please try again.'
+        };
+    }
 };
 
 /**

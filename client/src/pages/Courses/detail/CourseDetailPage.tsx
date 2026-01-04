@@ -71,6 +71,18 @@ const CourseDetailPage: React.FC = () => {
             setShowLoginModal(true);
             return;
         }
+        
+        // Check role - only students can enroll
+        if (user.role !== 'student') {
+            const roleMessage = user.role === 'instructor' 
+                ? 'Instructors cannot enroll in courses. Only students can enroll.'
+                : user.role === 'admin'
+                    ? 'Administrators cannot enroll in courses. Only students can enroll.'
+                    : 'Only students can enroll in courses.';
+            alert(roleMessage);
+            return;
+        }
+        
         if (!id) return;
 
         try {
@@ -89,10 +101,31 @@ const CourseDetailPage: React.FC = () => {
                 alert('Failed to enroll: ' + res.message);
             }
         } catch (err: any) {
-             if (err.response?.data?.message === 'Insufficient budget') {
-                alert(`Insufficient budget.`);
+            const errorMessage = err.response?.data?.message || err.message || 'Failed to enroll';
+            
+            // Handle specific error messages with clear user-friendly messages
+            if (errorMessage.includes('Only students can enroll')) {
+                alert('❌ Enrollment Error: Only students can enroll in courses. Instructors and administrators cannot enroll.');
+            } else if (errorMessage.includes('Insufficient budget')) {
+                const errorData = err.response?.data?.data;
+                if (errorData) {
+                    alert(`❌ Insufficient Budget\n\n` +
+                          `Course Price: $${errorData.required?.toFixed(2) || '0.00'}\n` +
+                          `Your Budget: $${errorData.budget?.toFixed(2) || '0.00'}\n` +
+                          `Bonus Credits: $${errorData.bonus_credits?.toFixed(2) || '0.00'}\n` +
+                          `Total Available: $${errorData.available?.toFixed(2) || '0.00'}\n\n` +
+                          `Please add more budget to enroll in this course.`);
+                } else {
+                    alert('❌ Insufficient Budget: You do not have enough budget to enroll in this course. Please add more budget.');
+                }
+            } else if (errorMessage.includes('Already enrolled')) {
+                alert('ℹ️ You are already enrolled in this course.');
+            } else if (errorMessage.includes('Course is not available for enrollment')) {
+                alert('❌ This course is not available for enrollment. The course may be in draft, pending review, or rejected status.');
+            } else if (errorMessage.includes('Course not found')) {
+                alert('❌ Course not found. This course may have been deleted.');
             } else {
-                alert('Error: ' + (err.message || 'Failed to enroll'));
+                alert(`❌ Enrollment Error: ${errorMessage}`);
             }
         } finally {
             setEnrolling(false);
@@ -145,10 +178,14 @@ const CourseDetailPage: React.FC = () => {
         if (user.role === 'admin') return true;
         if (user.role !== 'instructor') return false;
 
+        console.log('user: ', user);
+
         const instructorId = typeof course?.instructor_id === 'object' && course?.instructor_id !== null
             ? (course.instructor_id as any)._id || (course.instructor_id as any).id
             : course?.instructor_id;
-        const currentUserId = (user as any)._id || (user as any).id;
+        const currentUserId = (user as any).userId || (user as any)._id || (user as any).id;
+        
+        console.log('instructorId: ', instructorId, 'currentUserId: ', currentUserId);
         return instructorId?.toString() === currentUserId?.toString();
     })();
 
@@ -341,8 +378,16 @@ const CourseDetailPage: React.FC = () => {
                                     <div className="course-detail-sidebar-price">${course.price.toFixed(2)}</div>
                                 )}
                                 {!isEnrolled ? (
-                                    <button onClick={handleEnrollClick} disabled={enrolling} className="course-detail-enroll-button">
-                                        {enrolling ? 'Enrolling...' : (user ? 'Enroll Now' : 'Sign Up to Enroll')}
+                                    <button 
+                                        onClick={handleEnrollClick} 
+                                        disabled={enrolling || (user && user.role !== 'student' ? true : false)} 
+                                        className="course-detail-enroll-button"
+                                        title={user && user.role !== 'student' ? 'Only students can enroll in courses' : ''}
+                                    >
+                                        {enrolling ? 'Enrolling...' : 
+                                         !user ? 'Sign Up to Enroll' :
+                                         user.role !== 'student' ? `Enroll (${user.role === 'instructor' ? 'Instructor' : 'Admin'} cannot enroll)` :
+                                         'Enroll Now'}
                                     </button>
                                 ) : (
                                     <>

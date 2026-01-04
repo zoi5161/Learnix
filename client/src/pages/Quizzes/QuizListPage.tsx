@@ -49,8 +49,8 @@ const QuizListPage: React.FC = () => {
   useEffect(() => {
     const lowerTerm = searchTerm.toLowerCase();
     const results = items.filter(
-      item => 
-        item.title.toLowerCase().includes(lowerTerm) || 
+      item =>
+        item.title.toLowerCase().includes(lowerTerm) ||
         item.courseTitle.toLowerCase().includes(lowerTerm) ||
         (item.lessonTitle && item.lessonTitle.toLowerCase().includes(lowerTerm))
     );
@@ -107,20 +107,20 @@ const QuizListPage: React.FC = () => {
           : instructorIdFromCourse;
 
         // Kiểm tra an toàn: lesson_id có phải object không?
-        const lessonTitle = (q.lesson_id && typeof q.lesson_id === 'object') 
-            ? q.lesson_id.title 
-            : null;
+        const lessonTitle = (q.lesson_id && typeof q.lesson_id === 'object')
+          ? q.lesson_id.title
+          : null;
 
         return {
-            id: q._id || q.id,
-            title: q.title,
-            courseTitle: courseTitle,
-            lessonTitle: lessonTitle,
-            questionsCount: q.questionsCount || 0, // Backend mới đã trả về field này
-            timeLimit: q.time_limit || 0,
-            createdAt: q.createdAt,
-            instructorId,
-            courseId: courseKey
+          id: q._id || q.id,
+          title: q.title,
+          courseTitle: courseTitle,
+          lessonTitle: lessonTitle,
+          questionsCount: q.questionsCount || 0, // Backend mới đã trả về field này
+          timeLimit: q.time_limit || 0,
+          createdAt: q.createdAt,
+          instructorId,
+          courseId: courseKey
         };
       });
 
@@ -148,10 +148,10 @@ const QuizListPage: React.FC = () => {
       try {
         const statsRes = await quizService.getQuizSubmissionStats(quiz.id);
         if (statsRes.success && statsRes.data.totalSubmissions > 0) {
-          setItems(prev => prev.map(item => 
+          setItems(prev => prev.map(item =>
             item.id === quiz.id ? { ...item, stats: statsRes.data } : item
           ));
-          setFilteredItems(prev => prev.map(item => 
+          setFilteredItems(prev => prev.map(item =>
             item.id === quiz.id ? { ...item, stats: statsRes.data } : item
           ));
         }
@@ -180,7 +180,7 @@ const QuizListPage: React.FC = () => {
     <BaseLayout>
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <div className="flex items-center space-x-4">
@@ -212,134 +212,176 @@ const QuizListPage: React.FC = () => {
             <span className="absolute left-3 top-3 text-gray-400">🔍</span>
           </div>
 
-          {/* Table */}
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {filteredItems.map((item) => (
-    <div
-      key={item.id}
-      className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col hover:shadow-md transition"
-    >
-      {/* QUIZ TITLE (2 lines fixed height) */}
-      <h3
-        title={item.title}
-        className="
+          {/* Loading State */}
+          {loading && (
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+              <p className="text-gray-600 text-lg">Loading quizzes...</p>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && filteredItems.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {searchTerm ? 'No quizzes found' : 'No quizzes yet'}
+              </h3>
+              <p className="text-gray-600 text-center mb-6 max-w-md">
+                {searchTerm
+                  ? `No quizzes match your search "${searchTerm}". Try a different search term.`
+                  : user?.role === 'instructor'
+                    ? "You haven't created any quizzes yet. Create your first quiz to get started!"
+                    : "There are no quizzes available at the moment."}
+              </p>
+              {!searchTerm && (user?.role === 'instructor' || user?.role === 'admin') && (
+                <Link
+                  to="/quizzes/create"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-sm transition-colors font-medium"
+                >
+                  + Create Your First Quiz
+                </Link>
+              )}
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Clear search
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Quiz Grid */}
+          {!loading && filteredItems.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col hover:shadow-md transition"
+                >
+                  {/* QUIZ TITLE (2 lines fixed height) */}
+                  <h3
+                    title={item.title}
+                    className="
           text-lg font-semibold text-gray-900 leading-snug 
           line-clamp-2
         "
-        style={{ minHeight: "3.2rem" }}
-      >
-        {item.title}
-      </h3>
+                    style={{ minHeight: "3.2rem" }}
+                  >
+                    {item.title}
+                  </h3>
 
-      {/* DATE */}
-      {item.createdAt && (
-        <p className="text-xs text-gray-400 mt-1">
-          {new Date(item.createdAt).toLocaleDateString()}
-        </p>
-      )}
+                  {/* DATE */}
+                  {item.createdAt && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </p>
+                  )}
 
-      {/* COURSE (only 1 line, always truncate) */}
-      <div className="mt-4">
-        <span
-          className="
+                  {/* COURSE (only 1 line, always truncate) */}
+                  <div className="mt-4">
+                    <span
+                      className="
             inline-block px-3 py-1 text-xs font-semibold rounded-full 
             bg-blue-100 text-blue-800 border border-blue-200 
             max-w-full truncate
           "
-          title={item.courseTitle}
-        >
-          {item.courseTitle}
-        </span>
-      </div>
+                      title={item.courseTitle}
+                    >
+                      {item.courseTitle}
+                    </span>
+                  </div>
 
-      {/* CONTEXT */}
-      <div className="mt-4">
-        {item.lessonTitle ? (
-          <div
-            className="
+                  {/* CONTEXT */}
+                  <div className="mt-4">
+                    {item.lessonTitle ? (
+                      <div
+                        className="
               flex items-center gap-2 text-gray-700 text-sm 
               bg-gray-50 border border-gray-200 
               p-2 rounded-lg overflow-hidden
             "
-          >
-            <span className="text-lg">📄</span>
-            <span className="truncate">{item.lessonTitle}</span>
-          </div>
-        ) : (
-          <div
-            className="
+                      >
+                        <span className="text-lg">📄</span>
+                        <span className="truncate">{item.lessonTitle}</span>
+                      </div>
+                    ) : (
+                      <div
+                        className="
               flex items-center gap-2 text-purple-700 bg-purple-50 
               border border-purple-200 p-2 rounded-lg 
               text-sm font-medium
             "
-          >
-            <span className="text-lg">🎓</span>
-            <span>Final Exam</span>
-          </div>
-        )}
-      </div>
+                      >
+                        <span className="text-lg">🎓</span>
+                        <span>Final Exam</span>
+                      </div>
+                    )}
+                  </div>
 
-      {/* STATS */}
-      <div className="mt-4 flex gap-6 text-sm text-gray-600">
-        <div className="flex items-center gap-1">
-          ❓ <strong>{item.questionsCount}</strong> Qs
-        </div>
-        <div className="flex items-center gap-1">
-          ⏱ <strong>{item.timeLimit}</strong> min
-        </div>
-      </div>
+                  {/* STATS */}
+                  <div className="mt-4 flex gap-6 text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      ❓ <strong>{item.questionsCount}</strong> Qs
+                    </div>
+                    <div className="flex items-center gap-1">
+                      ⏱ <strong>{item.timeLimit}</strong> min
+                    </div>
+                  </div>
 
-      {/* SUBMISSION STATS (if available) */}
-      {item.stats && item.stats.totalSubmissions > 0 && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="text-xs font-semibold text-blue-800 mb-2">📊 Submission Statistics</div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span className="text-gray-600">Total:</span> <strong className="text-blue-700">{item.stats.totalSubmissions}</strong>
-            </div>
-            <div>
-              <span className="text-gray-600">Avg Score:</span> <strong className="text-blue-700">{item.stats.averageScore.toFixed(1)}%</strong>
-            </div>
-            <div>
-              <span className="text-gray-600">Passed:</span> <strong className="text-green-700">{item.stats.passedCount}</strong>
-            </div>
-            <div>
-              <span className="text-gray-600">Failed:</span> <strong className="text-red-700">{item.stats.failedCount}</strong>
-            </div>
-          </div>
-          <button
-            onClick={() => navigate(`/quizzes/${item.id}/submissions`)}
-            className="mt-2 w-full text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition"
-          >
-            View All Submissions →
-          </button>
-        </div>
-      )}
+                  {/* SUBMISSION STATS (if available) */}
+                  {item.stats && item.stats.totalSubmissions > 0 && (
+                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="text-xs font-semibold text-blue-800 mb-2">📊 Submission Statistics</div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <span className="text-gray-600">Total:</span> <strong className="text-blue-700">{item.stats.totalSubmissions}</strong>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Avg Score:</span> <strong className="text-blue-700">{item.stats.averageScore.toFixed(1)}%</strong>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Passed:</span> <strong className="text-green-700">{item.stats.passedCount}</strong>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Failed:</span> <strong className="text-red-700">{item.stats.failedCount}</strong>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => navigate(`/quizzes/${item.id}/submissions`)}
+                        className="mt-2 w-full text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition"
+                      >
+                        View All Submissions →
+                      </button>
+                    </div>
+                  )}
 
-      {/* ACTIONS */}
-      <div className="mt-6 flex justify-end gap-4 text-sm font-medium">
-        <button
-          onClick={() => navigate(`/quizzes/${item.id}/edit`)}
-          className="text-indigo-600 hover:text-indigo-900"
-        >
-          Edit
-        </button>
+                  {/* ACTIONS */}
+                  <div className="mt-6 flex justify-end gap-4 text-sm font-medium">
+                    <button
+                      onClick={() => navigate(`/quizzes/${item.id}/edit`)}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      Edit
+                    </button>
 
-        <button
-          onClick={() => handleDelete(item.id)}
-          disabled={deletingId === item.id}
-          className={`${
-            deletingId === item.id
-              ? "text-gray-400"
-              : "text-red-600 hover:text-red-900"
-          }`}
-        >
-          {deletingId === item.id ? "Deleting..." : "Delete"}
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      disabled={deletingId === item.id}
+                      className={`${deletingId === item.id
+                          ? "text-gray-400"
+                          : "text-red-600 hover:text-red-900"
+                        }`}
+                    >
+                      {deletingId === item.id ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
         </div>
       </div>
