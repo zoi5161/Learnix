@@ -313,7 +313,7 @@ const CourseListPage: React.FC = () => {
             <main className="course-list-main">
                 {/* Header */}
                 <div className="course-list-header">
-                    <div className="course-list-back"><button onClick={() => navigate('/dashboard')} className="course-list-back-btn">← Back</button></div>
+                    <div className="course-list-back"><button onClick={() => navigate('/')} className="course-list-back-btn">← Back</button></div>
                     <div className="header-actions" style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'center' }}>
                         <div>
                             <h1 className="course-list-title">All Courses</h1>

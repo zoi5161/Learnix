@@ -184,7 +184,7 @@
 .course-list-thumbnail img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .course-list-card-content {
@@ -261,6 +261,7 @@
     font-size: 11px;
     height: fit-content;
     font-weight: 500;
+    font-style: italic;
 }
 
 .course-status-badge.status-draft {

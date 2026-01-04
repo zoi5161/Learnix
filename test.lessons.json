@@ -1,0 +1,1467 @@
+[{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7c8"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b4"
+  },
+  "title": "Lesson 1 for Course 1",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/cvdsst3LYws?si=akuVEZ02PkBGw7QT",
+  "description": "This is lesson 1 introduction.",
+  "duration": 12,
+  "is_free": true,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7c9"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b5"
+  },
+  "title": "Lesson 2 for Course 2",
+  "content_type": "text",
+  "content": "https://example.com/content/2",
+  "description": "This is lesson 2 introduction.",
+  "duration": 14,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7ca"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b6"
+  },
+  "title": "Lesson 3 for Course 3",
+  "content_type": "pdf",
+  "content": "https://example.com/content/3",
+  "description": "This is lesson 3 introduction.",
+  "duration": 7,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7cb"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b7"
+  },
+  "title": "Lesson 4 for Course 4",
+  "content_type": "quiz",
+  "content": "https://example.com/content/4",
+  "description": "This is lesson 4 introduction.",
+  "duration": 8,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7cc"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b8"
+  },
+  "title": "Lesson 5 for Course 5",
+  "content_type": "assignment",
+  "content": "https://example.com/content/5",
+  "description": "This is lesson 5 introduction.",
+  "duration": 9,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7cd"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b9"
+  },
+  "title": "Lesson 6 for Course 6",
+  "content_type": "video",
+  "content": "https://example.com/content/6",
+  "description": "This is lesson 6 introduction.",
+  "duration": 12,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7ce"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7ba"
+  },
+  "title": "Lesson 7 for Course 7",
+  "content_type": "text",
+  "content": "https://example.com/content/7",
+  "description": "This is lesson 7 introduction.",
+  "duration": 11,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7cf"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bb"
+  },
+  "title": "Lesson 8 for Course 8",
+  "content_type": "pdf",
+  "content": "https://example.com/content/8",
+  "description": "This is lesson 8 introduction.",
+  "duration": 6,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d0"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bc"
+  },
+  "title": "Lesson 9 for Course 9",
+  "content_type": "quiz",
+  "content": "https://example.com/content/9",
+  "description": "This is lesson 9 introduction.",
+  "duration": 14,
+  "is_free": true,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d1"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bd"
+  },
+  "title": "Lesson 10 for Course 10",
+  "content_type": "assignment",
+  "content": "https://example.com/content/10",
+  "description": "This is lesson 10 introduction.",
+  "duration": 13,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d2"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b4"
+  },
+  "title": "Lesson 11 for Course 2",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/4gdAEy40_gU?si=FyXXY8EzUq9mXdpa",
+  "description": "This is lesson 11 introduction.",
+  "duration": 5,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T03:41:37.748Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d3"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b5"
+  },
+  "title": "Lesson 12 for Course 2",
+  "content_type": "text",
+  "content": "https://example.com/content/12",
+  "description": "This is lesson 12 introduction.",
+  "duration": 9,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d4"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b6"
+  },
+  "title": "Lesson 13 for Course 3",
+  "content_type": "pdf",
+  "content": "https://example.com/content/13",
+  "description": "This is lesson 13 introduction.",
+  "duration": 12,
+  "is_free": true,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d5"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b7"
+  },
+  "title": "Lesson 14 for Course 4",
+  "content_type": "quiz",
+  "content": "https://example.com/content/14",
+  "description": "This is lesson 14 introduction.",
+  "duration": 10,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d6"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b8"
+  },
+  "title": "Lesson 15 for Course 5",
+  "content_type": "assignment",
+  "content": "https://example.com/content/15",
+  "description": "This is lesson 15 introduction.",
+  "duration": 6,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d7"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b9"
+  },
+  "title": "Lesson 16 for Course 6",
+  "content_type": "video",
+  "content": "https://example.com/content/16",
+  "description": "This is lesson 16 introduction.",
+  "duration": 5,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d8"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7ba"
+  },
+  "title": "Lesson 17 for Course 7",
+  "content_type": "text",
+  "content": "https://example.com/content/17",
+  "description": "This is lesson 17 introduction.",
+  "duration": 13,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7d9"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bb"
+  },
+  "title": "Lesson 18 for Course 8",
+  "content_type": "pdf",
+  "content": "https://example.com/content/18",
+  "description": "This is lesson 18 introduction.",
+  "duration": 8,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7da"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bc"
+  },
+  "title": "Lesson 19 for Course 9",
+  "content_type": "quiz",
+  "content": "https://example.com/content/19",
+  "description": "This is lesson 19 introduction.",
+  "duration": 7,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7db"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bd"
+  },
+  "title": "Lesson 20 for Course 10",
+  "content_type": "assignment",
+  "content": "https://example.com/content/20",
+  "description": "This is lesson 20 introduction.",
+  "duration": 8,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7dc"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b4"
+  },
+  "title": "Lesson 21 for Course 1",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/mpnRuUO0WYQ?si=_U5GioMw8sRTtpQ3",
+  "description": "This is lesson 21 introduction.",
+  "duration": 7,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T03:41:46.367Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7dd"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b5"
+  },
+  "title": "Lesson 22 for Course 2",
+  "content_type": "text",
+  "content": "https://example.com/content/22",
+  "description": "This is lesson 22 introduction.",
+  "duration": 14,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7de"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b6"
+  },
+  "title": "Lesson 23 for Course 3",
+  "content_type": "pdf",
+  "content": "https://example.com/content/23",
+  "description": "This is lesson 23 introduction.",
+  "duration": 5,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7df"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b7"
+  },
+  "title": "Lesson 24 for Course 4",
+  "content_type": "quiz",
+  "content": "https://example.com/content/24",
+  "description": "This is lesson 24 introduction.",
+  "duration": 10,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7e0"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b8"
+  },
+  "title": "Lesson 25 for Course 5",
+  "content_type": "assignment",
+  "content": "https://example.com/content/25",
+  "description": "This is lesson 25 introduction.",
+  "duration": 10,
+  "is_free": true,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7e1"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7b9"
+  },
+  "title": "Lesson 26 for Course 6",
+  "content_type": "video",
+  "content": "https://example.com/content/26",
+  "description": "This is lesson 26 introduction.",
+  "duration": 8,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7e2"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7ba"
+  },
+  "title": "Lesson 27 for Course 7",
+  "content_type": "text",
+  "content": "https://example.com/content/27",
+  "description": "This is lesson 27 introduction.",
+  "duration": 9,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7e3"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bb"
+  },
+  "title": "Lesson 28 for Course 8",
+  "content_type": "pdf",
+  "content": "https://example.com/content/28",
+  "description": "This is lesson 28 introduction.",
+  "duration": 6,
+  "is_free": false,
+  "order": 0,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7e4"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bc"
+  },
+  "title": "Lesson 29 for Course 9",
+  "content_type": "quiz",
+  "content": "https://example.com/content/29",
+  "description": "This is lesson 29 introduction.",
+  "duration": 8,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7e5"
+  },
+  "course_id": {
+    "$oid": "692990d4550407327ac0b7bd"
+  },
+  "title": "Lesson 30 for Course 10",
+  "content_type": "assignment",
+  "content": "https://example.com/content/30",
+  "description": "This is lesson 30 introduction.",
+  "duration": 8,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6934f7afffe971f9f01f90d7"
+  },
+  "course_id": {
+    "$oid": "69347125dad5b16b6da5263e"
+  },
+  "title": "Lesson T",
+  "content_type": "video",
+  "content": "https://www.youtube.com/watch?v=0JvAPwUHLNk",
+  "description": "No desc",
+  "duration": 3,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-12-07T03:42:39.665Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T03:43:11.845Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69357253aa90fef46add1c68"
+  },
+  "course_id": {
+    "$oid": "69356e54aa90fef46add1c5d"
+  },
+  "title": "Lắng Nghe Chủ Động & Hiểu Ngữ Cảnh",
+  "content_type": "text",
+  "content": "👂 Lắng Nghe Chủ Động: Lắng nghe chủ động không chỉ là nghe những từ người khác nói, mà là hiểu ý nghĩa và cảm xúc đằng sau chúng. Bốn Bước Lắng Nghe Chủ Động:\n1. Tập trung hoàn toàn: Loại bỏ phiền nhiễu.\n2. Tóm tắt (Paraphrasing): Lặp lại những gì bạn hiểu (\"Ý của bạn là...\").\n3. Đặt câu hỏi mở: Khuyến khích đối phương chia sẻ thêm.\n4. Phản hồi phi ngôn ngữ: Gật đầu, duy trì giao tiếp bằng mắt.\n\n💡 Ngữ Cảnh Quan Trọng:\nHiểu ngữ cảnh (Context) giúp bạn chọn từ ngữ và giọng điệu phù hợp, tránh hiểu lầm trong môi trường đa văn hóa hoặc chuyên nghiệp.",
+  "description": "Nền tảng của giao tiếp hiệu quả",
+  "duration": 5,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-12-07T12:25:55.221Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T12:47:47.398Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693573afaa90fef46add1c6f"
+  },
+  "course_id": {
+    "$oid": "69356e54aa90fef46add1c5d"
+  },
+  "title": "Cấu Trúc Bài Thuyết Trình Thu Hút",
+  "content_type": "video",
+  "content": "https://www.youtube.com/watch?v=eIho2S0ZahI",
+  "description": "Công thức 3 phần: Giới thiệu, Thân bài, Kết luận",
+  "duration": 10,
+  "is_free": true,
+  "order": 2,
+  "createdAt": {
+    "$date": "2025-12-07T12:31:43.506Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T12:31:43.506Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693576a4aa90fef46add1cb0"
+  },
+  "course_id": {
+    "$oid": "69356e1daa90fef46add1c58"
+  },
+  "title": "Giới thiệu về Node.js và NPM",
+  "content_type": "text",
+  "content": "## ⚙️ Node.js: Javascript Ngoài Trình Duyệt\\n\\nNode.js là môi trường runtime sử dụng V8 Engine, cho phép chạy JavaScript phía Server. Nó nổi tiếng với kiến trúc Non-blocking, Event-driven (Không đồng bộ, hướng sự kiện).\\n\\n### 📦 NPM (Node Package Manager)\\nNPM là kho lưu trữ các thư viện JS lớn nhất thế giới. Lệnh cơ bản:\\n* npm init: Khởi tạo dự án.\\n* npm install <package>: Cài đặt gói.\\n* package.json: File quan trọng chứa metadata dự án và dependency.",
+  "description": "Hiểu về môi trường runtime và quản lý gói",
+  "duration": 10,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-12-07T12:44:20.266Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T12:44:20.266Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69359622d5c28a2334c8db71"
+  },
+  "course_id": {
+    "$oid": "69356e54aa90fef46add1c5d"
+  },
+  "title": "Tĩnh lặng",
+  "content_type": "text",
+  "content": "Tĩnh lặng là một phần của cuộc sống",
+  "description": "ý nghĩa của tĩnh lặng",
+  "duration": 15,
+  "is_free": true,
+  "order": 3,
+  "createdAt": {
+    "$date": "2025-12-07T14:58:42.128Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T14:58:42.128Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69442f737750192209b47494"
+  },
+  "course_id": {
+    "$oid": "69442a307750192209b461db"
+  },
+  "title": "test lesson",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/NZj6LI5a9vc?si=-cahGyfpdeGlBGPE",
+  "description": "test thoi fen",
+  "duration": 0,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-12-18T16:44:35.302Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-18T16:44:35.302Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695642ac14fd7c91dd947e8c"
+  },
+  "course_id": {
+    "$oid": "69442a307750192209b461db"
+  },
+  "title": "function in python",
+  "content_type": "text",
+  "content": "Hàm trong Python là gì?\nTrong lập trình Python, hàm được kí hiệu là function là một khối code hay nhóm lệnh có tổ chức và có thể tái sử dụng được dùng để triển khai một hành động liên quan, thực hiện một tác vụ cụ thể. Nó giúp chia một chương trình Python ra thành những khối/ phần/ mô đun nhỏ hơn, có tổ chức để dễ dàng quản lý hơn và tối ưu hóa việc tái sử dụng.\n\nTrong Python có 2 loại hàm cơ bản chính gồm:\n\nHàm Python tích hợp sẵn – Built-in Functions: hàm có sẵn trong thư viện cơ bản được Python cung cấp\nHàm Python tự định nghĩa: hàm mà người dùng tự khai báo\nỞ phiên bản Python 3.12 mới nhất hiện nay, có khoảng 70 functions được tích hợp sẵn và bạn có thể tham khảo ở link này để sử dụng\n\nhàm trong Python\n\nCú pháp khai báo function trong Python\nCấu trúc hàm trong Python:\n\nCú pháp khai báo hàm trong Python\n\nTrong đó:\n\ndef: từ khóa bắt đầu định nghĩa một hàm trong Python\nfuntion_name: tên function khai báo – định danh duy nhất và tuân thủ quy tắc đặt tên hàm Python\narguments: danh sách các tham số/ đối số đặt trong ngoặc đơn, được khai báo tách nhau bởi dấu phẩy\ndấu “:”: đánh dấu kết thúc khai báo tiêu đề của hàm\nstatement list: danh sách các câu lệnh, khai báo nội dung hàm\nreturn: từ khóa để giúp hàm trả về một giá trị nhất định\nVới Python, một function có thể trả về dữ liệu (chứa từ khóa return) hoặc không. Trường hợp không có lệnh return thì hàm sẽ trả về None.\n\nNgoài ra để phục vụ cho việc tạo tài liệu (documents) của hàm, Python sử dụng khai báo bên dưới tiêu đề hàm và nằm trong 3 ký tự [“””]. Phần này được gọi là Docstring (documentation string) giúp giải thích ngắn gọn về chức năng của hàm.\n\nMột ví dụ đầy đủ khi khai báo hàm Python bạn có thể tham khảo dưới đây:",
+  "description": "giới thiệu về hàm trong python",
+  "duration": 0,
+  "is_free": false,
+  "order": 2,
+  "createdAt": {
+    "$date": "2026-01-01T09:47:24.452Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-01T09:47:24.452Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69565a92eddea7b1d5a9d757"
+  },
+  "course_id": {
+    "$oid": "69565a6beddea7b1d5a9d70d"
+  },
+  "title": "Lesson 1",
+  "content_type": "video",
+  "content": "None",
+  "description": "",
+  "duration": 0,
+  "is_free": false,
+  "order": 1,
+  "createdAt": {
+    "$date": "2026-01-01T11:29:22.255Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-01T11:29:22.255Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a4357b3d76ffc09e2d66c"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Giới thiệu",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/r6GWbQL-qwA?si=DTLe35h-2UeNFrbN",
+  "description": "Trong bối cảnh các dịch bệnh lây qua đường hô hấp và Covid-19 đang hết sức căng thẳng như hiện nay, việc nâng cao ý thức phòng tránh bệnh cần hết sức chú trọng. Bệnh lây từ người sang người qua các giọt bắn hô hấp trực tiếp từ người nhiễm bệnh hoặc qua các giọt bắn đọng lại trên các bề mặt từ người nhiễm bệnh.\n\nViệc xây dựng ứng dụng \"Cảnh báo khi chạm tay lên mặt\" không giúp ngăn ngừa bệnh nhưng sẽ làm giảm nguy cơ lây nhiễm.\n\nGiới thiệu ứng dụng Cảnh Báo Khi Chạm Tay Lên Mặt | Don't Touch Your Face",
+  "duration": 4,
+  "is_free": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2026-01-04T10:39:19.898Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:39:19.898Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a43bbb3d76ffc09e2d677"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Demo AI hoạt động",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/WIyfBMdtNTE?si=cxU0OKorTtWqWaCF",
+  "description": "",
+  "duration": 1,
+  "is_free": true,
+  "order": 2,
+  "createdAt": {
+    "$date": "2026-01-04T10:40:59.643Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:40:59.643Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a43ecb3d76ffc09e2d685"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Install NodeJs",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/bqXyrCjT7V4?si=WCoeXHoDgHy_Iyk9",
+  "description": "",
+  "duration": 3,
+  "is_free": true,
+  "order": 3,
+  "createdAt": {
+    "$date": "2026-01-04T10:41:48.754Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:41:48.754Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a4410b3d76ffc09e2d696"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Create react app",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/3IWNmXKmRqo?si=4hoWYa0Wjf5Zfhwx",
+  "description": "",
+  "duration": 6,
+  "is_free": true,
+  "order": 4,
+  "createdAt": {
+    "$date": "2026-01-04T10:42:24.493Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:42:24.493Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a443eb3d76ffc09e2d6aa"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Install dependencies",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/3klHfl2fOb0?si=YCqxF_Jn2-3xYE7c",
+  "description": "",
+  "duration": 9,
+  "is_free": true,
+  "order": 5,
+  "createdAt": {
+    "$date": "2026-01-04T10:43:10.834Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:43:10.834Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a4493b3d76ffc09e2d6c1"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Build UI Frame",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/b5NEWtDwc_0?si=BweHDhlkfkUeIqEv",
+  "description": "",
+  "duration": 4,
+  "is_free": true,
+  "order": 6,
+  "createdAt": {
+    "$date": "2026-01-04T10:44:35.551Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:44:35.551Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a44bfb3d76ffc09e2d6db"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Import dependencies",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/jjZGa8foO0s?si=sImIAdhkGaLqsrwo",
+  "description": "",
+  "duration": 6,
+  "is_free": true,
+  "order": 7,
+  "createdAt": {
+    "$date": "2026-01-04T10:45:19.535Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:45:19.535Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a44fcb3d76ffc09e2d6f8"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Xây dựng phần mềm video stream | Setup camera",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/uXvZyCnaZ7Y?si=cWT_ad0jOn25NczJ",
+  "description": "",
+  "duration": 9,
+  "is_free": true,
+  "order": 8,
+  "createdAt": {
+    "$date": "2026-01-04T10:46:20.824Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:46:20.824Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a4548b3d76ffc09e2d718"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Train function | Setup thư viện TensorFlow",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/KuDJjRU8XfY?si=RU0qj42fUfSr6hZv",
+  "description": "",
+  "duration": 11,
+  "is_free": true,
+  "order": 9,
+  "createdAt": {
+    "$date": "2026-01-04T10:47:36.812Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:47:36.812Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a456fb3d76ffc09e2d73b"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Viết function training | Training function",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/xjXoFX3X2yg?si=blS_nnUKdXqUzkZ3",
+  "description": "",
+  "duration": 8,
+  "is_free": true,
+  "order": 10,
+  "createdAt": {
+    "$date": "2026-01-04T10:48:15.430Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:48:15.430Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a4596b3d76ffc09e2d761"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Running function | Giải thích cách hoạt động",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/C4jm3RWSw10?si=-Jzpg6a-r-J0S2tp",
+  "description": "",
+  "duration": 14,
+  "is_free": true,
+  "order": 11,
+  "createdAt": {
+    "$date": "2026-01-04T10:48:54.063Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:48:54.063Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a45c2b3d76ffc09e2d78a"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Implement audio & notification",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/pwWS_VcR9Ks?si=SxaMQeW7PMjRf7FY",
+  "description": "",
+  "duration": 14,
+  "is_free": false,
+  "order": 12,
+  "createdAt": {
+    "$date": "2026-01-04T10:49:38.422Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:49:38.422Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a45f4b3d76ffc09e2d7b6"
+  },
+  "course_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "title": "Hướng dẫn Training hiệu quả",
+  "content_type": "video",
+  "content": "https://www.youtube.com/embed/D5Xd9FByKXc?si=rc2Ucs4rwv04twIx",
+  "description": "",
+  "duration": 1,
+  "is_free": false,
+  "order": 13,
+  "createdAt": {
+    "$date": "2026-01-04T10:50:28.521Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:50:28.521Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121827"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121813"
+  },
+  "title": "Python Setup và Môi Trường Làm Việc",
+  "content_type": "video",
+  "description": "Cài đặt Python và thiết lập môi trường phát triển với virtualenv",
+  "duration": 12,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/python-setup.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121828"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121813"
+  },
+  "title": "Cú Pháp Python Cơ Bản",
+  "content_type": "video",
+  "description": "Hiểu về cú pháp Python, indentation, và Pythonic way of coding",
+  "duration": 20,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/python-syntax.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121829"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121813"
+  },
+  "title": "Data Structures trong Python",
+  "content_type": "video",
+  "description": "List, tuple, dictionary, set và cách sử dụng hiệu quả",
+  "duration": 25,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/python-data-structures.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12182a"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121813"
+  },
+  "title": "Dự Án: Xây Dựng Web Scraper",
+  "content_type": "assignment",
+  "description": "Xây dựng một web scraper hoàn chỉnh để thu thập dữ liệu",
+  "duration": 60,
+  "is_free": false,
+  "order": 4,
+  "content": "https://example.com/assignments/python-scraper-project.pdf"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12182b"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121814"
+  },
+  "title": "Giới Thiệu React và JSX",
+  "content_type": "video",
+  "description": "Hiểu về React, JSX syntax, và component-based architecture",
+  "duration": 20,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/react-intro.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12182c"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121814"
+  },
+  "title": "Components và Props",
+  "content_type": "video",
+  "description": "Tạo reusable components và truyền data qua props",
+  "duration": 25,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/react-components.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12182d"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121814"
+  },
+  "title": "State và Hooks",
+  "content_type": "video",
+  "description": "Quản lý state với useState và useEffect hooks",
+  "duration": 30,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/react-hooks.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12182e"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121814"
+  },
+  "title": "Dự Án: E-commerce App",
+  "content_type": "assignment",
+  "description": "Xây dựng ứng dụng e-commerce hoàn chỉnh với React",
+  "duration": 90,
+  "is_free": false,
+  "order": 4,
+  "content": "https://example.com/assignments/react-ecommerce.pdf"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12182f"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121815"
+  },
+  "title": "Node.js Fundamentals",
+  "content_type": "video",
+  "description": "Giới thiệu Node.js, npm, và module system",
+  "duration": 15,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/nodejs-intro.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121830"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121815"
+  },
+  "title": "Express.js Framework",
+  "content_type": "video",
+  "description": "Xây dựng RESTful APIs với Express.js",
+  "duration": 30,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/express-basics.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121831"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121815"
+  },
+  "title": "MongoDB và Mongoose",
+  "content_type": "video",
+  "description": "Kết nối và thao tác với MongoDB database",
+  "duration": 35,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/mongodb-mongoose.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121832"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121816"
+  },
+  "title": "HTML5 Semantic Elements",
+  "content_type": "video",
+  "description": "Học về semantic HTML5 tags và best practices",
+  "duration": 15,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/html5-semantic.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121833"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121816"
+  },
+  "title": "CSS3 Selectors và Properties",
+  "content_type": "video",
+  "description": "Hiểu về CSS selectors, properties, và specificity",
+  "duration": 20,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/css-selectors.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121834"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121816"
+  },
+  "title": "Flexbox Layout",
+  "content_type": "video",
+  "description": "Tạo layouts linh hoạt với CSS Flexbox",
+  "duration": 25,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/css-flexbox.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121835"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121817"
+  },
+  "title": "Phân tích độ phức tạp thuật toán",
+  "content_type": "video",
+  "description": "Big O Notation, Time và Space Complexity",
+  "duration": 40,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/dsa-big-o.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121836"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121817"
+  },
+  "title": "Arrays và Linked Lists",
+  "content_type": "video",
+  "description": "Cài đặt và thao tác với danh sách liên kết",
+  "duration": 50,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/dsa-linked-list.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121837"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121817"
+  },
+  "title": "Stack và Queue",
+  "content_type": "video",
+  "description": "Ứng dụng của ngăn xếp và hàng đợi trong thực tế",
+  "duration": 45,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/dsa-stack-queue.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121838"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121818"
+  },
+  "title": "Mô hình quan hệ (Relational Model)",
+  "content_type": "video",
+  "description": "Khóa chính, khóa ngoại và các mối quan hệ 1-1, 1-n, n-n",
+  "duration": 30,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/mysql-relational.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de121839"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121818"
+  },
+  "title": "Truy vấn dữ liệu với SELECT",
+  "content_type": "video",
+  "description": "Các câu lệnh SELECT cơ bản đến nâng cao, WHERE, ORDER BY",
+  "duration": 35,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/mysql-select.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12183a"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121818"
+  },
+  "title": "JOINs và Subqueries",
+  "content_type": "video",
+  "description": "Kết hợp dữ liệu từ nhiều bảng",
+  "duration": 45,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/mysql-joins.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12183b"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121819"
+  },
+  "title": "Tổng quan về Machine Learning",
+  "content_type": "video",
+  "description": "Phân biệt Supervised, Unsupervised và Reinforcement Learning",
+  "duration": 25,
+  "is_free": true,
+  "order": 1,
+  "content": "https://example.com/videos/ml-intro.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12183c"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121819"
+  },
+  "title": "Linear Regression",
+  "content_type": "video",
+  "description": "Thuật toán hồi quy tuyến tính và ứng dụng dự báo",
+  "duration": 40,
+  "is_free": false,
+  "order": 2,
+  "content": "https://example.com/videos/ml-linear-regression.mp4"
+},
+{
+  "_id": {
+    "$oid": "695a828980a72311de12183d"
+  },
+  "course_id": {
+    "$oid": "695a7f6380a72311de121819"
+  },
+  "title": "Phân loại với Logistic Regression",
+  "content_type": "video",
+  "description": "Xây dựng mô hình phân loại nhị phân",
+  "duration": 45,
+  "is_free": false,
+  "order": 3,
+  "content": "https://example.com/videos/ml-logistic.mp4"
+}]

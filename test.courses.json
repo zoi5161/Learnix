@@ -1,0 +1,777 @@
+[{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7b4"
+  },
+  "instructor_id": {
+    "$oid": "69520834cc316f4078685d78"
+  },
+  "title": "JavaScript Fundamentals for Beginners",
+  "description": "Learn JavaScript from scratch, including variables, functions, loops, and DOM manipulation with practical examples.",
+  "level": "beginner",
+  "is_premium": true,
+  "status": "published",
+  "price": 0,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0,
+  "thumbnail": "https://images.viblo.asia/e1d604b1-b533-4eec-93a5-04177f28442d.jpg"
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7b5"
+  },
+  "instructor_id": "69520834cc316f4078685d78",
+  "title": "Advanced JavaScript & ES6+",
+  "description": "Deep dive into advanced JavaScript concepts such as closures, async/await, event loop, and ES6+ features.",
+  "level": "advanced",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/6549a9d8-f10e-4b5f-a87e-ae16631d2e52.png",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7b6"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c0"
+  },
+  "title": "Node.js & Express Backend Development",
+  "description": "Build scalable backend applications using Node.js and Express with real-world project structure.",
+  "level": "intermediate",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20220517005132/Why-to-Use-NodeJS-for-Backend-Development.jpg",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7b7"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c1"
+  },
+  "title": "MongoDB & Mongoose Masterclass",
+  "description": "Master MongoDB database design, indexing, aggregation, and Mongoose ODM in real applications.",
+  "level": "intermediate",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/286c9a3f-6a38-4113-addd-7b6e43b537bf.jpg",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7b8"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c2"
+  },
+  "title": "RESTful API Design & Best Practices",
+  "description": "Design clean, secure, and maintainable RESTful APIs following industry best practices.",
+  "level": "intermediate",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://aptech.fpt.edu.vn/wp-content/uploads/2023/07/uu-va-nhuoc-diem-cua-restfull-api.jpg",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7b9"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c3"
+  },
+  "title": "JWT Authentication & Authorization",
+  "description": "Implement authentication and authorization using JWT, refresh tokens, and role-based access control.",
+  "level": "intermediate",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/72bcdaa5-39de-45e0-beeb-54358edb8266.png",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7ba"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c4"
+  },
+  "title": "React Fundamentals for Frontend Developers",
+  "description": "Learn core React concepts including components, hooks, state management, and routing.",
+  "level": "beginner",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://aptech.fpt.edu.vn/wp-content/uploads/2022/11/react-js-la-gi.jpg",
+  "price": 0,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7bb"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c5"
+  },
+  "title": "Advanced React & Performance Optimization",
+  "description": "Optimize React applications with performance techniques, memoization, and advanced patterns.",
+  "level": "advanced",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://eflairwebtech.com/wp-content/uploads/2024/01/Advanced-React-JS-Concepts-for-Developers-1.jpg",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7bc"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c6"
+  },
+  "title": "Full-Stack Web Development Capstone Project",
+  "description": "Build a complete full-stack web application combining frontend, backend, authentication, and deployment.",
+  "level": "advanced",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/ff0afb78-12ab-4ff9-bb7a-a9ed5cd12093.jpeg",
+  "price": 59.99,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.829Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692990d4550407327ac0b7bd"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c7"
+  },
+  "title": "JavaScript Fundamentals for Beginners",
+  "description": "Learn JavaScript from scratch, including variables, functions, loops, and DOM manipulation with practical examples.",
+  "level": "beginner",
+  "is_premium": true,
+  "status": "published",
+  "thumbnail": "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/09/javascript-4.jpg",
+  "price": 0,
+  "tags": [
+    "web",
+    "javascript",
+    "backend",
+    "frontend"
+  ],
+  "category": "programming",
+  "summary": "Hands-on course with real-world examples and practical projects.",
+  "createdAt": {
+    "$date": "2025-11-28T12:08:52.830Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T16:03:34.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69356e1daa90fef46add1c58"
+  },
+  "instructor_id": {
+    "$oid": "6932e828cac71db67576d903"
+  },
+  "title": "Node.js và Express: Xây dựng RESTful API Cơ bản",
+  "description": "Khóa học này tập trung vào các kiến thức nền tảng về Node.js, Express framework, và cách kết nối với MongoDB để xây dựng các API (Application Programming Interface) phục vụ ứng dụng web hiện đại.",
+  "level": "intermediate",
+  "is_premium": false,
+  "status": "draft",
+  "thumbnail": "https://bs-uploads.toptal.io/blackfish-uploads/components/open_graph_image/10227551/og_image/optimized/secure-rest-api-in-nodejs-18f43b3033c239da5d2525cfd9fdc98f.png",
+  "price": 99,
+  "tags": [
+    "Nodejs",
+    "Express",
+    "Backend",
+    "Api",
+    "Javascript",
+    "Mongodb"
+  ],
+  "category": "Programming",
+  "summary": "Học cách thiết lập môi trường Node.js, hiểu về kiến trúc RESTful, và thực hiện các thao tác CRUD (Create, Read, Update, Delete) với database.",
+  "createdAt": {
+    "$date": "2025-12-07T12:07:57.314Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T12:43:42.524Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69356e54aa90fef46add1c5d"
+  },
+  "instructor_id": {
+    "$oid": "6932e828cac71db67576d903"
+  },
+  "title": "Nghệ Thuật Thuyết Phục và Giao Tiếp Hiệu Quả (Professional Communication)",
+  "description": "Khóa học này cung cấp các kỹ thuật giao tiếp từ cơ bản đến nâng cao, giúp bạn tự tin trình bày ý tưởng, đàm phán thành công, và xây dựng mối quan hệ bền vững trong môi trường làm việc.",
+  "level": "beginner",
+  "is_premium": false,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/fa40a0e8-1e90-4a61-a13b-83fbbe9031cc.jpg",
+  "price": 49,
+  "tags": [
+    "Communication",
+    "Presentation",
+    "Negotiation",
+    "Leadership Skills"
+  ],
+  "category": "Soft Skills",
+  "summary": "Làm chủ ngôn ngữ cơ thể, kỹ năng lắng nghe chủ động, và cấu trúc bài thuyết trình logic để đạt được mục tiêu giao tiếp trong mọi tình huống.",
+  "createdAt": {
+    "$date": "2025-12-07T12:08:52.759Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-26T13:28:28.759Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69442a307750192209b461db"
+  },
+  "instructor_id": {
+    "$oid": "69520834cc316f4078685d78"
+  },
+  "title": "Python Basic",
+  "description": "Khóa học cơ bản về ngôn ngữ Python cho lập trình viên",
+  "level": "beginner",
+  "is_premium": false,
+  "status": "published",
+  "thumbnail": "data:image/png;base64,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",
+  "price": 10,
+  "tags": [
+    "python",
+    "backend"
+  ],
+  "category": "programming",
+  "summary": "aaa",
+  "createdAt": {
+    "$date": "2025-12-18T16:22:08.357Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-01T10:57:10.335Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69521122fda2b5c4911239b3"
+  },
+  "instructor_id": {
+    "$oid": "69520834cc316f4078685d78"
+  },
+  "title": "Test Course",
+  "description": "Test Course",
+  "level": "intermediate",
+  "is_premium": false,
+  "status": "pending",
+  "thumbnail": "",
+  "price": 0,
+  "tags": [],
+  "category": "",
+  "summary": "",
+  "createdAt": {
+    "$date": "2025-12-29T05:26:58.256Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T05:43:06.824Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6956544affce1da9f7846a41"
+  },
+  "instructor_id": {
+    "$oid": "69520834cc316f4078685d78"
+  },
+  "title": "Java Basic",
+  "description": "Java course for beginner",
+  "level": "beginner",
+  "is_premium": false,
+  "status": "rejected",
+  "thumbnail": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxEQEhUSEhAQEhUPDxUREBUWFhUVFxYQFhUYFhUSFhUdHSggGBolHRUWITEhJikrOi8uFx8zODMtNygtLi0BCgoKDg0OGxAQGy4lICUuLS8uLS0rLTAtKy0vLSstKy0tKy0tLS0tLy0tLS0tLS0tLS0uLS0tLS0tLS0tLS0tLf/AABEIAKgBKwMBEQACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAwUCBAYBB//EAEwQAAEDAgMDCAQJCAgHAQAAAAEAAgMEEQUSIQYxUQcTIjJBYXGBkaGxshQ0Q1JicpLB0SMzQnN0gpPiRISiwsPS0/AWJFNUVYPhF//EABsBAQACAwEBAAAAAAAAAAAAAAACBAEDBQYH/8QAOxEAAgEDAAYGCAYBBAMAAAAAAAECAwQRBRIhMUFREzJhcYGRFCIzUqGxwdEGNEJy4fCCJCVi8RUjU//aAAwDAQACEQMRAD8A6xwVA9YjAhYJIjcEJJmBCwSR4I0wZci7wXCM9pJB0f0W/O7z3e1W6FDPrSOTfX2p/wCunv4vkdIr5wwgCAIAgCAIDWw6sEzA8adJ7HDg9jixw9LSoQlrLJtr0XSnqvsfmsmypmoIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgOOIXIPUkZCwSRgQsEkzxrEwZci1wfDecOdw6DTu+ceHgrNCjrPL3HOvbvo1qR3v4HSLoHCCAIAgCAIAgMXvDQXE2DQSTwA1JWG8LJmMXJpI5zk/qDJTPf8APq5njuD3Z7f2iq1o8wb7WdbTVPUuFHlGPwR0qtHICAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIDkCFyD1CMCEJGIZdYMt4NmkpjI8NHmeDe0rZThrywaK1ZUoOTOpijDQGgWAFgumkksI87OTk3JmSyRCAIAgCAIAgOO5Q8ebDEadhHOTN6f0ITvv3nd4XKpXlbVjqLezvaDsHVq9NLqx3dr/gt9jsPNPSRMcLOcDI8cHPObKe8AgeS3W0NSmkyjpW4Ve6lJbty8C6W854QBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAcmQuSemRgQsEsmeWyyRyXeC0+Vmbtf7oV23hiOeZx7+rrT1eRYqyUQgCAIAgCAIDktrNsmU14obPm3OO9sfjxd9H08DSuLpQ9WO87mjdDzuMVKuyHxf8dpS7HbNyVMnwyquWl3OMDutK/se76A7ONh2DXTbUHOXSTOjpXSUKFP0ahv3PHBcu8+jrpnkjWdXxB/N52l+/I3pOA4lo1A7yoa8c44m3oKmrr42c+BsqZqCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCA5ZwXJPSI8Y1DLZ64LJjJ00LMrQPmtA9AXTisJI87OWtJszUiIQBAEAQBAfP8AbDbXfBSutYkSTD1tjP8Ae9HFc25u/wBMPM9RovQu6rcLuj9X9jW2M2Q561RUt/JnpRxn5TtD3/R7u3w3xtrXW9ee43aV0v0WaNB7eL5di7fkdjj20VPRAB5u8joRN6xHHg0d58ldq14Ult8jgWejq92/V3cW938nO0ElfihzF5paW/yejnj5rXbz46DuKrQdWvt3ROrWjZaOWqlr1O3cvD6HXYXhcNMzJCwMG9x3ucfnOdvcfFXIU4wWIo4Vxc1biWtUefku5G4thoCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCA5khco9EgwIGz0DXzWVvMPczpV0zzwWQEAQBAEBw3KLtA6MfBYjZz25pnDeGHcwcCd57vFc+8rteoj0mgtHqo+nqLYty7efgVGwezIqHc/K38lGbMb/wBR44/RHrOnYVptLfXetLcX9M6S6CPQ036z3vkvuztdrcc+BQZmgGR5yQg7s1tXEcANfQO1Xrit0UMreed0ZZel1tV7ltf97Th9j8DdXzOnqCXsY/p3Osktr5D9ECxPiAqFtRdWWtLcej0peqypKjR2N7uxc+8+pMaAAAAABYAaAAbgAuslg8Y228s9WTAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAc2QuUehR6wLKMMOCA6JpuAeIuumtxwJLDaPVkwEAQBAEB8g2+p3x1spde0obIw8W5Q23kWkeS4t3Fqq8nvNC1IztIqPDYz6ng1O2KCJjOq2Jtu/S5PmST5rrUoqMEkeKuqkqlaUpb22cFypuPPQjsELiPEu6Xsauff9ZHp/w4l0U3xyvkW/JjVtdTvi0zxSlxHaWvAs70gjyW6xknDVKH4hoyjXVTg18v7k7JXjgBAEAQBAEBDWz83G+S1+bjc+26+VpNr9m5RlLVi2bKUOknGHNpHJYLt38Jnjh+DZOddlzc5e3RJvbIL7lTp3mvJRwdy60E6FGVXXzjsOzV48+EAQBAEAQBAEAQBAEAQBAEBi94AuVGUkllkoxcnhGs+pJ3ae1V5Vm9xbhbpbzHN3rVlm3VXIqyFqLqDAhhghAi7o3XY36tvRp9y6FJ5gjjV1ioyZbDUEAQBAEBz+2eAfDIeiBzsV3RHjfrRk8DYeYCrXNHpI7N6Opoq/9Fq+t1Xv+/gY7DYlz1M1jriSm/IyNO8ZdGkjwFvEFLWprQw962GdL23RXDlHqy2oh5QMFNTAHsF5KclwA3ujPXaO/QH91Ru6WvDK3o2aEvVb1tWT9WWzufA+cYFirqSZszdcuj2/OjPWb9/iAuZSqOnLWR629tY3VF034djPtkEzZGte03a9oc08WkXB9BXdTTWUfO5wcJOMt6M1kiEAQBAEBp418Xm/Z5fcK11eo+4sWnt4fuXzPkuxnx2n/WH3HLj23tYnudK/k6nd9UfZl3D58RT1MbOvIxn1nBvtUXJLeycKU59VN+BFDiUDzZk8Ljwa9pPoBWFUi9zJytq0VmUGvBm0pmkwMrRvc0eYUdZElTk9yfkZhSIglAYCVp0DmnzCjrIk4SW9PyM1Iia02IQs680TfrPaPaVB1IrezbG3qy6sW/Azp6uOT83JG/6rmu9hWVOL3MxOjUh1otd6JHPA3kC+653rOUQUW9yMgVkweE214LDeDKWXhFbLMXG/Z2KlObkzp06SgsHmaygTxkwusGcEBCwbUeMGqB7j0hAizwx3QtwcfxVy3fqnMvFieTbW8qhAEAQBAEBR1uHmCf4XC09MZauMfKRjdI0fPb6xftVeUNWevHxOjSuFVo+j1Hu2xfJ8u5/Mu2PBAIIIIBBG4g7iFvW057TTwz5Lt7hTaapJZo2dnOgfNcSQ4DuuL+a493TUJ7OJ7nQt1Kvb+tvjs+x9I2Zp3R0kDH3DmwtzA7xpfKfC9vJdSgmqaTPI6QqRqXNSUdzbLNbSmEAQBAEBp418Xm/Z5fcK11eo+4sWnt4fuXzR8l2M+O0/6w+45ce29rE9zpX8nU7vqj6htRS1EtOW0zyyTM3c4Nu29nDN2aG+nBdavGcoYhvPGaOq0KddSrrMdv8ABx0PJ1M/pTVLA477NdIfNxIuqSsZPbJnel+IqMNlOm8eC+BXbR7GSUkfOiRsrGkB/RLXNubA2ubi5HatVa0lTWtnJcsdM07qp0bjh8NuUy+5OceklLqaVxfkZnicdTlBAc0nt3i3n3KxZVnL1JHL09YQp4r01jLw+/mUfKRh4jq+csLVDA/d+m3ou9jT5rRew1ameZ0tA1+kttTjF/B7UdpsFW87RRjthvCfBvV/slqvWk9amuw89pmh0V3LlLb57/ibm1k4jo53HthcweL+gPeU7iWrTbNGjafSXVOPafPeTijD6wOt+Zie+/0jZg98+hc2yjmp3HqtPVtS0x7zS+p122OEVtS9jYJckeQiQF5YM19CQBd1wfUrlzSqTa1XsODou7tbeEnWjmWdmzJSxcmrrdKqYD3Rkj05gtHoD4yOi/xJHOym8d/8HPY5gs2HStOfU3dFKy7Tpa47jqNNd6rVaUqMt51bO9o39N7O9M+hbNVjcRpWumAL2OdG+2nSABzd12lpXSoS6anmR5XSFF2Ny1T3Pai/p4GxtDG7m7tb9+9WUsLCOXObnLWZBiElgB87f4BaK8sLBZtIZlrcjSaqpeZ452qGUj1DBg4LBJGA3oZ4GbgsmEbmFnrDwPtVi3e9FK9W5m+rRRCAICjxDaqliOUPMzybBkQznNe1r7r911vhbVJbcYXaUaukKMHhPL5I2aeoqpdeZjgad3OOMj/NjbAfaUJRhHjnuNsJ1p7dVRXbtfkvuWLAbam542t6lrLCzxMkMnjWgbtO1Y3GW295zzMCNRVfC6gaRgNpoT2NaSRJJ9IkkhvZpfXQVlR16mvPwR1HfKhbej0d760vouztOiVo5R4T60MZRqV1G+Tq1EsQtuYI/SS5pPospxko71k1VaUp7pNd2DmcUrq3DnNc6UVUL3ZekA1zTvylw7bbjru3K1ThSrLCWGc2vVuLRpt60Xz3nU4dXMqI2yxm7Xi4vvB3Fp7wbhVJwcJOLOnRqxqwU47mbKibTTxr4vP+zy+4Vrq9R9xYtPbw/cvmj5LsZ8dp/wBYfccuPbe1ie50r+Tqd31R9mXcPnxSYjtZRQHK6YOcDYhgLyCOwkaDzKrzuacdjZ0aGibustaMNnbs+Zzm0G29LPBLCyOcmWMta4tYGh3YT0r7+5Vq13CcHFZOtY6EuKNaFWTWx53vPyKnk1+O/wBXk95i02XtfAv6f/Kf5L6nT8pVDzlKJBvp5A79x/Rd6y0+StXsMwzyONoCvqXOo/1L4raUfJfXZZpIDulj5xv12Gx9Id/ZWixniTidH8RUNalGquDx5lxynVuSnZF2zS3P1I9SftFi3X08Q1eZQ/D1DWrup7q+LIeS6itFLMd8kgjb9VgufW71LFjDEXI2fiKtmrGlyWfP+DtJpWsaXOcGtaLuJIAA4klXm0llnnowlN6sVlnPVW3FCwkCR0lvmMJHk42B9KrSvKS4nUp6EvJrOrjvf0OQ2z2nhrWRtjjlaY5C4l4YLgttYWce5Urm4jVSSO/onRlW0lKU2nlcM/Yv+Sz4vL+0/wCGxWbDqPvOX+I/bw/b9Wdorx54qq193nu0VGtLMzq20cU12kQK1m1mLSsEmZ3WSIIQwjAhYJEhCyRRsYd1j4fet9vvZVu+qiwVsoBAaOM4cKmJ0Re+PNbVvd2Edo7lOnPUlrYyaLij00HDOO4452wlRG4OhqI7tN2khzCCNx0ur3psJLEonHeiasXmEl8iwDcaZpeCS3b0P5Vq/wBK+aLH+4R5MGsxof0aA+bP9VZ1bX3n/fAx0ukF+lfD7gVuNH+iwDzZ/qrGpa+8/wC+BnpdIe4vh9yRpxl3ZSs8bfcSsP0VcySekH7qJBhuKP69dEwduRgP90H1rHSW63Qb8SXQXst9RLuR6dl5n/ncQqXcQ05R6LkepPSIrqwQ9AqS69WRbYVg0NMPybSXHrPcczz4u4dwWmpVlPeXKNtCl1d/N7ywWs3nLcolQ1tMGHrSStyjubqT7B5q3ZRbqZ5HL0tNKjq8WyXYCFzaQF17Pke9gPzdB6yCfNYvGnV2EtFxaobeLZ0iqnSNPGvi8/7PL7hWur1H3Fi09vD9y+aPkuxnx2n/AFh9xy49t7WJ7nSv5Op3fVHYcpWMPiYyCMlvPBzpCNDzY0yX7ze/h3q7e1XFKK4nA0BZwqylVms6u7v5mjsRslBPCJ5wX53ERsuWgNaS0k2NySQdO5a7W2jKOtIs6X0tVo1eho7Mb33l3tJs/SR0k72U0LXMhcWuDRcEDQgqxWoU4020jm2F/c1LqnGVRtNricpya/Hf6vJ7zFTsva+B3dP/AJT/ACX1PptfStmjfE7dKxzD5i111Jx1otM8dRqulUjUXB5PjWCVJpauJ7tDDPlk7hcsf6iVxaUtSom+DPf3lNXFrJLisr5otuUev5yrLAejTxhn7x6TvaB5LbeT1qmORS0DQ6O21nvk8+C2L6n0PZqg+D0sURFnNjBf+sd0nesldKhDUppHlNIV+nuJz4Z2dx872/xd81Q+K55undla0bi8AZnHib3HdZc27quU3Hgj1ehbOFK3VXHrS257DrsG2IpY2NMsfPSFoLy4nLmO8Bt7W8VcpWlNLass4V3pq5nNqnLVjwxv8yl5RcKp4IojDDHGXSkOLWgEjKTYrReU4QitVHR0FdVq1SaqSbwuPeb/ACWfF5f2n/DYtth1H3lX8R+3h+36s7RXTzyKEuuSeJuuc3l5O4o4SR646LAW88ahlkl0IkjgpEEYELBLJm4LJFG1h7d58ArFut7Kd3LcjcVkphAEB451gSewXPgEMN4WTisM22ElQedIhhsebsL3OljI7s0vusr1SzcYertf93HGo6UU6vr7I8P5OnjxulduqYP4jR7SqrpVF+l+R0ldUXumvMzOLUw/pEH8Rn4rHRz5PyJekUveXmRPx6kG+pg+20/es9DU91+RB3dBfrXmas+1lEz5cO7mhzvYFNW1V8DXLSFvH9XkYUO19JM/IHuYT1S8ZWk8L33+KzO1qRWWiNPSNCpLVTx3l8q5fNHF8WipWZ5Hb+o0dZ54NC2U6UqjxE0V7iFGOZeXM5SmwSoxGb4RVgxRjqR7nFm8NA7BxJ1Pdpa3KtCjHUp7XzOVC1q3dTpa2xcF2HbsYGgAAANAAA3ADcAqGcnbSSWEZIZNLGzamnPCnl9xy11eo+4sWnt4fuXzPk+xbb11P+sJ8gxy49t7WJ7jSzxZ1O76o6rlQw17mx1DQSIg5ktv0Wk3a4917jzCuX1NtKSOJ+HrmMZSoy3vDX2KbZTbE0cfMvjMkYcXMykBzSdSNdCL69m8+Wi3uujWq1sOhpLQ6up9JCWHx5M2cR2lqsSvTU0OVjh+U1zOLPpu3Mb7ePYpTrzr+rBbDTQ0bb6PxWryy+Hf2LiavJof+d/q8nvMUbL2vgb9P/lP8l9T6quueJPkW31DzNY89k4Ew8XaOH2mk+a4t3DVqPtPd6Fr9LaRXGOz7EWyVA6rrGZruDXc9Ke5puAfF1h5lYt4OpUWe8npOurW1erszsXifYl2zwJ8i28w50NW9xByVB5yM9hJAztvxDr6cCFxrum41G+Z7vQtzGraxjnbHY/oXeHcomSINlgc97WgZmuADrdpB3Hwut8L7EcSW051f8Pa1RypzwnwfApMexOrr4zO9gbBC4BoHVD3HL1jq92tiezuWirUqVVrNbEdGytrayn0MXmcl8tvgdTyWfF5f2n/AA2K3YdR95xfxH7eH7fqzrqt9mOPdb06K1UeIs4dCOtUSKVq552WevKyEg1AzNCBskKRqRiG6oZzsMiEMZN+CPKLenxV6nHVjg5tWevLJIpmsIAgCApK7ZSjmJcYsrjvLCW68bDT1LfC5qRWEylV0fQqPLWH2bCpl5P4T1Z5R4hrvuC3K+nyRUeh6b3SfwNZ3J5wqh5xfzqfp/OPxNT0Nyn8DxvJ6e2qHlF/Ojv/APj8QtDvjP4G7T7AwDryzP7hlaPYStbvp8EjfHRFJdaTZb0ezFHFq2Bjjxfd/vXC0yuKkt7LVOxoQ3R89pa5bCw00sLW08AtJbxswjViwyJr+cyZpD+m/puHc0nqjuFlN1JNY4GqNCClrYy+bNxQNwQBAcnyhY02GAwNN5KhuUj5sR6zjwvuHj3KneVlGGqt7O5oSylVrKq16sfi+BQcmWGudM6oI6MLCxp4yO328G3+0FWsaeZa3I6f4huVGkqK3t58EfSiL6Ht0PguoeQTxuKqbZmiebmlhve+jcvpAsCtTt6b/SXoaSu4rCqPzLClpY4m5Y42Rt4NaGj0BbIxUVhIq1Ks6j1ptt9phBh8MZzMhiY61szWNabHeLgLChFPKRmderNaspNrtZsqZqNeqoYZSDJFFIWiwL2NdYcBcaKMoRlvRtp16lPZCTXcxS0MUV+bijjzdbIxrb23XsNUjCMdyMVK1Sp15N97NhSNZFUU7JGlsjGvad7XAOHoKjKKksMnTqTpvWg8PsK1mzFC05hSw37xcfZOi1K3pJ51S29J3bWHUfmWUlNG5uRzGFmgyFoLbDUdHctuqmsYKiqTUtZN558RTUscQtHGyME3IY0NBO65AG/RFFR3ITqzqPM233mti8lmgfOPqH+wtNxLEcFqyhmblyKtqpnSYcdUCWwyahhmd1kibjgpldGTWIkYcjYghtqfJWadPG1lStWz6qJ1vK4QBAEAQHJ8oElS2NnNZxGc3PFl730sHEahu/71cs1Tcnrb+BydKOsorUzjjgqqHb57GNa6BjsrQ27XZb2FurY2W6Vim8plWnpeUYpOOfE2v/0If9sf4g/yqHoD942/+YXufEwdyhcKX0yfyrPoH/L4GHpjlD4mrU7fzkdCKJneS5/4KcbGPFs1T0vVfVikX2zO0z6mzZKeQE/KMaTGe8n9H1qtXt1T2p+HEvWd9KtslF96Ww6ZVTphAEAQBAcVXbAMlqHSc85sbznc2135iek0OO4emyozslKec7D0NHT8qVBU9X1lszw8jrqGjjgY2OJoYxg0A9ZPEnirkIKCwjh1q0603Oby2TqRqCAIAgCAIAgCAIAgCAICjxKbM88G9Hz7f99yoVpa0jsWlPUp7eJACtRYwYgrBIzaskGZrJEt2QrfGm2c+VZIlbGArEaaiVp1HIzWw1hAEBVY9j8NGBnu5zuoxu8jieA71tpUJVXsKtzd07detv5FdgeLVNdmezmYI2Oy7jJITa/aQ0b95C21qUKOx5b8kVra5rXOXHEUvFl9T0pb1pZZD9ItHqa0BVm87kX4U3HfJs2Fg2GhVYLTS9eniJ45QD6Rqtkas47myvO1oz60UaD9jqE/IkeD5P8AMtiu6vM0PRts/wBPxZizYyiHyTj4yP8AuKz6XV5/AwtGW64fFlhS4HSxdSniB4locfSblapVqkt7ZYhaUYdWKLALWWNwQHj3AC5IAG8nQelDDaW80KPE2zSObFZ8bGdKQdXnb9QO3O01Nt2nFTlTcVl7+Rpp11UniO1c+0sFA3hAEAQBAEAQBAEAQBAEAQBAEBq4hVc236TtG/itVWpqLtLNtQdWfYihaVzztBzuxAketQMkaskGZrJE6BdM4IQBAEAQFDtFsvHWEPL3RvDcuYagtFyAW+Z3EKxRuZUtm9FC7sIXD1s4ZzLtiqyJ2aGZhI3FrnRu9n3q36ZSksSX1Oa9F3EHmEl54NmNmNx6avA4mF/rJuoN2suzzNiWkYdvkSjFsXZ1qUO/cv7rljorZ7pElcX8d8M+H8kg2kxHtw8/ZkCj6PR98n6bd8aXzPf+JMQ/8e77Miz6PR9/5D066/8Al8wNoMTO7D/S1/4hY6Ch749MvHupA4ljDt1LE3xA++ROjtl+r++Q6e/e6CX97z0HGndkMf8AD/8Aqf6Vcx/uL5ImZg2JSfna8MHCJuvps1RdWgurDzNitrufXqY7iYbMUsfTqZXzEG+aeTo+gm3puo+kVJbILHciSsaMPWqyz3sm/wCII3fkqOI1Dm9EZRkiZ9Z9rAeCj0DXrVHj5+RP0yL9Sgtbu3LxLeije1o5x4e86uIFm34NHYAtMmm9hbpqSj6zyydYNgQBAEAQBAEAQBAEAQBAEBq11c2Ia6uO5v3ngFqqVVBFi3tpVns3czn5p3PcXOOp9Q4Bc+UnJ5Z26dKNOOrEwL+CxknqhpQMlaskWSNQgzO6yROhXUOAEAQBAEAQBAYyszC13DvBsURhrKwV8lFUDqVZ/wDZHG/3Q1bFKHGPk/8AsrulVXVn5pP7GpIzEx1ZKJ/1myN9hKmnQe9P4GqSvFucX4Mj53FR8nRHwc8e1Zxb82R1r3lHzHP4p/0KT7bvxTFDmxrXvux8zznMWP6FC3xMh9hTFvzZjN6+ET0QYo7fNRs+qxzrekJmguDZlQvXvlFeB63A6p353EZjx5tjY/WEdamurBeIVrWfXqvwSRlDsjSg5pBJO7jK8u9WgPmjuqm5bO4lHR1FPMsy72XUELY2hrGtY0bmtAAHkFobbeWXIwjFYisIkWCQQBAEAQBAEAQBAEAQBAYSytYLucGjiVGUlFZZKEJTeIrJTVuOdkQ/eP3D8VUqXPCJ1aGjeNTyKh0tzckknffUlVW87WdNQSWEjzOsZM6pkEMMkaskGSNWSDJGrJFkiyROiXUPPhAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEBq1eIRRdd4B4bz6FrnVjDezfRtatXqL7FLV7RuOkbcv0nanyG4etVJ3bfVOrR0UltqPPYiomqnPN3OLj3/70VaU3LazpQoxgsRWDHnCo5J6p60rJhkrUIMkaskGSNWSLJGlZIMkaskWZ3WSB0i6h58IAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCA0sSxSKAdM3J3NGrj+A7ytVStGnvLVtZ1a79VbOfA5iu2gml0aebbwbv83fhZUKlzOW7Yd6hoylS2y2vt+xV855qvk6CiM10GDNqEWSNWSDJGrJFkjVkgyVqyQZI1ZIskaskGSNWSDM0InSrqnnggCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAqdoMX+DsAbYyP6g4DtcVXuK3RrZvOho+y9Int6q3/AGOHfK5xLnEuLjck7yVym23lnq4wjBasVhGJf2LGTKR61AyRqyRZK1ZIMkaskGSNWSDJGrJFkjVkgyRqyQZI0oRZK1ZIMzWSJ0y6p50IAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgPnm0VSZKiQ9jHc23uDdPbc+a49xLWqM9lo6kqdtHt2+ZoXWkuGLSsEmSNWSDJGrJBkjVkiyRqyQZK1ZIMkaVkiyRqEGSNWSDJGrJFkjSskGSLJE/9k=",
+  "price": 4.98,
+  "tags": [
+    "java",
+    "web"
+  ],
+  "category": "programming",
+  "summary": "aaaa",
+  "createdAt": {
+    "$date": "2026-01-01T11:02:34.682Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-01T11:44:47.967Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a42b5b3d76ffc09e2d652"
+  },
+  "instructor_id": {
+    "$oid": "69520834cc316f4078685d78"
+  },
+  "title": "App \"Đừng chạm tay lên mặt\"",
+  "description": "Bạn sẽ học được gì?\n1. Làm được tool cảnh báo khi sờ tay lên mặt\n2. Biết áp dụng làm tool có concept tương tự\n3. Làm quen với tư tưởng \"Máy học\"\n4. Biết thêm một số kỹ thuật với Javascript",
+  "level": "beginner",
+  "is_premium": false,
+  "status": "published",
+  "thumbnail": "https://files.f8.edu.vn/f8-prod/courses/4/61a9e9e701506.png",
+  "price": null,
+  "tags": [
+    "reactJS",
+    "tensorflow"
+  ],
+  "category": "programming",
+  "summary": "Xây dựng ứng dụng đưa ra cảnh báo khi người dùng sờ tay lên mặt. Chúng ta sẽ sử dụng thư viện ReactJS & Tensoflow để hoàn thiện ứng dụng này.",
+  "createdAt": {
+    "$date": "2026-01-04T10:36:37.520Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-04T10:51:48.223Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121812"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "JavaScript Cơ Bản cho Người Mới Bắt Đầu",
+  "description": "Học JavaScript từ con số không với các khái niệm cơ bản nhất như biến, hàm, vòng lặp và DOM manipulation. Khóa học phù hợp cho người chưa biết gì về lập trình.",
+  "summary": "Khóa học JavaScript cơ bản dành cho người mới bắt đầu",
+  "level": "beginner",
+  "category": "programming",
+  "tags": [
+    "JavaScript",
+    "Web Development",
+    "Frontend"
+  ],
+  "is_premium": false,
+  "price": 0,
+  "status": "published",
+  "thumbnail": "https://s3-hfx03.fptcloud.com/codelearnstorage/files/thumbnails/Javascript-co-ban__2__be74112f409f47e9874f0da758c1d7cb.png"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121813"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Python Lập Trình Ứng Dụng Thực Tế",
+  "description": "Học Python qua các dự án thực tế như web scraping, data analysis, và automation. Bạn sẽ xây dựng portfolio với 5+ dự án thực tế.",
+  "summary": "Python thực tế với các dự án portfolio",
+  "level": "intermediate",
+  "category": "programming",
+  "tags": [
+    "Python",
+    "Data Science",
+    "Automation"
+  ],
+  "is_premium": true,
+  "price": 10,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/d9efa478-09c2-42a5-b05e-58e5d8634365.png"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121814"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "React.js - Xây Dựng Ứng Dụng Web Hiện Đại",
+  "description": "Master React.js với hooks, context API, và state management. Xây dựng ứng dụng e-commerce hoàn chỉnh từ đầu đến cuối.",
+  "summary": "React.js từ cơ bản đến nâng cao",
+  "level": "intermediate",
+  "category": "web-development",
+  "tags": [
+    "React",
+    "Frontend",
+    "JavaScript"
+  ],
+  "is_premium": true,
+  "price": 50,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/da4b60f5-c0e3-4872-aec0-90fbe4ca0a61.png"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121815"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Node.js Backend Development",
+  "description": "Phát triển RESTful APIs và real-time applications với Node.js, Express, và MongoDB. Học authentication, authorization, và deployment.",
+  "summary": "Backend development với Node.js",
+  "level": "advanced",
+  "category": "backend",
+  "tags": [
+    "Node.js",
+    "Backend",
+    "API"
+  ],
+  "is_premium": true,
+  "price": 36,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/bf885a69-4174-4176-b760-e5dee991d47f.jpg"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121816"
+  },
+  "instructor_id": {
+    "$oid": "692990d4550407327ac0b7c0"
+  },
+  "title": "HTML & CSS - Thiết Kế Web Đẹp Mắt",
+  "description": "Học HTML5 và CSS3 từ cơ bản, bao gồm Flexbox, Grid, và responsive design. Tạo ra các website đẹp mắt và chuyên nghiệp.",
+  "summary": "Thiết kế web với HTML & CSS",
+  "level": "beginner",
+  "category": "web-design",
+  "tags": [
+    "HTML",
+    "CSS",
+    "Web Design"
+  ],
+  "is_premium": false,
+  "price": 0,
+  "status": "published",
+  "thumbnail": "https://letdiv.com/wp-content/uploads/2024/04/khoa-hoc-html-css.jpg"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121817"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Data Structures & Algorithms",
+  "description": "Hiểu sâu về cấu trúc dữ liệu và thuật toán. Chuẩn bị cho các kỳ thi phỏng vấn tại các công ty công nghệ hàng đầu.",
+  "summary": "DSA cho phỏng vấn công ty công nghệ",
+  "level": "advanced",
+  "category": "computer-science",
+  "tags": [
+    "Algorithms",
+    "Data Structures",
+    "Interview"
+  ],
+  "is_premium": true,
+  "price": 20,
+  "status": "published",
+  "thumbnail": "https://media.geeksforgeeks.org/wp-content/uploads/20240213174747/dsa-new.webp"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121818"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "MySQL Database Design & Optimization",
+  "description": "Học thiết kế database, viết queries hiệu quả, và tối ưu hóa performance. Thực hành với các case study thực tế.",
+  "summary": "Thiết kế và tối ưu database",
+  "level": "intermediate",
+  "category": "database",
+  "tags": [
+    "MySQL",
+    "Database",
+    "SQL"
+  ],
+  "is_premium": true,
+  "price": 20,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/9fa318d9-3f3e-4e3d-be3f-1846199e4955.jpg"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de121819"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Machine Learning với Python",
+  "description": "Giới thiệu về Machine Learning với scikit-learn và TensorFlow. Xây dựng các mô hình dự đoán và phân loại dữ liệu.",
+  "summary": "Machine Learning từ cơ bản",
+  "level": "advanced",
+  "category": "ai-ml",
+  "tags": [
+    "Machine Learning",
+    "Python",
+    "AI"
+  ],
+  "is_premium": true,
+  "price": 30,
+  "status": "published",
+  "thumbnail": "https://cellphones.com.vn/sforum/wp-content/uploads/2021/09/01.-ML-la-gi.jpg"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de12181a"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Git & GitHub - Quản Lý Code Chuyên Nghiệp",
+  "description": "Học sử dụng Git và GitHub để quản lý version control, collaboration, và CI/CD. Kỹ năng cần thiết cho mọi developer.",
+  "summary": "Quản lý code với Git & GitHub",
+  "level": "beginner",
+  "category": "tools",
+  "tags": [
+    "Git",
+    "Version Control",
+    "Collaboration"
+  ],
+  "is_premium": false,
+  "price": 0,
+  "status": "published",
+  "thumbnail": "https://media.geeksforgeeks.org/wp-content/uploads/20250717190432134676/git.webp"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de12181b"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Vue.js - Framework JavaScript Hiện Đại",
+  "description": "Học Vue.js 3 với Composition API, Vuex, và Vue Router. Xây dựng Single Page Applications hiện đại và hiệu quả.",
+  "summary": "Vue.js từ cơ bản đến nâng cao",
+  "level": "intermediate",
+  "category": "web-development",
+  "tags": [
+    "Vue.js",
+    "Frontend",
+    "JavaScript"
+  ],
+  "is_premium": true,
+  "price": 100,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/94f4ac67-bebd-4d2e-9a39-2562525e74c3.jpeg"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de12181c"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "TypeScript - JavaScript với Type Safety",
+  "description": "Chuyển từ JavaScript sang TypeScript. Học type system, interfaces, generics, và best practices để viết code an toàn hơn.",
+  "summary": "TypeScript cho developer JavaScript",
+  "level": "intermediate",
+  "category": "programming",
+  "tags": [
+    "TypeScript",
+    "JavaScript",
+    "Type Safety"
+  ],
+  "is_premium": true,
+  "price": 39,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/675e5c02-b36d-474c-8ddf-20be4f421d5a.png"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de12181d"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Docker & Kubernetes - Containerization",
+  "description": "Containerize applications với Docker và orchestrate với Kubernetes. Deploy và scale applications một cách dễ dàng.",
+  "summary": "Containerization và orchestration",
+  "level": "advanced",
+  "category": "devops",
+  "tags": [
+    "Docker",
+    "Kubernetes",
+    "DevOps"
+  ],
+  "is_premium": true,
+  "price": 30,
+  "status": "published",
+  "thumbnail": "https://images.viblo.asia/fad7cf1a-772f-43e4-9042-e96d5d903b2b.png"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de12181e"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "Flutter - Mobile App Development",
+  "description": "Xây dựng ứng dụng mobile cross-platform với Flutter. Tạo iOS và Android apps với một codebase duy nhất.",
+  "summary": "Mobile app với Flutter",
+  "level": "intermediate",
+  "category": "mobile",
+  "tags": [
+    "Flutter",
+    "Mobile",
+    "Cross-platform"
+  ],
+  "is_premium": true,
+  "price": 15,
+  "status": "published",
+  "thumbnail": "https://i.imgur.com/BOPaQQ5.png"
+},
+{
+  "_id": {
+    "$oid": "695a7f6380a72311de12181f"
+  },
+  "instructor_id": {
+    "$oid": "69554bef1e54509bc9d066db"
+  },
+  "title": "GraphQL API Development",
+  "description": "Xây dựng GraphQL APIs với Node.js và Apollo Server. Học schema design, resolvers, và authentication.",
+  "summary": "GraphQL API development",
+  "level": "intermediate",
+  "category": "backend",
+  "tags": [
+    "GraphQL",
+    "API",
+    "Backend"
+  ],
+  "is_premium": true,
+  "price": 25,
+  "status": "published",
+  "thumbnail": "https://res.cloudinary.com/codersociety/image/fetch/https://cdn.codersociety.com/uploads/graphql-reasons.png"
+}]
