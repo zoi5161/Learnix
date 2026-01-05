@@ -193,10 +193,10 @@ const HomePage: React.FC = () => {
                                     <div className="f8-course-item-center">
                                         <h4 className="f8-course-item-title">{course.title}</h4>
                                         <div className="f8-course-item-meta">
-                                            <span className="f8-meta-icon">👁</span>
+                                            <span className="f8-meta-icon">Students</span>
                                             <span>{course.enrollmentsCount || 0}</span>
                                             <span className="f8-meta-divider">•</span>
-                                            <span className="f8-meta-icon">👍</span>
+                                            <span className="f8-meta-icon">Lessons</span>
                                             <span>{course.lessonsCount || 0}</span>
                                         </div>
                                     </div>
